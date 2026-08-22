@@ -13,6 +13,7 @@ qt_add_qml_module(FlightDisplayModule
         FlightDisplayViewQtMultimedia.qml
         FlightDisplayViewUVC.qml
         FlightDisplayViewVideo.qml
+        FlightConsoleDemo.qml
         FlyView.qml
         FlyViewAdditionalActionsButton.qml
         FlyViewAdditionalActionsList.qml
@@ -41,6 +42,7 @@ qt_add_qml_module(FlightDisplayModule
         GuidedActionTakeoff.qml
         GuidedToolStripAction.qml
         GuidedValueSlider.qml
+        InstrumentsArtificialHorizon.qml
         MultiRotorChecklist.qml
         MultiVehicleList.qml
         ObstacleDistanceOverlay.qml

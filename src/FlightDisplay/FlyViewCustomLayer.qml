@@ -52,4 +52,8 @@ Item {
         bottomEdgeCenterInset:  parentToolInsets.bottomEdgeCenterInset
         bottomEdgeRightInset:   parentToolInsets.bottomEdgeRightInset
     }
+
+    FlightConsoleDemo {
+        anchors.fill: parent
+    }
 }

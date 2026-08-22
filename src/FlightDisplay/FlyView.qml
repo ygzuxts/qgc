@@ -81,12 +81,12 @@ Item {
 
     FlyViewToolBar {
         id:         toolbar
-        visible:    !QGroundControl.videoManager.fullScreen
+        visible:    false
     }
 
     Item {
         id:                 mapHolder
-        anchors.top:        toolbar.bottom
+        anchors.top:        parent.top
         anchors.bottom:     parent.bottom
         anchors.left:       parent.left
         anchors.right:      parent.right
@@ -105,6 +105,7 @@ Item {
         FlyViewVideo {
             id:         videoControl
             pipView:    _pipView
+            visible:    false
         }
 
         PipView {
@@ -118,6 +119,7 @@ Item {
             show:                   QGroundControl.videoManager.hasVideo && !QGroundControl.videoManager.fullScreen &&
                                         (videoControl.pipState.state === videoControl.pipState.pipState || mapControl.pipState.state === mapControl.pipState.pipState)
             z:                      QGroundControl.zOrderWidgets
+            visible:                false
 
             property real leftEdgeBottomInset: visible ? width + anchors.margins : 0
             property real bottomEdgeLeftInset: visible ? height + anchors.margins : 0
@@ -132,9 +134,9 @@ Item {
             z:                      _fullItemZorder + 2 // we need to add one extra layer for map 3d viewer (normally was 1)
             parentToolInsets:       _toolInsets
             mapControl:             _mapControl
-            visible:                !QGroundControl.videoManager.fullScreen
             utmspActTrigger:        utmspSendActTrigger
             isViewer3DOpen:         viewer3DWindow.isOpen
+            visible:                false
         }
 
         FlyViewCustomLayer {
@@ -177,6 +179,7 @@ Item {
         Viewer3D{
             id:                     viewer3DWindow
             anchors.fill:           parent
+            visible:                false
         }
     }
 }
