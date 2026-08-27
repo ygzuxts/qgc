@@ -4,6 +4,30 @@
 .ccache/
 cmake-build-*/
 out/
+
+# Local Qt/CMake build outputs. Keep generated build folders and installer
+# artifacts local; do not push them to GitHub.
+/build/
+/build-*/
+/build_*/
+/Desktop_Qt_*/
+/_build/
+/_build_*/
+*.ilk
+*.exp
+*.obj
+*.pdb
+*.idb
+/*.exe
+/*.dll
+/*.lib
+/*.apk
+/*.aab
+/*.dmg
+/*.AppImage
+/*.msi
+/*.7z
+/*.zip
 libs/lib/Frameworks/GStreamer.framework
 *_qmlcache.qrc
 *.swp
