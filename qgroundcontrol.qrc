@@ -128,4 +128,9 @@
     <qresource prefix="/ShaderFragment">
         <file alias="earthMaterial.frag">src/Viewer3D/Shaders/earthMaterial.frag</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="resources/plane.svg">resources/InstrumentValueIcons/airplane.svg</file>
+        <file alias="resources/edit.svg">resources/InstrumentValueIcons/edit-pencil.svg</file>
+        <file alias="resources/fence.svg">resources/fence.svg</file>
+    </qresource>
 </RCC>

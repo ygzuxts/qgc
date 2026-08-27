@@ -5,6 +5,45 @@ qt_add_qml_module(FlightDisplayModule
     VERSION 1.0
     RESOURCE_PREFIX /qml
     QML_FILES
+        CustomUI/App.qml
+        CustomUI/AttitudeHUD.qml
+        CustomUI/BoardStatusCard.qml
+        CustomUI/CompassWidget.qml
+        CustomUI/CustomFlyViewMap.qml
+        CustomUI/CustomPlanCenterMapDropButton.qml
+        CustomUI/CustomPlanCenterMapDropPanel.qml
+        CustomUI/CustomPlanGeoFenceEditor.qml
+        CustomUI/CustomPlanMissionCommandDialog.qml
+        CustomUI/CustomPlanMissionItemEditor.qml
+        CustomUI/CustomPlanRallyPointEditorHeader.qml
+        CustomUI/CustomPlanRallyPointItemEditor.qml
+        CustomUI/CustomPlanToolBarIndicators.qml
+        CustomUI/CustomPlanToolStrip.qml
+        CustomUI/CustomPlanToolStripButton.qml
+        CustomUI/CustomPlanToolStripDropPanel.qml
+        CustomUI/CustomPlanView.qml
+        CustomUI/CustomPlanViewToolBar.qml
+        CustomUI/DecisionFlowItem.qml
+        CustomUI/FailoverDialog.qml
+        CustomUI/FlightModeButton.qml
+        CustomUI/FlightModePanel.qml
+        CustomUI/FlyViewBottomBar.qml
+        CustomUI/FlyViewHUD.qml
+        CustomUI/FlyViewLeftPanel.qml
+        CustomUI/FlyViewRightPanel.qml
+        CustomUI/FlyViewState.qml
+        CustomUI/FlyViewTheme.qml
+        CustomUI/FlyViewTopBar.qml
+        CustomUI/PageMission.qml
+        CustomUI/PageSettings.qml
+        CustomUI/PageTakeoff.qml
+        CustomUI/PageWaypoint.qml
+        CustomUI/PlanShellView.qml
+        CustomUI/Screen01.ui.qml
+        CustomUI/SectionTitle.qml
+        CustomUI/SignalBars.qml
+        CustomUI/TelemCard.qml
+        CustomUI/WaypointPlanPage.qml
         CustomGuidedActionsController.qml
         DefaultChecklist.qml
         FixedWingChecklist.qml
@@ -63,5 +102,8 @@ qt_add_qml_module(FlightDisplayModule
         TerrainProgress.qml
         VehicleWarnings.qml
         VirtualJoystick.qml
+    RESOURCES
+        CustomUI/antglogo.svg
+        CustomUI/antglogo-white.svg
     NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.
 )

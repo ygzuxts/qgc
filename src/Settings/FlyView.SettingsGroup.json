@@ -102,6 +102,12 @@
     "min":          3,
     "max":          60,
     "default":      10
+},
+{
+    "name":         "useCustomFlyView",
+    "shortDesc":    "Use the custom Fly View instead of the upstream QGC Fly View.",
+    "type":         "bool",
+    "default":      true
 }
 ]
 }

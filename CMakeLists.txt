@@ -289,6 +289,10 @@ if(QGC_BUILD_TESTING)
     list(APPEND QGC_RESOURCES ${CMAKE_SOURCE_DIR}/test/UnitTest.qrc)
 endif()
 
+if(QGC_CUSTOM_BUILD)
+    list(APPEND QGC_RESOURCES ${CUSTOM_RESOURCES})
+endif()
+
 #######################################################
 #               QGroundControl Target
 #######################################################

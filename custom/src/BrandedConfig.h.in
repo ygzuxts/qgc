@@ -1,0 +1,3 @@
+#pragma once
+
+#define QGC_BRAND_GRADIENT_COLOR "@QGC_BRAND_GRADIENT_COLOR@"

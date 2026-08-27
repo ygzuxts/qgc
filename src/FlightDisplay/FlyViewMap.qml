@@ -36,6 +36,7 @@ FlightMap {
     property var    rightPanelWidth
     property var    planMasterController
     property bool   pipMode:                    false   // true: map is shown in a small pip mode
+    property bool   customFlyViewEnabled:        false
     property var    toolInsets                          // Insets for the center viewport area
 
     property var    _activeVehicle:             QGroundControl.multiVehicleManager.activeVehicle
@@ -332,12 +333,17 @@ FlightMap {
         largeMapView:   !pipMode
     }
 
-    GeoFenceMapVisuals {
-        map:                    _root
-        myGeoFenceController:   _geoFenceController
-        interactive:            false
-        planView:               false
-        homePosition:           _activeVehicle && _activeVehicle.homePosition.isValid ? _activeVehicle.homePosition :  QtPositioning.coordinate()
+    Loader {
+        active: !_root.customFlyViewEnabled
+        sourceComponent: Component {
+            GeoFenceMapVisuals {
+                map:                    _root
+                myGeoFenceController:   _geoFenceController
+                interactive:            false
+                planView:               false
+                homePosition:           _activeVehicle && _activeVehicle.homePosition.isValid ? _activeVehicle.homePosition :  QtPositioning.coordinate()
+            }
+        }
     }
 
     // Rally points on map

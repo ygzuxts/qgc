@@ -183,6 +183,14 @@ Popup {
             rejectButton.visible = true
         }
 
+        // Fallback: Some callers pass button values from a different Dialog
+        // enum namespace. If the bit checks above did not match anything,
+        // keep the dialog dismissible instead of showing a modal without buttons.
+        if (!acceptButton.visible && !rejectButton.visible && Number(buttons) !== 0) {
+            acceptButton.text = qsTr("Ok")
+            acceptButton.visible = true
+        }
+
         closePolicy = Popup.NoAutoClose
         if (buttons & Dialog.Cancel) {
             closePolicy |= Popup.CloseOnEscape
@@ -227,14 +235,14 @@ Popup {
             QGCButton {
                 id:                     rejectButton
                 onClicked:              _reject()
-                Layout.minimumWidth:    height * 1.5
+                Layout.minimumWidth:    Math.max(ScreenTools.implicitButtonWidth, height * 2.2)
             }
 
             QGCButton {
                 id:                     acceptButton
                 primary:                true
                 onClicked:              _accept()
-                Layout.minimumWidth:    height * 1.5
+                Layout.minimumWidth:    Math.max(ScreenTools.implicitButtonWidth, height * 2.2)
             }
         }
 
@@ -268,5 +276,6 @@ Popup {
                 }
             }
         }
+
     }
 }

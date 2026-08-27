@@ -634,9 +634,9 @@ void LinkManager::removeConfiguration(LinkConfiguration *config)
         return;
     }
 
-    LinkInterface* const link = config->link();
-    if (link) {
-        link->disconnect();
+    if (config->link()) {
+        qgcApp()->showAppMessage(tr("Cannot delete an active communication link. Disconnect it first."));
+        return;
     }
 
     _removeConfiguration(config);

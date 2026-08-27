@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/brand">
+        <file alias="logo.png">@QGC_BRAND_LOGO@</file>
+        <file alias="app-logo.png">@QGC_BRAND_TRANSPARENT_LOGO@</file>
+        <file alias="app-logo-white.png">@QGC_BRAND_TRANSPARENT_LOGO@</file>
+        <file alias="topbar-logo.png">@QGC_BRAND_TRANSPARENT_LOGO@</file>
+        <file alias="app-icon.ico">@QGC_BRAND_APP_ICON@</file>
+    </qresource>
+</RCC>
