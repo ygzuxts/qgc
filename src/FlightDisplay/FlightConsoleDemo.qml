@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 import QtQuick.Shapes 1.15
 
 import QGroundControl
+import QGroundControl.Controls
+import QGroundControl.Toolbar
 
 // ============================================================
 // FlightConsoleDemo.qml
@@ -16,25 +18,32 @@ import QGroundControl
 Item {
     id: window
     anchors.fill: parent
+    property bool lightMode: true
 
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
+        color: palette.bg
         z: -1
     }
 
     // ---------------- 配色 / 设计令牌 ----------------
     QtObject {
         id: palette
-        readonly property color bg: "#080B10"
-        readonly property color panel: "#0F151D"
-        readonly property color panelBorder: "#1C2733"
-        readonly property color cyan: "#33E1FF"
-        readonly property color amber: "#FFB238"
+        readonly property color bg: window.lightMode ? "#edf1f5" : "#080B10"
+        readonly property color panel: window.lightMode ? "#f8fafc" : "#0F151D"
+        readonly property color panelBorder: window.lightMode ? "#cbd5e1" : "#1C2733"
+        readonly property color overlay: window.lightMode ? Qt.rgba(1, 1, 1, 0.86) : Qt.rgba(0.06, 0.09, 0.13, 0.85)
+        readonly property color overlayMuted: window.lightMode ? Qt.rgba(0.94, 0.97, 1.0, 0.86) : Qt.rgba(0.06, 0.09, 0.13, 0.75)
+        readonly property color buttonIdle: window.lightMode ? Qt.rgba(0.90, 0.94, 0.98, 0.92) : Qt.rgba(0.1, 0.14, 0.18, 0.85)
+        readonly property color takeoffReady: window.lightMode ? Qt.rgba(0.16, 0.47, 0.94, 0.14) : Qt.rgba(0.2, 0.88, 1.0, 0.16)
+        readonly property color landReady: window.lightMode ? Qt.rgba(1.0, 0.29, 0.29, 0.12) : Qt.rgba(1.0, 0.29, 0.29, 0.14)
+        readonly property color cyan: "#2977ef"
+        readonly property color amber: "#884600"
         readonly property color red: "#FF4B4B"
-        readonly property color green: "#39D98A"
-        readonly property color textHi: "#EAF3FF"
-        readonly property color textLo: "#6E7E90"
+        readonly property color green: window.lightMode ? "#118a4f" : "#39D98A"
+        readonly property color textHi: window.lightMode ? "#142033" : "#EAF3FF"
+        readonly property color textLo: window.lightMode ? "#64748b" : "#6E7E90"
+        readonly property color tapeBg: window.lightMode ? "#eef2f6" : "#080B10"
     }
 
     // ---------------- 飞行数据 ----------------
@@ -49,18 +58,18 @@ Item {
         property real airspeed: factValue(activeVehicle ? activeVehicle.vehicle.airSpeed : null,
                                         factValue(activeVehicle ? activeVehicle.vehicle.groundSpeed : null, 0))
         property real altitude: factValue(activeVehicle ? activeVehicle.vehicle.altitudeRelative : null, 0)
+        property real altitudeAMSL: factValue(activeVehicle ? activeVehicle.vehicle.altitudeAMSL : null, 0)
         property real vspeed: factValue(activeVehicle ? activeVehicle.vehicle.climbRate : null, 0)
+        property real flightTime: factValue(activeVehicle ? activeVehicle.vehicle.flightTime : null, 0)
         property int battery: Math.round(factValue(batteryFactGroup ? batteryFactGroup.percentRemaining : null, 0))
-        property real voltage: factValue(batteryFactGroup ? batteryFactGroup.voltage : null, 0)
-        property real current: factValue(batteryFactGroup ? batteryFactGroup.current : null, 0)
         property var motorLoad: [0.62, 0.58, 0.71, 0.55, 0.66, 0.60]
         property var motorTemp: [46, 44, 52, 41, 48, 45]
         property int gpsSat: Math.round(factValue(activeVehicle ? activeVehicle.gps.count : null, 0))
-        property int linkLevel: 4 // 0-5
         property string flightMode: activeVehicle ? activeVehicle.flightMode : "未连接"
         property string displayMode: activeVehicle ? activeVehicle.flightMode : "未连接"
         property real heading: factValue(activeVehicle ? activeVehicle.vehicle.heading : null, 0)
         property var guidedController: globals.guidedControllerFlyView
+        property date localTime: new Date()
 
         function factValue(fact, fallback) {
             if (!fact) {
@@ -70,6 +79,15 @@ Item {
             var value = fact.rawValue
             return isNaN(value) ? fallback : value
         }
+
+        function formatElapsed(seconds) {
+            var total = Math.max(0, Math.floor(seconds))
+            var minutes = Math.floor(total / 60)
+            var secs = total % 60
+
+            return String(minutes).padStart(2, "0") + ":" +
+                   String(secs).padStart(2, "0")
+        }
     }
 
     Timer {
@@ -78,6 +96,14 @@ Item {
         onTriggered: {
             t += 0.03
         }
+    }
+
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: telemetry.localTime = new Date()
     }
 
     // ================= 顶部状态条 =================
@@ -99,374 +125,235 @@ Item {
 
             Item { Layout.fillWidth: true }
 
-            // GPS
-            RowLayout {
-                spacing: 6
-                Text { text: "GPS"; color: palette.textLo; font.pixelSize: 12 }
-                Text { text: telemetry.gpsSat + " 星"; color: palette.green; font.pixelSize: 13; font.bold: true }
-            }
+            Item {
+                Layout.preferredWidth: Math.max(indicatorRow.implicitWidth, lightIndicatorRow.implicitWidth)
+                Layout.preferredHeight: 30
+                Layout.alignment: Qt.AlignVCenter
 
-            // 图传/数链信号条
-            RowLayout {
-                spacing: 3
-                Repeater {
-                    model: 5
-                    Rectangle {
-                        width: 4
-                        height: 6 + index * 3
-                        radius: 1
-                        color: index < telemetry.linkLevel ? palette.cyan : palette.panelBorder
-                        anchors.bottom: parent.bottom
+                Row {
+                    id: indicatorRow
+                    visible: !window.lightMode
+                    anchors.centerIn: parent
+                    height: parent.height - 8
+                    spacing: 10
+
+                    VehicleGPSIndicator {
+                        height: parent.height
+                    }
+
+                    APMBatteryIndicator {
+                        height: parent.height
+                    }
+                }
+
+                Row {
+                    id: lightIndicatorRow
+                    visible: window.lightMode
+                    anchors.centerIn: parent
+                    spacing: 14
+
+                    Row {
+                        spacing: 4
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        QGCColoredImage {
+                            width: 18
+                            height: 18
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "/qmlimages/Gps.svg"
+                            fillMode: Image.PreserveAspectFit
+                            color: palette.textHi
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: telemetry.gpsSat
+                            color: palette.textHi
+                            font.pixelSize: 13
+                            font.bold: true
+                        }
+                    }
+
+                    Row {
+                        spacing: 4
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        QGCColoredImage {
+                            width: 18
+                            height: 18
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "/qmlimages/Battery.svg"
+                            fillMode: Image.PreserveAspectFit
+                            color: palette.textHi
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: Math.max(0, Math.min(100, telemetry.battery)) + "%"
+                            color: palette.textHi
+                            font.pixelSize: 13
+                            font.bold: true
+                        }
                     }
                 }
             }
 
             Text {
-                text: Qt.formatTime(new Date(), "hh:mm")
+                text: Qt.formatTime(telemetry.localTime, "hh:mm")
                 color: palette.textHi; font.pixelSize: 13
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 58
+                Layout.preferredHeight: 28
+                radius: 14
+                color: palette.buttonIdle
+                border.color: palette.panelBorder
+
+                Text {
+                    anchors.centerIn: parent
+                    text: window.lightMode ? "深色" : "浅色"
+                    color: palette.textHi
+                    font.pixelSize: 12
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: window.lightMode = !window.lightMode
+                }
             }
         }
     }
 
-    // ================= 主体三栏布局 =================
-    RowLayout {
+    // ================= 主体单面板仪表布局 =================
+    Rectangle {
         anchors.top: topBar.bottom
-        anchors.bottom: bottomBar.top
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 12
-        spacing: 12
+        color: palette.panel
+        radius: 10
+        border.color: palette.panelBorder
+        clip: true
 
-        // ---------- 左栏：航空式 PFD（姿态仪 + 空速/高度带） ----------
-        Rectangle {
-            Layout.preferredWidth: 320
-            Layout.fillHeight: true
-            color: palette.panel
-            radius: 10
-            border.color: palette.panelBorder
+        Item {
+            anchors.fill: parent
+            anchors.margins: Math.max(18, parent.height * 0.04)
 
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 10
+            Column {
+                width: Math.max(150, parent.width * 0.20)
+                anchors.horizontalCenter: parent.left
+                anchors.horizontalCenterOffset: parent.width * 0.16
+                anchors.verticalCenter: parent.verticalCenter
                 spacing: 8
 
-                // 空速带
-                TapeGauge {
-                    Layout.preferredWidth: 54
-                    Layout.fillHeight: true
-                    value: telemetry.airspeed
-                    unit: "km/h"
-                    accent: palette.cyan
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: telemetry.airspeed.toFixed(0)
+                    color: palette.cyan
+                    font.pixelSize: Math.min(104, Math.max(64, window.width * 0.085))
+                    font.bold: true
                 }
 
-                // 姿态仪
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "速度 km/h"
+                    color: palette.textLo
+                    font.pixelSize: 15
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: (telemetry.vspeed >= 0 ? "↑ +" : "↓ ") + telemetry.vspeed.toFixed(1) + " m/s"
+                    color: telemetry.vspeed >= 0 ? palette.cyan : palette.amber
+                    font.pixelSize: 20
+                    font.bold: true
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "垂直速度"
+                    color: palette.textLo
+                    font.pixelSize: 13
+                }
+            }
+
+            Column {
+                anchors.centerIn: parent
+                spacing: 10
+
                 Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    width: Math.min(window.width * 0.28, window.height * 0.52)
+                    height: width
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     InstrumentsArtificialHorizon {
-                        width: Math.min(parent.width * 0.85, parent.height * 0.7)
-                        height: width
-                        anchors.centerIn: parent
+                        anchors.fill: parent
                         roll: telemetry.roll
                         pitch: telemetry.pitch
                         pitchScale: 30
                     }
                 }
 
-                // 高度带
-                TapeGauge {
-                    Layout.preferredWidth: 54
-                    Layout.fillHeight: true
-                    value: telemetry.altitude
-                    unit: "m"
-                    accent: palette.amber
-                }
-            }
-        }
+                Column {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 3
 
-        // ---------- 中栏：汽车式中控地图卡片 ----------
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: "transparent"
-            radius: 10
-            border.color: "transparent"
-            clip: true
-
-            // 网格背景，模拟地图
-            Canvas {
-                visible: false
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
-                    ctx.strokeStyle = "#152230"
-                    ctx.lineWidth = 1
-                    var step = 36
-                    for (var x = 0; x < width; x += step) {
-                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke()
-                    }
-                    for (var y = 0; y < height; y += step) {
-                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke()
-                    }
-                }
-            }
-
-            // 规划航线（虚线）
-            Shape {
-                visible: false
-                anchors.fill: parent
-                ShapePath {
-                    strokeColor: palette.cyan
-                    strokeWidth: 2
-                    fillColor: "transparent"
-                    strokeStyle: ShapePath.DashLine
-                    dashPattern: [4, 3]
-                    startX: 60; startY: 260
-                    PathLine { x: 220; y: 150 }
-                    PathLine { x: 420; y: 190 }
-                    PathLine { x: 560; y: 90 }
-                }
-            }
-
-            // 航点
-            Repeater {
-                model: [ {x:60,y:260}, {x:220,y:150}, {x:420,y:190}, {x:560,y:90} ]
-                Rectangle {
-                    visible: false
-                    x: modelData.x - 5; y: modelData.y - 5
-                    width: 10; height: 10; radius: 5
-                    color: palette.bg
-                    border.color: palette.amber; border.width: 2
-                }
-            }
-
-            // 自身位置图标（带航向指向）
-            Item {
-                visible: false
-                x: 300; y: 320
-                width: 28; height: 28
-                rotation: telemetry.heading
-                Shape {
-                    anchors.fill: parent
-                    ShapePath {
-                        fillColor: palette.cyan
-                        strokeColor: "transparent"
-                        startX: 14; startY: 0
-                        PathLine { x: 26; y: 26 }
-                        PathLine { x: 14; y: 19 }
-                        PathLine { x: 2; y: 26 }
-                        PathLine { x: 14; y: 0 }
-                    }
-                }
-            }
-
-            // 中栏左上角：飞行/图传缩略信息卡（悬浮卡片，汽车中控常见样式）
-            Rectangle {
-                anchors.top: parent.top; anchors.left: parent.left
-                anchors.margins: 12
-                width: 168; height: 64
-                radius: 8
-                color: Qt.rgba(0.06, 0.09, 0.13, 0.85)
-                border.color: palette.panelBorder
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 8
-                    spacing: 2
-                    Text { text: "垂直速度"; color: palette.textLo; font.pixelSize: 11 }
                     Text {
-                        text: (telemetry.vspeed >= 0 ? "+" : "") + telemetry.vspeed.toFixed(1) + " m/s"
-                        color: palette.textHi; font.pixelSize: 18; font.bold: true
-                    }
-                }
-            }
-        }
-
-        // ---------- 右栏：汽车式状态环 + 电机监控（EV仪表既视感） ----------
-        Rectangle {
-            Layout.preferredWidth: 260
-            Layout.fillHeight: true
-            color: palette.panel
-            radius: 10
-            border.color: palette.panelBorder
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 14
-                spacing: 14
-
-                // 电池环形量表
-                BatteryRing {
-                    Layout.alignment: Qt.AlignHCenter
-                    value: telemetry.battery
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        Text { text: "电压"; color: palette.textLo; font.pixelSize: 11 }
-                        Text { text: telemetry.voltage.toFixed(1) + " V"; color: palette.textHi; font.pixelSize: 15; font.bold: true }
-                    }
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        Text { text: "电流"; color: palette.textLo; font.pixelSize: 11 }
-                        Text { text: telemetry.current.toFixed(1) + " A"; color: palette.textHi; font.pixelSize: 15; font.bold: true }
-                    }
-                }
-
-                Rectangle { Layout.fillWidth: true; height: 1; color: palette.panelBorder }
-
-                Text { text: "起飞 / 降落"; color: palette.textLo; font.pixelSize: 11 }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    spacing: 10
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 46
-                        radius: 8
-                        color: telemetry.guidedController && telemetry.guidedController.showTakeoff ? Qt.rgba(0.2, 0.88, 1.0, 0.16) : Qt.rgba(0.1, 0.14, 0.18, 0.85)
-                        border.color: telemetry.guidedController && telemetry.guidedController.showTakeoff ? palette.cyan : palette.panelBorder
-                        opacity: telemetry.guidedController && telemetry.guidedController.showTakeoff ? 1.0 : 0.55
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 14
-                            anchors.rightMargin: 14
-                            spacing: 8
-
-                            Text { text: "↗"; color: palette.cyan; font.pixelSize: 18; font.bold: true }
-                            Text {
-                                Layout.fillWidth: true
-                                text: telemetry.guidedController ? telemetry.guidedController.takeoffTitle : "起飞"
-                                color: palette.textHi
-                                font.pixelSize: 14
-                                font.bold: true
-                            }
-                            Text {
-                                text: telemetry.guidedController && telemetry.guidedController.showTakeoff ? "READY" : "LOCKED"
-                                color: telemetry.guidedController && telemetry.guidedController.showTakeoff ? palette.cyan : palette.textLo
-                                font.pixelSize: 10
-                                font.bold: true
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            enabled: telemetry.guidedController && telemetry.guidedController.showTakeoff
-                            onClicked: telemetry.guidedController.confirmAction(telemetry.guidedController.actionTakeoff)
-                        }
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: "飞行时间"
+                        color: palette.textLo
+                        font.pixelSize: 12
                     }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 46
-                        radius: 8
-                        color: telemetry.guidedController && telemetry.guidedController.showLand ? Qt.rgba(1.0, 0.29, 0.29, 0.14) : Qt.rgba(0.1, 0.14, 0.18, 0.85)
-                        border.color: telemetry.guidedController && telemetry.guidedController.showLand ? palette.red : palette.panelBorder
-                        opacity: telemetry.guidedController && telemetry.guidedController.showLand ? 1.0 : 0.55
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 14
-                            anchors.rightMargin: 14
-                            spacing: 8
-
-                            Text { text: "↘"; color: palette.red; font.pixelSize: 18; font.bold: true }
-                            Text {
-                                Layout.fillWidth: true
-                                text: telemetry.guidedController ? telemetry.guidedController.landTitle : "降落"
-                                color: palette.textHi
-                                font.pixelSize: 14
-                                font.bold: true
-                            }
-                            Text {
-                                text: telemetry.guidedController && telemetry.guidedController.showLand ? "READY" : "LOCKED"
-                                color: telemetry.guidedController && telemetry.guidedController.showLand ? palette.red : palette.textLo
-                                font.pixelSize: 10
-                                font.bold: true
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            enabled: telemetry.guidedController && telemetry.guidedController.showLand
-                            onClicked: telemetry.guidedController.confirmAction(telemetry.guidedController.actionLand)
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 38
-                        radius: 8
-                        color: Qt.rgba(0.06, 0.09, 0.13, 0.75)
-                        border.color: palette.panelBorder
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: telemetry.activeVehicle ? "飞控状态 · " + telemetry.flightMode : "等待飞控连接"
-                            color: palette.textLo
-                            font.pixelSize: 11
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
-                }
-            }
-        }
-    }
-
-    // ================= 底部功能条（汽车中控常见的快捷操作条） =================
-    Rectangle {
-        id: bottomBar
-        width: parent.width; height: 64
-        anchors.bottom: parent.bottom
-        color: palette.panel
-        border.color: palette.panelBorder
-
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 16; anchors.rightMargin: 16
-            spacing: 10
-
-            // 飞行模式切换（体验 / 玩家 / 自动）
-            RowLayout {
-                spacing: 6
-                Repeater {
-                    model: ["体验模式", "玩家模式", "自动模式"]
-                    Rectangle {
-                        width: 92; height: 38; radius: 8
-                        color: telemetry.displayMode === modelData ? palette.cyan : "transparent"
-                        border.color: telemetry.displayMode === modelData ? palette.cyan : palette.panelBorder
-                        Text {
-                            anchors.centerIn: parent
-                            text: modelData
-                            font.pixelSize: 12
-                            color: telemetry.displayMode === modelData ? palette.bg : palette.textHi
-                        }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: telemetry.activeVehicle ? telemetry.formatElapsed(telemetry.flightTime) : "--:--"
+                        color: palette.textHi
+                        font.family: "Consolas"
+                        font.pixelSize: 34
+                        font.bold: true
                     }
                 }
             }
 
-            Item { Layout.fillWidth: true }
+            Column {
+                width: Math.max(150, parent.width * 0.20)
+                anchors.horizontalCenter: parent.right
+                anchors.horizontalCenterOffset: -parent.width * 0.16
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
 
-            // 一键返航（关键操作，红色高亮，圆角大按钮，符合应急操作的可达性设计）
-            Rectangle {
-                width: 130; height: 40; radius: 20
-                color: Qt.rgba(1, 0.29, 0.29, 0.12)
-                border.color: palette.red; border.width: 1.5
                 Text {
-                    anchors.centerIn: parent
-                    text: "⟲ 一键返航"
-                    color: palette.red
-                    font.pixelSize: 13; font.bold: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: telemetry.altitude.toFixed(0)
+                    color: palette.amber
+                    font.pixelSize: Math.min(104, Math.max(64, window.width * 0.085))
+                    font.bold: true
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "高度 m"
+                    color: palette.textLo
+                    font.pixelSize: 15
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: telemetry.activeVehicle ? telemetry.altitudeAMSL.toFixed(0) + " m" : "-- m"
+                    color: palette.amber
+                    font.pixelSize: 20
+                    font.bold: true
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "海拔"
+                    color: palette.textLo
+                    font.pixelSize: 13
                 }
             }
         }
@@ -550,7 +437,7 @@ Item {
         property real value: 0
         property string unit: ""
         property color accent: "#33E1FF"
-        color: palette.bg
+        color: palette.tapeBg
         radius: 6
         border.color: palette.panelBorder
 
