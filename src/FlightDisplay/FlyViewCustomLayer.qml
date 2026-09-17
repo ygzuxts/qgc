@@ -30,6 +30,7 @@ import QGroundControl.Vehicle
 // To implement a custom overlay copy this code to your own control in your custom code source. Then override the
 // FlyViewCustomLayer.qml resource with your own qml. See the custom example and documentation for details.
 Item {
+    z: 10000
     id: _root
 
     property var parentToolInsets               // These insets tell you what screen real estate is available for positioning the controls in your overlay
@@ -53,7 +54,15 @@ Item {
         bottomEdgeRightInset:   parentToolInsets.bottomEdgeRightInset
     }
 
-    FlightConsoleDemo {
+    FlightConsole {
         anchors.fill: parent
+        z: 10000
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            preventStealing: true
+            z: 10001
+        }
     }
 }

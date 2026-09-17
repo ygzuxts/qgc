@@ -1,5 +1,11 @@
 qt_add_library(FlightDisplayModule STATIC)
 
+set_source_files_properties(
+    FlightPalette.qml
+    FlightTelemetryModel.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(FlightDisplayModule
     URI QGroundControl.FlightDisplay
     VERSION 1.0
@@ -13,7 +19,24 @@ qt_add_qml_module(FlightDisplayModule
         FlightDisplayViewQtMultimedia.qml
         FlightDisplayViewUVC.qml
         FlightDisplayViewVideo.qml
-        FlightConsoleDemo.qml
+        FlightConsole.qml
+        FlightPalette.qml
+        FlightTelemetryModel.qml
+        FlightStateController.qml
+        HeadingTape.qml
+        CircularMetricGauge.qml
+        StatusLight.qml
+        SelfCheckItem.qml
+        BigHoldActionButton.qml
+        FatalWarningOverlay.qml
+        components/EmbeddedStatusBar.qml
+        components/WarningBanner.qml
+        components/SpeedPanel.qml
+        components/AltitudeCluster.qml
+        components/AttitudeCluster.qml
+        components/SelfCheckOverlay.qml
+        components/TakeoffLandOverlay.qml
+        components/JoystickOverlay.qml
         FlyView.qml
         FlyViewAdditionalActionsButton.qml
         FlyViewAdditionalActionsList.qml
