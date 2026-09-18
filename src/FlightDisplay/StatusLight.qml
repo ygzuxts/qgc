@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import QGroundControl.FlightDisplay
+
 Column {
     id: root
 
@@ -8,53 +10,53 @@ Column {
     property color textLo: "#64748b"
     property bool compactLandscape: false
     property bool lightMode: true
+    readonly property bool activeLamp: accent !== FlightPalette.statusOff
 
-    // Keep mode names readable on narrow Android layouts instead of eliding them.
-    width: compactLandscape ? 96 : 112
-    spacing: compactLandscape ? 3 : 7
+    width: compactLandscape ? 84 : 98
+    spacing: compactLandscape ? 4 : 6
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
-        width: root.compactLandscape ? 20 : 26
+        width: root.compactLandscape ? 30 : 38
         height: width
         radius: width / 2
-        color: root.lightMode ? Qt.rgba(0.9, 0.94, 0.98, 0.92) : Qt.rgba(0.02, 0.04, 0.07, 0.92)
-        border.color: root.lightMode ? Qt.rgba(0.38, 0.45, 0.55, 0.20) : Qt.rgba(1, 1, 1, 0.16)
-        border.width: 1
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#4A4A4C" }
+            GradientStop { position: 0.48; color: "#18181A" }
+            GradientStop { position: 1.0; color: "#050506" }
+        }
+        border.color: Qt.rgba(1, 1, 1, 0.20)
+        border.width: 2
 
         Rectangle {
             anchors.centerIn: parent
-            width: root.compactLandscape ? 15 : 18
+            width: parent.width - 8
             height: width
             radius: width / 2
-            color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, root.lightMode ? 0.34 : 0.42)
+            opacity: root.activeLamp ? 1.0 : 0.42
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: root.activeLamp ? Qt.lighter(root.accent, 1.55) : "#3C3C3E" }
+                GradientStop { position: 0.45; color: root.activeLamp ? root.accent : "#171719" }
+                GradientStop { position: 1.0; color: root.activeLamp ? Qt.darker(root.accent, 1.75) : "#050506" }
+            }
+            border.color: Qt.rgba(1, 1, 1, root.activeLamp ? 0.38 : 0.10)
+        }
+
+        Rectangle {
+            x: parent.width * 0.27
+            y: parent.height * 0.18
+            width: parent.width * 0.22
+            height: parent.height * 0.11
+            radius: height / 2
+            color: Qt.rgba(1, 1, 1, root.activeLamp ? 0.62 : 0.18)
         }
 
         Rectangle {
             anchors.centerIn: parent
-            width: root.compactLandscape ? 12 : 14
+            width: parent.width + 18
             height: width
             radius: width / 2
-            color: root.accent
-            border.color: Qt.rgba(1, 1, 1, root.lightMode ? 0.60 : 0.34)
-            border.width: 1
-        }
-
-        Rectangle {
-            x: root.compactLandscape ? 7 : 8
-            y: root.compactLandscape ? 5 : 6
-            width: root.compactLandscape ? 5 : 6
-            height: root.compactLandscape ? 3 : 4
-            radius: 2
-            color: Qt.rgba(1, 1, 1, root.lightMode ? 0.62 : 0.46)
-        }
-
-        Rectangle {
-            anchors.centerIn: parent
-            width: root.compactLandscape ? 26 : 34
-            height: width
-            radius: width / 2
-            color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, root.lightMode ? 0.16 : 0.22)
+            color: root.activeLamp ? Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.22) : "transparent"
             z: -1
         }
     }
@@ -64,11 +66,12 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width
         text: root.label
-        color: root.accent
+        color: root.activeLamp ? FlightPalette.textHi : root.textLo
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideNone
         wrapMode: Text.NoWrap
-        font.pixelSize: root.compactLandscape ? 12 : 14
+        font.family: FlightPalette.cockpitFont
+        font.pixelSize: root.compactLandscape ? 9 : 10
         font.bold: true
     }
 }

@@ -7,7 +7,7 @@ Rectangle {
 
     property bool compactLandscape: false
     property real primaryMetricSize: 80
-    property color overlayColor: Qt.rgba(0.55, 0.0, 0.0, 0.82)
+    property color overlayColor: Qt.rgba(0.18, 0.0, 0.0, 0.90)
 
     visible: false
     color: overlayColor
@@ -26,10 +26,11 @@ Rectangle {
 
         Text {
             width: parent.width
-            text: "姿态角超限警告"
+            text: "ATTITUDE LIMIT"
             color: "#FFFFFF"
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: root.compactLandscape ? 26 : 34
             font.bold: true
         }
@@ -105,10 +106,11 @@ Rectangle {
         Text {
             id: fatalFooter
             width: parent.width
-            text: "请立即检查飞行姿态"
+            text: "CHECK FLIGHT ATTITUDE"
             color: Qt.rgba(1, 1, 1, 0.86)
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: root.compactLandscape ? 13 : 15
             font.bold: true
         }
@@ -139,6 +141,7 @@ Rectangle {
             color: accent
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: compactValue ? (compactLandscape ? 20 : 26)
                                          : Math.round(primaryMetricSize * 0.92)
             font.bold: true
@@ -151,6 +154,7 @@ Rectangle {
             color: Qt.rgba(1, 1, 1, 0.76)
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: compactLandscape ? 13 : 15
             font.bold: true
         }

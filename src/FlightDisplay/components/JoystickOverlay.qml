@@ -10,7 +10,7 @@ Rectangle {
     signal joystickEnabledChangedByUser(bool enabled)
     signal closeRequested()
 
-    color: FlightPalette.lightMode ? Qt.rgba(0.93, 0.96, 0.99, 0.90) : Qt.rgba(0.03, 0.05, 0.08, 0.90)
+    color: Qt.rgba(0.02, 0.02, 0.025, 0.94)
 
     MouseArea { anchors.fill: parent }
 
@@ -29,6 +29,7 @@ Rectangle {
             anchors.centerIn: parent
             text: "×"
             color: FlightPalette.textHi
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: 24
         }
 
@@ -50,8 +51,9 @@ Rectangle {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text: "模拟摇杆"
+            text: "VIRTUAL STICK"
             color: FlightPalette.textHi
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: 18
             font.bold: true
         }
@@ -59,25 +61,36 @@ Rectangle {
         Rectangle {
             width: 92
             height: 34
-            radius: 17
-            color: root.joystickEnabled ? FlightPalette.takeoffReady : FlightPalette.buttonIdle
-            border.color: root.joystickEnabled ? FlightPalette.cyan : FlightPalette.panelBorder
+            radius: 4
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: root.joystickEnabled ? Qt.lighter(FlightPalette.takeoffReady, 1.16) : "#3C3D40" }
+                GradientStop { position: 0.48; color: root.joystickEnabled ? FlightPalette.takeoffReady : FlightPalette.buttonIdle }
+                GradientStop { position: 1.0; color: root.joystickEnabled ? Qt.darker(FlightPalette.takeoffReady, 1.35) : "#070809" }
+            }
+            border.color: root.joystickEnabled ? FlightPalette.statusGreen : FlightPalette.panelBorder
 
             Rectangle {
-                width: 28
+                width: 18
                 height: 28
-                radius: 14
+                radius: 3
                 anchors.verticalCenter: parent.verticalCenter
-                x: root.joystickEnabled ? parent.width - width - 3 : 3
-                color: root.joystickEnabled ? FlightPalette.cyan : FlightPalette.textLo
+                x: root.joystickEnabled ? parent.width - width - 6 : 6
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: root.joystickEnabled ? "#FFFFFF" : "#8B8780" }
+                    GradientStop { position: 0.52; color: root.joystickEnabled ? FlightPalette.statusGreen : "#3E3F42" }
+                    GradientStop { position: 1.0; color: "#08090A" }
+                }
+                border.color: "#F1EEE6"
+                border.width: 1
 
                 Behavior on x { NumberAnimation { duration: 120 } }
             }
 
             Text {
                 anchors.centerIn: parent
-                text: root.joystickEnabled ? "已激活" : "关闭"
+                text: root.joystickEnabled ? "ACTIVE" : "OFF"
                 color: FlightPalette.textHi
+                font.family: FlightPalette.cockpitFont
                 font.pixelSize: 12
                 font.bold: true
             }

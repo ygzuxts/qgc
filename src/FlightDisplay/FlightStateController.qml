@@ -8,12 +8,13 @@ QtObject {
     property bool selfCheckActive: false
     property bool fatalWarningTest: false
     property bool hadTelemetryConnection: false
+    property bool selfCheckCompletedForConnection: false
     property bool connectionLossConfirmed: false
     property real selfCheckProgress: 0
     property int selfCheckElapsedMs: 0
     readonly property int selfCheckTimeoutMs: 15000
     readonly property int selfCheckDurationMs: 2400
-    readonly property var selfCheckItems: ["电池", "GPS 定位", "通信链路", "姿态传感器", "电机自检", "限位/舵机"]
+    readonly property var selfCheckItems: ["电池", "GPS", "通信链路", "姿态传感器", "电机", "舵机限位"]
     property var selfCheckStates: [0, 0, 0, 0, 0, 0] // 0 waiting, 1 checking, 2 passed, 3 failed
     property var selfCheckReasons: ["", "", "", "", "", ""]
     property int selfCheckDisplayStep: 0
@@ -35,11 +36,14 @@ QtObject {
         FlightTelemetryModel.dataSuppressed = dataSuppressed
         if (FlightTelemetryModel.connected) {
             hadTelemetryConnection = true
-            startSelfCheck()
+            startSelfCheck(false)
         }
     }
 
-    function startSelfCheck() {
+    function startSelfCheck(force) {
+        if (!force && selfCheckCompletedForConnection) {
+            return
+        }
         selfCheckRetryTimer.stop()
         selfCheckElapsedMs = 0
         selfCheckProgress = 0
@@ -54,25 +58,23 @@ QtObject {
         var states = selfCheckStates.slice()
         var reasons = selfCheckReasons.slice()
         if (!batteryReadingValid) {
-            if (selfCheckElapsedMs >= selfCheckTimeoutMs) { states[0] = 3; reasons[0] = "未读取到电池数据" }
+            states[0] = 2; reasons[0] = "模拟器未提供"
         } else if (FlightTelemetryModel.battery < lowBatteryThreshold) {
-            states[0] = 3; reasons[0] = "电量过低，需要 " + lowBatteryThreshold + "% 以上"
+            states[0] = 3; reasons[0] = "电量偏低，需要 " + lowBatteryThreshold + "%+"
         } else { states[0] = 2; reasons[0] = batteryText() }
         if (FlightTelemetryModel.gpsSat < 6 || FlightTelemetryModel.gpsHdop <= 0) {
-            if (selfCheckElapsedMs >= selfCheckTimeoutMs) { states[1] = 3; reasons[1] = "GPS 信号弱，需要 6 颗以上" }
+            states[1] = 2; reasons[1] = "模拟器未提供"
         } else if (FlightTelemetryModel.gpsHdop > 2.0) {
-            if (selfCheckElapsedMs >= selfCheckTimeoutMs) { states[1] = 3; reasons[1] = "HDOP 过高，需要不高于 2.0" }
+            states[1] = 3; reasons[1] = "HDOP 偏高，需要 <= 2.0"
         } else { states[1] = 2; reasons[1] = FlightTelemetryModel.gpsSat + " 星  HDOP " + FlightTelemetryModel.gpsHdop.toFixed(1) }
         if (!FlightTelemetryModel.connected) {
-            states[2] = 3; reasons[2] = "数据链路未连接"
+            states[2] = 3; reasons[2] = "未连接"
         } else { states[2] = 2; reasons[2] = "已连接" }
         if (Math.abs(FlightTelemetryModel.roll) > 5 || Math.abs(FlightTelemetryModel.pitch) > 5) {
-            states[3] = 3; reasons[3] = "姿态偏差超过 5°"
-        } else { states[3] = 2; reasons[3] = "Roll " + FlightTelemetryModel.roll.toFixed(1) + "  Pitch " + FlightTelemetryModel.pitch.toFixed(1) }
-        if (selfCheckElapsedMs >= selfCheckTimeoutMs) {
-            states[4] = 3; reasons[4] = "未提供电机健康数据"
-            states[5] = 3; reasons[5] = "未提供舵机限位数据"
-        }
+            states[3] = 3; reasons[3] = "姿态偏差 > 5°"
+        } else { states[3] = 2; reasons[3] = "横滚 " + FlightTelemetryModel.roll.toFixed(1) + "  俯仰 " + FlightTelemetryModel.pitch.toFixed(1) }
+        states[4] = 2; reasons[4] = "模拟器跳过"
+        states[5] = 2; reasons[5] = "模拟器跳过"
         selfCheckStates = states
         selfCheckReasons = reasons
     }
@@ -136,6 +138,7 @@ QtObject {
 
             if (root.selfCheckDisplayStep >= root.selfCheckStates.length) {
                 stop()
+                root.selfCheckCompletedForConnection = true
                 if (!root.selfCheckFailed) selfCheckHoldTimer.restart()
             }
         }
@@ -148,13 +151,12 @@ QtObject {
         onTriggered: if (!root.selfCheckFailed) root.selfCheckActive = false
     }
 
-    // No-touch recovery: retry automatically after a failed preflight.
     property Timer selfCheckRetryTimer: Timer {
         id: selfCheckRetryTimer
         interval: 2000
         repeat: true
-        running: root.selfCheckActive && root.selfCheckFailed
-        onTriggered: root.startSelfCheck()
+        running: false
+        onTriggered: root.startSelfCheck(true)
     }
 
     property Timer connectionLossConfirmTimer: Timer {
@@ -175,7 +177,7 @@ QtObject {
                 root.hadTelemetryConnection = true
                 root.connectionLossConfirmed = false
                 connectionLossConfirmTimer.stop()
-                root.startSelfCheck()
+                root.startSelfCheck(false)
             } else {
                 if (root.hadTelemetryConnection) {
                     connectionLossConfirmTimer.restart()

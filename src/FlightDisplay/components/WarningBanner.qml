@@ -12,7 +12,7 @@ Rectangle {
     visible: (flightState.connectionLossConfirmed || flightState.lowBatteryWarning) && !flightState.fatalAttitudeWarning
     width: Math.min(parent ? parent.width * 0.36 : 260, warningText.implicitWidth + (compactLandscape ? 56 : 54))
     height: compactLandscape ? 34 : 30
-    radius: 5
+    radius: 3
     color: FlightPalette.warningBg
     border.color: FlightPalette.statusYellow
     border.width: 1
@@ -38,11 +38,12 @@ Rectangle {
             id: warningText
             anchors.verticalCenter: parent.verticalCenter
             width: root.width - (compactLandscape ? 58 : 52)
-            text: flightState.connectionLossConfirmed ? "数据链路已断开"
-                  : (compactLandscape ? ("电量偏低：" + flightState.batteryText())
-                                       : ("电量偏低：" + flightState.batteryText() + "，建议尽快返航"))
+            text: flightState.connectionLossConfirmed ? "LINK LOST"
+                  : (compactLandscape ? ("BAT LOW " + flightState.batteryText())
+                                       : ("BAT LOW " + flightState.batteryText() + "  RETURN ADVISED"))
             color: FlightPalette.statusYellow
             elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: compactLandscape ? 14 : 13
             font.bold: true
         }

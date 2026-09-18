@@ -9,10 +9,10 @@ Item {
     property string valueText: Math.round(value).toString()
     property string label: ""
     property string unit: ""
-    property color progressColor: "#2977EF"
-    property color trackColor: "#DDD8C7"
-    property color textColor: "#142033"
-    property color labelColor: "#64748B"
+    property color progressColor: "#E6E2D8"
+    property color trackColor: "#34363A"
+    property color textColor: "#F1EEE6"
+    property color labelColor: "#A8A39A"
     property real lineWidth: compact ? 8 : 10
     property real valueFontSize: compact ? 26 : 32
     property real labelFontSize: compact ? 10 : 11
@@ -88,6 +88,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.valueText
             color: root.textColor
+            font.family: "Consolas"
             font.pixelSize: root.valueFontSize
             font.bold: true
         }
@@ -98,6 +99,7 @@ Item {
             visible: root.label.length > 0 || root.unit.length > 0
             text: root.label + (root.unit.length > 0 ? " " + root.unit : "")
             color: root.labelColor
+            font.family: "Consolas"
             font.pixelSize: root.labelFontSize
         }
     }

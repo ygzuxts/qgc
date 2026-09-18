@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import QGroundControl.FlightDisplay
+
 Rectangle {
     id: root
 
@@ -7,7 +9,7 @@ Rectangle {
 
     property string text: ""
     property string hint: ""
-    property color accent: "#2977EF"
+    property color accent: "#D6D6D2"
     property bool enabledState: false
     property real holdProgress: 0
     property int holdDuration: 900
@@ -20,9 +22,13 @@ Rectangle {
     width: Math.min(190, Math.max(150, containerWidth * 0.18))
     height: width
     radius: width / 2
-    color: enabledState ? Qt.rgba(accent.r, accent.g, accent.b, lightMode ? 0.12 : 0.18) : buttonIdle
-    border.color: enabledState ? accent : panelBorder
-    border.width: 2
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: enabledState ? "#3D3D40" : "#242426" }
+        GradientStop { position: 0.45; color: enabledState ? "#141416" : "#101012" }
+        GradientStop { position: 1.0; color: enabledState ? "#050506" : "#070708" }
+    }
+    border.color: enabledState ? Qt.rgba(accent.r, accent.g, accent.b, 0.70) : panelBorder
+    border.width: 3
     opacity: enabledState ? 1.0 : 0.55
 
     Canvas {
@@ -65,8 +71,9 @@ Rectangle {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.text
-            color: root.enabledState ? root.accent : root.textLo
-            font.pixelSize: 34
+            color: root.enabledState ? FlightPalette.textHi : root.textLo
+            font.family: FlightPalette.cockpitFont
+            font.pixelSize: 28
             font.bold: true
         }
 
@@ -74,6 +81,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.hint
             color: root.textLo
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: 13
         }
     }

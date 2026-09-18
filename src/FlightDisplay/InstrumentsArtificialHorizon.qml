@@ -34,19 +34,19 @@ Canvas {
         if ((scpitch > pitchScale) || (scpitch < -pitchScale)) {
             ctx.beginPath()
             ctx.arc(0, 0, h2, 0, 2 * Math.PI)
-            ctx.fillStyle = ovlpitch > pitchScale ? "#2977ef" : "#884600"
+            ctx.fillStyle = ovlpitch > pitchScale ? "#262B30" : "#15120E"
             ctx.fill()
         } else {
             var alpha = Math.asin(h / h2)
 
             ctx.beginPath()
             ctx.arc(0, 0, h2, -Math.PI + alpha, -alpha)
-            ctx.fillStyle = (ovlpitch > 150 || ovlpitch < -150) ? "#884600" : "#2977ef"
+            ctx.fillStyle = (ovlpitch > 150 || ovlpitch < -150) ? "#15120E" : "#262B30"
             ctx.fill()
 
             ctx.beginPath()
             ctx.arc(0, 0, h2, -alpha, -Math.PI + alpha)
-            ctx.fillStyle = (ovlpitch > 150 || ovlpitch < -150) ? "#2977ef" : "#884600"
+            ctx.fillStyle = (ovlpitch > 150 || ovlpitch < -150) ? "#262B30" : "#15120E"
             ctx.fill()
 
             ctx.beginPath()

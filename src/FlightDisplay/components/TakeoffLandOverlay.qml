@@ -8,7 +8,7 @@ Rectangle {
     property real containerWidth: width
     signal closeRequested()
 
-    color: FlightPalette.lightMode ? Qt.rgba(0.93, 0.96, 0.99, 0.96) : Qt.rgba(0.03, 0.05, 0.08, 0.96)
+    color: Qt.rgba(0.02, 0.02, 0.022, 0.96)
 
     MouseArea { anchors.fill: parent }
 
@@ -20,13 +20,17 @@ Rectangle {
         width: 42
         height: 42
         radius: 21
-        color: FlightPalette.buttonIdle
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#3A3A3C" }
+            GradientStop { position: 1.0; color: "#09090A" }
+        }
         border.color: FlightPalette.panelBorder
 
         Text {
             anchors.centerIn: parent
             text: "×"
             color: FlightPalette.textHi
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: 24
         }
 
@@ -42,8 +46,9 @@ Rectangle {
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "长按执行"
+            text: "HOLD TO ACTUATE"
             color: FlightPalette.textLo
+            font.family: FlightPalette.cockpitFont
             font.pixelSize: 16
         }
 
@@ -52,9 +57,9 @@ Rectangle {
             spacing: 44
 
             BigHoldActionButton {
-                text: "起飞"
-                hint: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showTakeoff ? "长按启动起飞" : "LOCKED"
-                accent: FlightPalette.cyan
+                text: "TAKEOFF"
+                hint: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showTakeoff ? "HOLD" : "LOCKED"
+                accent: FlightPalette.statusGreen
                 enabledState: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showTakeoff
                 containerWidth: root.containerWidth
                 lightMode: FlightPalette.lightMode
@@ -68,8 +73,8 @@ Rectangle {
             }
 
             BigHoldActionButton {
-                text: "降落"
-                hint: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showLand ? "长按启动降落" : "LOCKED"
+                text: "LAND"
+                hint: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showLand ? "HOLD" : "LOCKED"
                 accent: FlightPalette.red
                 enabledState: FlightTelemetryModel.guidedController && FlightTelemetryModel.guidedController.showLand
                 containerWidth: root.containerWidth

@@ -81,6 +81,12 @@ qt_add_qml_module(FlightDisplayModule
         PreFlightSoundCheck.qml
         ProximityRadarValues.qml
         ProximityRadarVideoView.qml
+        QfiAirspeedIndicator.qml
+        QfiAltimeter.qml
+        QfiAttitudeIndicator.qml
+        QfiCustomImage.qml
+        QfiHeadingIndicator.qml
+        QfiTurnCoordinator.qml
         QGCVideoBackground.qml
         RoverChecklist.qml
         SubChecklist.qml
@@ -88,5 +94,27 @@ qt_add_qml_module(FlightDisplayModule
         TerrainProgress.qml
         VehicleWarnings.qml
         VirtualJoystick.qml
+    RESOURCES
+        QmlFlightInstruments/Images/ai/ai_back.svg
+        QmlFlightInstruments/Images/ai/ai_case.svg
+        QmlFlightInstruments/Images/ai/ai_face.svg
+        QmlFlightInstruments/Images/ai/ai_ring.svg
+        QmlFlightInstruments/Images/alt/alt_case.svg
+        QmlFlightInstruments/Images/alt/alt_face_1.svg
+        QmlFlightInstruments/Images/alt/alt_face_2.svg
+        QmlFlightInstruments/Images/alt/alt_face_3.svg
+        QmlFlightInstruments/Images/alt/alt_hand_1.svg
+        QmlFlightInstruments/Images/alt/alt_hand_2.svg
+        QmlFlightInstruments/Images/asi/asi_case.svg
+        QmlFlightInstruments/Images/asi/asi_face.svg
+        QmlFlightInstruments/Images/asi/asi_hand.svg
+        QmlFlightInstruments/Images/hi/hi_case.svg
+        QmlFlightInstruments/Images/hi/hi_face.svg
+        QmlFlightInstruments/Images/tc/tc_back.svg
+        QmlFlightInstruments/Images/tc/tc_ball.svg
+        QmlFlightInstruments/Images/tc/tc_case.svg
+        QmlFlightInstruments/Images/tc/tc_face_1.svg
+        QmlFlightInstruments/Images/tc/tc_face_2.svg
+        QmlFlightInstruments/Images/tc/tc_mark.svg
     NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.
 )

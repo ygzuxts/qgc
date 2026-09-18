@@ -106,7 +106,7 @@ Rectangle {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: flightState.startSelfCheck()
+                onClicked: flightState.startSelfCheck(true)
             }
         }
     }

@@ -34,22 +34,29 @@ QtObject {
     property int gpsSat: Math.round(factValue(activeVehicle ? activeVehicle.gps.count : null, 0))
     property real gpsHdop: factValue(activeVehicle ? activeVehicle.gps.hdop : null, 0)
     property bool displayConnected: activeVehicle && !dataSuppressed
-    property string flightMode: displayConnected ? activeVehicle.flightMode : "未连接"
-    property string displayMode: displayConnected ? activeVehicle.flightMode : "未连接"
-    property string connectionState: displayConnected ? "已连接" : "未连接"
+    property string flightMode: displayConnected ? activeVehicle.flightMode : "OFFLINE"
+    property string displayMode: displayConnected ? activeVehicle.flightMode : "OFFLINE"
+    property string connectionState: displayConnected ? "LINK OK" : "NO LINK"
     property string modeState: displayConnected ? activeVehicle.flightMode : "--"
-    property string modePillText: displayConnected ? activeVehicle.flightMode : "未连接"
-    property string armPillText: displayConnected ? (armed ? "已解锁" : "未解锁") : "未连接"
+    property string modePillText: displayConnected ? (flying ? "FLIGHT" : "STANDBY") : "STANDBY"
+    property string armPillText: displayConnected ? (armed ? "ARMED" : "SAFE") : "NO LINK"
     property color modePillColor: displayConnected ? (flying ? FlightPalette.statusGreen : FlightPalette.statusYellow) : FlightPalette.statusOff
-    property color armPillColor: displayConnected ? (armed ? FlightPalette.statusGreen : FlightPalette.statusYellow) : FlightPalette.statusOff
+    property color armPillColor: displayConnected ? (armed ? FlightPalette.statusYellow : FlightPalette.statusGreen) : FlightPalette.statusOff
     property real heading: factValue(activeVehicle ? activeVehicle.vehicle.heading : null, 0)
+    property real turnRate: 0
+    property real _lastHeading: heading
+    property double _lastHeadingTime: Date.now()
     property real displayRoll: dataSuppressed ? 0 : roll
     property real displayPitch: dataSuppressed ? 0 : pitch
     property real displayAirspeed: dataSuppressed ? 0 : airspeed
+    property real displayAirspeedKnots: displayAirspeed * 1.94384449
     property real displayVspeed: dataSuppressed ? 0 : vspeed
     property real displayAltitude: dataSuppressed ? 0 : altitude
+    property real displayAltitudeFeet: displayAltitude * 3.280839895
     property real displayAltitudeAMSL: dataSuppressed ? 0 : altitudeAMSL
     property real displayHeading: dataSuppressed ? 0 : heading
+    property real displayTurnRate: dataSuppressed ? 0 : turnRate
+    property real displaySlipSkid: dataSuppressed ? 0 : Math.max(-1, Math.min(1, roll / 30.0))
     property real displayBattery: dataSuppressed ? 0 : battery
     property real displayBatteryVoltage: dataSuppressed ? -1 : batteryVoltage
     property real displayBatteryCurrent: dataSuppressed ? -1 : batteryCurrent
@@ -106,6 +113,29 @@ QtObject {
             } else {
                 FlightTelemetryModel.localFlightTime = 0
             }
+        }
+    }
+
+    property Timer turnRateTimer: Timer {
+        interval: 250
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            var now = Date.now()
+            var elapsed = Math.max(0.001, (now - FlightTelemetryModel._lastHeadingTime) / 1000.0)
+            var delta = FlightTelemetryModel.heading - FlightTelemetryModel._lastHeading
+
+            if (delta > 180) {
+                delta -= 360
+            } else if (delta < -180) {
+                delta += 360
+            }
+
+            var rate = delta / elapsed
+            FlightTelemetryModel.turnRate = isFinite(rate) ? rate : 0
+            FlightTelemetryModel._lastHeading = FlightTelemetryModel.heading
+            FlightTelemetryModel._lastHeadingTime = now
         }
     }
 }

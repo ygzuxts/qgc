@@ -8,7 +8,7 @@ Item {
     anchors.fill: parent
     focus: true
 
-    property bool lightMode: true
+    property bool lightMode: false
     property bool controlOverlayOpen: false
     property bool joystickOverlayOpen: false
     property bool joystickEnabled: false
@@ -17,7 +17,7 @@ Item {
     readonly property bool compactLandscape: false
     readonly property int primaryMetricSize: Math.round(88 * uiScale)
     readonly property int horizonSize: Math.round(330 * uiScale)
-    readonly property int sideGaugeSize: Math.round(300 * uiScale)
+    readonly property int sideGaugeSize: Math.round(260 * uiScale)
     readonly property real headingTapeScale: uiScale
 
     Binding {
@@ -43,8 +43,17 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: FlightPalette.bg
         z: -1
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: window.lightMode ? "#E0DDD4" : "#242426" }
+            GradientStop { position: 0.35; color: FlightPalette.bg }
+            GradientStop { position: 1.0; color: window.lightMode ? "#C9C6BC" : "#101012" }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: window.lightMode ? Qt.rgba(1, 1, 1, 0.06) : Qt.rgba(1, 1, 1, 0.018)
+        }
     }
 
     Item {
@@ -69,6 +78,7 @@ Item {
                 compactLandscape: window.compactLandscape
                 flightState: flightState
                 z: 12
+                onThemeToggleRequested: window.lightMode = !window.lightMode
             }
 
             WarningBanner {
@@ -80,11 +90,24 @@ Item {
                 z: 8
             }
 
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.AllButtons
+                hoverEnabled: false
+                preventStealing: true
+                propagateComposedEvents: false
+                z: 10
+                onClicked: function(mouse) { mouse.accepted = true }
+                onPressed: function(mouse) { mouse.accepted = true }
+                onReleased: function(mouse) { mouse.accepted = true }
+            }
+
             SpeedPanel {
                 anchors.horizontalCenter: parent.left
                 anchors.horizontalCenterOffset: parent.width * 0.17
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: Math.round(12 * window.uiScale)
+                z: 11
                 compactLandscape: window.compactLandscape
                 sideGaugeSize: window.sideGaugeSize
                 flightState: flightState
@@ -92,7 +115,8 @@ Item {
 
             AttitudeCluster {
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: Math.round(12 * window.uiScale)
+                anchors.verticalCenterOffset: Math.round(-6 * window.uiScale)
+                z: 11
                 compactLandscape: window.compactLandscape
                 horizonSize: window.horizonSize
                 headingTapeScale: window.headingTapeScale
@@ -104,6 +128,7 @@ Item {
                 anchors.horizontalCenterOffset: -parent.width * 0.17
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: Math.round(12 * window.uiScale)
+                z: 11
                 compactLandscape: window.compactLandscape
                 sideGaugeSize: window.sideGaugeSize
                 flightState: flightState
