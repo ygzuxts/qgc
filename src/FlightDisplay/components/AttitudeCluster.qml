@@ -56,7 +56,7 @@ Column {
                 Text {
                     anchors.centerIn: parent
                     text: FlightTelemetryModel.activeVehicle && !flightState.dataSuppressed
-                          ? ("航向 " + ("000" + Math.round(((FlightTelemetryModel.displayHeading % 360) + 360) % 360)).slice(-3))
+                          ? ("航向 " + ("000" + Math.round(((FlightTelemetryModel.displayHeading % 360) + 360) % 360)).slice(-3) + "°")
                           : "航向 ---"
                     color: FlightPalette.lcdText
                     font.family: FlightPalette.cockpitFont

@@ -26,7 +26,7 @@ Rectangle {
 
         Text {
             width: parent.width
-            text: "ATTITUDE LIMIT"
+            text: "姿态超限"
             color: "#FFFFFF"
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
@@ -74,14 +74,14 @@ Rectangle {
                         anchors.fill: parent
                         roll: FlightTelemetryModel.roll
                         pitch: FlightTelemetryModel.pitch
-                        pitchScale: 30
+                        pitchScale: 90
                     }
                 }
 
                 Column {
-                    width: Math.max(150, parent.width * 0.25)
+                    width: Math.max(170, parent.width * 0.26)
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: root.compactLandscape ? 12 : 18
+                    spacing: root.compactLandscape ? 10 : 16
 
                     CriticalMetric {
                         label: "高度 m"
@@ -91,13 +91,8 @@ Rectangle {
                         primaryMetricSize: root.primaryMetricSize
                     }
 
-                    CriticalMetric {
-                        label: "姿态角"
-                        value: "R " + FlightTelemetryModel.roll.toFixed(0) + "° / P " + FlightTelemetryModel.pitch.toFixed(0) + "°"
-                        accent: "#FFD7A0"
-                        compactValue: true
+                    AttitudeMetric {
                         compactLandscape: root.compactLandscape
-                        primaryMetricSize: root.primaryMetricSize
                     }
                 }
             }
@@ -106,7 +101,7 @@ Rectangle {
         Text {
             id: fatalFooter
             width: parent.width
-            text: "CHECK FLIGHT ATTITUDE"
+            text: "请检查飞行姿态"
             color: Qt.rgba(1, 1, 1, 0.86)
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
@@ -151,6 +146,46 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
             text: label
+            color: Qt.rgba(1, 1, 1, 0.76)
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+            font.family: FlightPalette.cockpitFont
+            font.pixelSize: compactLandscape ? 13 : 15
+            font.bold: true
+        }
+    }
+
+    component AttitudeMetric: Column {
+        property bool compactLandscape: false
+
+        width: parent ? parent.width : 170
+        spacing: compactLandscape ? 4 : 6
+
+        Text {
+            width: parent.width
+            text: "横滚 " + FlightTelemetryModel.roll.toFixed(0) + "°"
+            color: "#FFD7A0"
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideNone
+            font.family: FlightPalette.cockpitFont
+            font.pixelSize: compactLandscape ? 23 : 28
+            font.bold: true
+        }
+
+        Text {
+            width: parent.width
+            text: "俯仰 " + FlightTelemetryModel.pitch.toFixed(0) + "°"
+            color: "#FFD7A0"
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideNone
+            font.family: FlightPalette.cockpitFont
+            font.pixelSize: compactLandscape ? 23 : 28
+            font.bold: true
+        }
+
+        Text {
+            width: parent.width
+            text: "姿态角"
             color: Qt.rgba(1, 1, 1, 0.76)
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight

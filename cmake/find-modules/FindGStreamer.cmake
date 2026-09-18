@@ -444,5 +444,19 @@ if(GStreamer_FOUND AND NOT TARGET GStreamer::GStreamer)
         endforeach()
 
         target_link_libraries(GStreamer::GStreamer INTERFACE GStreamer::Plugins)
+
+        if(ANDROID)
+            foreach(extra_lib IN ITEMS jpeg png16 z graphene-1.0 gstcontroller-1.0)
+                string(MAKE_C_IDENTIFIER "GST_ANDROID_EXTRA_${extra_lib}" extra_lib_var)
+                find_library(${extra_lib_var}
+                    NAMES ${extra_lib}
+                    PATHS ${GSTREAMER_LIB_PATH}
+                    NO_DEFAULT_PATH
+                )
+                if(${extra_lib_var})
+                    target_link_libraries(GStreamer::GStreamer INTERFACE ${${extra_lib_var}})
+                endif()
+            endforeach()
+        endif()
     endif()
 endif()

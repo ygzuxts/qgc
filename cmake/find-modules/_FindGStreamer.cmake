@@ -332,6 +332,7 @@ if(PC_GStreamer_FOUND AND (NOT TARGET GStreamer::GStreamer))
         endforeach()
 
         _gst_apply_link_libraries(ON PC_GStreamer_STATIC_LIBRARIES PC_GStreamer_STATIC_LIBRARY_DIRS GStreamer::deps)
+
     endif()
 
     target_link_libraries(GStreamer::GStreamer

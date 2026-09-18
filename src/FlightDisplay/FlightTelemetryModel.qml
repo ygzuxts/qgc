@@ -38,8 +38,8 @@ QtObject {
     property string displayMode: displayConnected ? activeVehicle.flightMode : "OFFLINE"
     property string connectionState: displayConnected ? "LINK OK" : "NO LINK"
     property string modeState: displayConnected ? activeVehicle.flightMode : "--"
-    property string modePillText: displayConnected ? (flying ? "FLIGHT" : "STANDBY") : "STANDBY"
-    property string armPillText: displayConnected ? (armed ? "ARMED" : "SAFE") : "NO LINK"
+    property string modePillText: displayConnected ? translatedFlightMode(activeVehicle.flightMode) : "未连接"
+    property string armPillText: displayConnected ? (armed ? "已解锁" : "已上锁") : "未连接"
     property color modePillColor: displayConnected ? (flying ? FlightPalette.statusGreen : FlightPalette.statusYellow) : FlightPalette.statusOff
     property color armPillColor: displayConnected ? (armed ? FlightPalette.statusYellow : FlightPalette.statusGreen) : FlightPalette.statusOff
     property real heading: factValue(activeVehicle ? activeVehicle.vehicle.heading : null, 0)
@@ -81,6 +81,43 @@ QtObject {
 
         return String(minutes).padStart(2, "0") + ":" +
                String(secs).padStart(2, "0")
+    }
+
+    function translatedFlightMode(mode) {
+        switch (mode) {
+        case "Manual":
+            return "手动"
+        case "Stabilized":
+            return "自稳"
+        case "Acro":
+            return "特技"
+        case "Altitude":
+        case "Altitude Hold":
+            return "定高"
+        case "Position":
+        case "Position Hold":
+        case "Loiter":
+            return "定点"
+        case "Mission":
+        case "Auto Mission":
+            return "任务"
+        case "Return":
+        case "Return to Launch":
+        case "RTL":
+            return "返航"
+        case "Land":
+            return "降落"
+        case "Takeoff":
+            return "起飞"
+        case "Hold":
+            return "悬停"
+        case "Offboard":
+            return "外部控制"
+        case "Follow Me":
+            return "跟随"
+        default:
+            return mode && mode.length > 0 ? mode : "--"
+        }
     }
 
     function directTakeoff() {

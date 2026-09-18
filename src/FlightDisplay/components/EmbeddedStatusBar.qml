@@ -189,7 +189,7 @@ RowLayout {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            text: root.flightState.batteryReadingValid ? ("BATT " + Math.round(FlightTelemetryModel.displayBattery) + "%") : "BATT --"
+            text: root.flightState.batteryReadingValid ? ("电量 " + Math.round(FlightTelemetryModel.displayBattery) + "%") : "电量 --"
             color: FlightPalette.textHi
             font.family: FlightPalette.cockpitFont
             font.pixelSize: compactLandscape ? 7 : 8

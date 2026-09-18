@@ -216,14 +216,24 @@ public class QGCUsbSerialManager {
      */
     private static void addOrUpdateDevice(UsbDevice device) {
         UsbSerialDriver driver = findDriverByDeviceId(device.getDeviceId());
-        if (driver != null) {
-            if (usbManager.hasPermission(device)) {
-                QGCLogger.i(TAG, "Already have permission to use device " + device.getDeviceName());
+        if (driver == null) {
+            updateCurrentDrivers();
+            driver = findDriverByDeviceId(device.getDeviceId());
+        }
+
+        if (driver == null) {
+            QGCLogger.w(TAG, "No USB serial driver found for attached device " + device.getDeviceName());
+            return;
+        }
+
+        if (usbManager.hasPermission(device)) {
+            QGCLogger.i(TAG, "Already have permission to use device " + device.getDeviceName());
+            if (!drivers.contains(driver)) {
                 addDriver(driver);
-            } else {
-                QGCLogger.i(TAG, "Requesting permission to use device " + device.getDeviceName());
-                usbManager.requestPermission(device, usbPermissionIntent);
             }
+        } else {
+            QGCLogger.i(TAG, "Requesting permission to use device " + device.getDeviceName());
+            usbManager.requestPermission(device, usbPermissionIntent);
         }
     }
 
@@ -415,19 +425,20 @@ public class QGCUsbSerialManager {
      * @return An array of device information strings or null if no devices are available.
      */
     public static String[] availableDevicesInfo() {
-        // updateCurrentDrivers();
-
         if (usbManager == null) {
             return null;
         }
 
-        if (usbManager.getDeviceList().size() < 1) {
+        updateCurrentDrivers();
+
+        if (drivers.isEmpty()) {
             return null;
         }
 
         final List<String> deviceInfoList = new ArrayList<>();
 
-        for (final UsbDevice device : usbManager.getDeviceList().values()) {
+        for (final UsbSerialDriver driver : drivers) {
+            final UsbDevice device = driver.getDevice();
             final String deviceInfo = formatDeviceInfo(device);
             deviceInfoList.add(deviceInfo);
         }
@@ -442,11 +453,25 @@ public class QGCUsbSerialManager {
      * @return A formatted string containing device information.
      */
     private static String formatDeviceInfo(final UsbDevice device) {
+        final boolean hasPermission = usbManager != null && usbManager.hasPermission(device);
+        String serialNumber = "";
+
+        if (hasPermission) {
+            try {
+                serialNumber = device.getSerialNumber();
+            } catch (final SecurityException ex) {
+                QGCLogger.w(TAG, "USB permission lost while reading serial number for " + device.getDeviceName() + ": " + ex.getMessage());
+            }
+        } else {
+            QGCLogger.i(TAG, "USB permission not granted yet for " + device.getDeviceName());
+            usbManager.requestPermission(device, usbPermissionIntent);
+        }
+
         StringBuilder deviceInfo = new StringBuilder();
         deviceInfo.append(device.getDeviceName()).append(":")
                  .append(device.getProductName()).append(":")
                  .append(device.getManufacturerName()).append(":")
-                 .append(device.getSerialNumber()).append(":")
+                 .append(serialNumber).append(":")
                  .append(device.getProductId()).append(":")
                  .append(device.getVendorId());
 
@@ -477,6 +502,16 @@ public class QGCUsbSerialManager {
 
         UsbDevice device = driver.getDevice();
         int deviceId = device.getDeviceId();
+        if (!usbManager.hasPermission(device)) {
+            QGCLogger.i(TAG, "Requesting permission before opening device " + deviceName);
+            UsbDeviceResources resources = deviceResourcesMap.get(deviceId);
+            if (resources != null) {
+                resources.classPtr = classPtr;
+            }
+            usbManager.requestPermission(device, usbPermissionIntent);
+            return BAD_DEVICE_ID;
+        }
+
         UsbSerialPort port = findPortByDeviceId(deviceId);
 
         if (!openDriver(port, device, deviceId, classPtr)) {

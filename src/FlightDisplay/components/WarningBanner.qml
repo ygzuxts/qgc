@@ -38,9 +38,9 @@ Rectangle {
             id: warningText
             anchors.verticalCenter: parent.verticalCenter
             width: root.width - (compactLandscape ? 58 : 52)
-            text: flightState.connectionLossConfirmed ? "LINK LOST"
-                  : (compactLandscape ? ("BAT LOW " + flightState.batteryText())
-                                       : ("BAT LOW " + flightState.batteryText() + "  RETURN ADVISED"))
+            text: flightState.connectionLossConfirmed ? "链路丢失"
+                  : (compactLandscape ? ("电量低 " + flightState.batteryText())
+                                       : ("电量低 " + flightState.batteryText() + "  建议返航"))
             color: FlightPalette.statusYellow
             elide: Text.ElideRight
             font.family: FlightPalette.cockpitFont

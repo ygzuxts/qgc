@@ -154,7 +154,7 @@ Item {
 
         Text {
             anchors.centerIn: parent
-            text: root.active ? ("航向 " + ("000" + Math.round(root.normalize(root.heading))).slice(-3)) : "航向 ---"
+            text: root.active ? ("航向 " + ("000" + Math.round(root.normalize(root.heading))).slice(-3) + "°") : "航向 ---"
             color: FlightPalette.lcdText
             font.family: FlightPalette.cockpitFont
             font.pixelSize: Math.round((compactLandscape ? 13 : 16) * root.scaleFactor)

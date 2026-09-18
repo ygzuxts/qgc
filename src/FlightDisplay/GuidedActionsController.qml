@@ -65,10 +65,10 @@ Item {
 
     readonly property string armMessage:                        qsTr("Arm the vehicle.")
     readonly property string mvArmMessage:                      qsTr("Arm selected vehicles.")
-    readonly property string forceArmMessage:                   qsTr("WARNING: This will force arming of the vehicle bypassing any safety checks.")
+    readonly property string forceArmMessage:                   qsTr("警告：将强制解锁飞行器，并绕过所有安全检查。")
     readonly property string disarmMessage:                     qsTr("Disarm the vehicle")
     readonly property string mvDisarmMessage:                   qsTr("Disarm selected vehicles.")
-    readonly property string emergencyStopMessage:              qsTr("WARNING: THIS WILL STOP ALL MOTORS. IF VEHICLE IS CURRENTLY IN THE AIR IT WILL CRASH.")
+    readonly property string emergencyStopMessage:              qsTr("警告：这将停止所有电机。如果飞行器正在空中，将会坠落。")
     readonly property string takeoffMessage:                    qsTr("Takeoff from ground and hold position.")
     readonly property string gripperMessage:                    qsTr("Grab or Release the cargo")
     readonly property string startMissionMessage:               qsTr("Takeoff from ground and start the current mission.")

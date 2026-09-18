@@ -98,6 +98,7 @@ qt_add_qml_module(FlightDisplayModule
         QmlFlightInstruments/Images/ai/ai_back.svg
         QmlFlightInstruments/Images/ai/ai_case.svg
         QmlFlightInstruments/Images/ai/ai_face.svg
+        QmlFlightInstruments/Images/ai/ai_face_extended.svg
         QmlFlightInstruments/Images/ai/ai_ring.svg
         QmlFlightInstruments/Images/alt/alt_case.svg
         QmlFlightInstruments/Images/alt/alt_face_1.svg

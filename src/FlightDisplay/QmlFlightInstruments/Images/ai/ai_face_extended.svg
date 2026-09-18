@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="620" viewBox="0 0 620 620">
+  <g>
+    <rect x="0" y="0" width="620" height="310" fill="#2977ef"/>
+    <rect x="0" y="310" width="620" height="310" fill="#7a4a21"/>
+    <line x1="0" y1="310" x2="620" y2="310" stroke="#ffffff" stroke-width="3"/>
+
+    <g stroke="#ffffff">
+      <line x1="255" y1="280" x2="365" y2="280" stroke-width="1.6"/>
+      <line x1="255" y1="250" x2="365" y2="250" stroke-width="1.6"/>
+      <line x1="220" y1="220" x2="400" y2="220" stroke-width="2.4"/>
+      <line x1="255" y1="175" x2="365" y2="175" stroke-width="1.6"/>
+      <line x1="220" y1="130" x2="400" y2="130" stroke-width="2.4"/>
+      <line x1="220" y1="40" x2="400" y2="40" stroke-width="2.4"/>
+      <line x1="255" y1="340" x2="365" y2="340" stroke-width="1.6"/>
+      <line x1="255" y1="370" x2="365" y2="370" stroke-width="1.6"/>
+      <line x1="220" y1="400" x2="400" y2="400" stroke-width="2.4"/>
+      <line x1="255" y1="445" x2="365" y2="445" stroke-width="1.6"/>
+      <line x1="220" y1="490" x2="400" y2="490" stroke-width="2.4"/>
+      <line x1="220" y1="580" x2="400" y2="580" stroke-width="2.4"/>
+    </g>
+
+    <g fill="#ffffff" font-family="Consolas, monospace" font-size="14" font-weight="bold" text-anchor="middle">
+      <text x="204" y="224">30</text>
+      <text x="416" y="224">30</text>
+      <text x="204" y="134">60</text>
+      <text x="416" y="134">60</text>
+      <text x="204" y="44">90</text>
+      <text x="416" y="44">90</text>
+      <text x="204" y="404">30</text>
+      <text x="416" y="404">30</text>
+      <text x="204" y="494">60</text>
+      <text x="416" y="494">60</text>
+      <text x="204" y="584">90</text>
+      <text x="416" y="584">90</text>
+    </g>
+  </g>
+</svg>
