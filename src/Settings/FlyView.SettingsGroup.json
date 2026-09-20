@@ -108,6 +108,12 @@
     "shortDesc":    "Use the custom Fly View instead of the upstream QGC Fly View.",
     "type":         "bool",
     "default":      true
+},
+{
+    "name":         "showViewSwitchBar",
+    "shortDesc":    "Show the Fly View switch bar.",
+    "type":         "bool",
+    "default":      true
 }
 ]
 }

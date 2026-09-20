@@ -37,6 +37,26 @@
     ${EndIf}
 !macroend
 
+!macro TryUninstallPreviousVersion uninstallKey displayName regView
+  SetRegView ${regView}
+  ClearErrors
+  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${uninstallKey}" "UninstallString"
+  ${If} $R0 != ""
+    DetailPrint "Uninstalling previous ${displayName} version..."
+    ExecWait '$R0 /S -LEAVE_DATA=1' $0
+    ${If} $0 != 0
+      MessageBox MB_OK|MB_ICONEXCLAMATION \
+            "Could not remove a previously installed ${displayName} version.$\n$\nPlease remove it before continuing."
+      Abort
+    ${EndIf}
+  ${EndIf}
+!macroend
+
+!macro TryUninstallPreviousVersions uninstallKey displayName
+  !insertmacro TryUninstallPreviousVersion "${uninstallKey}" "${displayName}" 32
+  !insertmacro TryUninstallPreviousVersion "${uninstallKey}" "${displayName}" 64
+!macroend
+
 Name "${APPNAME}"
 Var StartMenuFolder
 
@@ -59,27 +79,11 @@ SetCompressor /SOLID /FINAL lzma
 !insertmacro MUI_LANGUAGE "English"
 
 Section
-  DetailPrint "Checking for 32 bit uninstaller"
-  SetRegView 32
-  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString"
-  StrCmp $R0 "" check64BitUninstall doUninstall
+  !insertmacro TryUninstallPreviousVersions "${APPNAME}" "${APPNAME}"
+  !if "${APPNAME}" == "FutureWings"
+    !insertmacro TryUninstallPreviousVersions "FutureWing" "FutureWing"
+  !endif
 
-check64BitUninstall:
-  DetailPrint "Checking for 64 bit  uninstaller"
-  SetRegView 64
-  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString"
-  StrCmp $R0 "" doInstall
-
-doUninstall:
-  DetailPrint "Uninstalling previous version..."
-  ExecWait "$R0 /S -LEAVE_DATA=1 _?=$INSTDIR"
-  IntCmp $0 0 doInstall
-
-  MessageBox MB_OK|MB_ICONEXCLAMATION \
-        "Could not remove a previously installed ${APPNAME} version.$\n$\nPlease remove it before continuing."
-  Abort
-
-doInstall:
   SetRegView 64
   SetOutPath $INSTDIR
   File /r /x ${EXENAME}.pdb /x ${EXENAME}.lib /x ${EXENAME}.exp ${DESTDIR}\*.*

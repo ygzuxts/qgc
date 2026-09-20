@@ -8,7 +8,7 @@ Item {
     id: root
 
     width:  320
-    height: 240
+    height: Math.round(240 * (theme ? theme.uiScale : 1))
 
     // ── 外部输入属性 ──
     property real pitch:       0       // 俯仰角 deg，正值抬头
@@ -162,7 +162,7 @@ Item {
             anchors.top:   parent.top
             anchors.left:  parent.left
             anchors.right: parent.right
-            height: 28
+            height: Math.round(28 * (theme ? theme.uiScale : 1))
             color: root._panelBg
 
             // 滚动刻度
@@ -186,7 +186,7 @@ Item {
                                 anchors.bottom: parent.bottom
                                 anchors.bottomMargin: 4
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                width: 1
+                                width: Math.round(1 * (theme ? theme.uiScale : 1))
                                 height: tickDeg % 10 === 0 ? 10 : 5
                                 color: root._lineColor
                             }
@@ -196,7 +196,7 @@ Item {
                                 anchors.bottomMargin: 16
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: root._headingLabel(tickDeg)
-                                font.pixelSize: 9
+                                font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1))
                                 font.weight: (tickDeg === 0 || tickDeg === 90 || tickDeg === 180 || tickDeg === 270) ? Font.Bold : Font.Normal
                                 color: tickDeg === 0 ? "#ef4444" : root._textColor
                             }
@@ -209,14 +209,14 @@ Item {
             Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                width: 10; height: 10
+                width: Math.round(10 * (theme ? theme.uiScale : 1)); height: Math.round(10 * (theme ? theme.uiScale : 1))
                 Rectangle {
-                    width: 0; height: 0
+                    width: Math.round(0 * (theme ? theme.uiScale : 1)); height: Math.round(0 * (theme ? theme.uiScale : 1))
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     // 三角指针
                     Canvas {
-                        width: 10; height: 8
+                        width: Math.round(10 * (theme ? theme.uiScale : 1)); height: Math.round(8 * (theme ? theme.uiScale : 1))
                         x: -5
                         onPaint: {
                             var ctx = getContext("2d")
@@ -237,14 +237,14 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: -1
-                width: 36; height: 16
+                width: Math.round(36 * (theme ? theme.uiScale : 1)); height: Math.round(16 * (theme ? theme.uiScale : 1))
                 color: "#1a2a3a"
                 border.color: Qt.rgba(1,1,1,.3)
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 Text {
                     anchors.centerIn: parent
                     text: Math.round(root._displayHeading)
-                    font.pixelSize: 9; font.weight: Font.Bold
+                    font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold
                     color: "#ffffff"
                 }
             }
@@ -293,7 +293,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 2
+                    height: Math.round(2 * (theme ? theme.uiScale : 1))
                     color: Qt.rgba(1, 1, 1, 0.8)
                 }
 
@@ -302,7 +302,7 @@ Item {
 
                     delegate: Item {
                         width: Math.max(120, attitudeViewport.width * 0.62)
-                        height: 18
+                        height: Math.round(18 * (theme ? theme.uiScale : 1))
                         x: (worldLayer.width - width) / 2
                         y: worldLayer.height / 2 - (modelData * root._pitchPixPerDeg) - height / 2
 
@@ -320,7 +320,7 @@ Item {
                             anchors.rightMargin: (Math.abs(modelData) % 10 === 0 ? 56 : 28)
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.abs(modelData)
-                            font.pixelSize: 9
+                            font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1))
                             font.weight: Font.Medium
                             color: Qt.rgba(1, 1, 1, 0.82)
                         }
@@ -331,7 +331,7 @@ Item {
                             anchors.leftMargin: (Math.abs(modelData) % 10 === 0 ? 56 : 28)
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.abs(modelData)
-                            font.pixelSize: 9
+                            font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1))
                             font.weight: Font.Medium
                             color: Qt.rgba(1, 1, 1, 0.82)
                         }
@@ -346,7 +346,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 4
                 width: Math.min(parent.width * 0.9, 190)
-                height: 54
+                height: Math.round(54 * (theme ? theme.uiScale : 1))
 
                 onPaint: {
                     var ctx = getContext("2d")
@@ -380,13 +380,13 @@ Item {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 2
-                width: 48
-                height: 26
+                width: Math.round(48 * (theme ? theme.uiScale : 1))
+                height: Math.round(26 * (theme ? theme.uiScale : 1))
 
                 Canvas {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: 12
-                    height: 10
+                    width: Math.round(12 * (theme ? theme.uiScale : 1))
+                    height: Math.round(10 * (theme ? theme.uiScale : 1))
                     onPaint: {
                         var ctx = getContext("2d")
                         ctx.reset()
@@ -405,7 +405,7 @@ Item {
                     anchors.topMargin: 10
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: Math.round(root._displayRoll)
-                    font.pixelSize: 10
+                    font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Bold
                     color: "#ffffff"
                 }
@@ -416,28 +416,28 @@ Item {
                 anchors.centerIn: parent
 
                 Rectangle {
-                    x: -42; y: -1; width: 20; height: 2
+                    x: -42; y: -1; width: Math.round(20 * (theme ? theme.uiScale : 1)); height: Math.round(2 * (theme ? theme.uiScale : 1))
                     color: root._accentColor; radius: 1
                 }
 
                 Rectangle {
-                    x: 22; y: -1; width: 20; height: 2
+                    x: 22; y: -1; width: Math.round(20 * (theme ? theme.uiScale : 1)); height: Math.round(2 * (theme ? theme.uiScale : 1))
                     color: root._accentColor; radius: 1
                 }
 
                 Rectangle {
-                    x: -16; y: -1; width: 32; height: 2
+                    x: -16; y: -1; width: Math.round(32 * (theme ? theme.uiScale : 1)); height: Math.round(2 * (theme ? theme.uiScale : 1))
                     color: root._accentColor; radius: 1
                 }
 
                 Rectangle {
                     anchors.centerIn: parent
-                    width: 6; height: 6; radius: 3
+                    width: Math.round(6 * (theme ? theme.uiScale : 1)); height: Math.round(6 * (theme ? theme.uiScale : 1)); radius: 3
                     color: root._accentColor
                 }
 
                 Rectangle {
-                    x: -1; y: -12; width: 2; height: 10
+                    x: -1; y: -12; width: Math.round(2 * (theme ? theme.uiScale : 1)); height: Math.round(10 * (theme ? theme.uiScale : 1))
                     color: root._accentColor; radius: 1
                 }
             }
@@ -458,7 +458,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 4
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "空速"; font.pixelSize: 9; color: root._textColor
+                text: "空速"; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
             }
 
             // 刻度
@@ -479,7 +479,7 @@ Item {
                             anchors.right: parent.right
                             anchors.rightMargin: 2
                             anchors.verticalCenter: parent.verticalCenter
-                            width: tickValue % 5 === 0 ? 10 : 5; height: 1
+                            width: tickValue % 5 === 0 ? 10 : 5; height: Math.round(1 * (theme ? theme.uiScale : 1))
                             color: root._lineColor
                         }
                         Text {
@@ -488,7 +488,7 @@ Item {
                             anchors.rightMargin: 14
                             anchors.verticalCenter: parent.verticalCenter
                             text: tickValue
-                            font.pixelSize: 8; color: root._textColor
+                            font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1)); color: root._textColor
                             horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -499,19 +499,19 @@ Item {
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                width: parent.width - 2; height: 20
+                width: parent.width - 2; height: Math.round(20 * (theme ? theme.uiScale : 1))
                 color: "#1a2a3a"
                 border.color: Qt.rgba(1,1,1,.4)
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 Text {
                     anchors.centerIn: parent
                     text: root._displayAirspeed.toFixed(1)
-                    font.pixelSize: 11; font.weight: Font.Bold; color: "#ffffff"
+                    font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold; color: "#ffffff"
                 }
             }
 
             // 左侧竖线
-            Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Qt.rgba(1,1,1,.15) }
+            Rectangle { anchors.right: parent.right; width: Math.round(1 * (theme ? theme.uiScale : 1)); height: parent.height; color: Qt.rgba(1,1,1,.15) }
         }
 
         // ════════════════
@@ -528,7 +528,7 @@ Item {
             Text {
                 anchors.top: parent.top; anchors.topMargin: 4
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "高度"; font.pixelSize: 9; color: root._textColor
+                text: "高度"; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
             }
 
             // 刻度
@@ -549,7 +549,7 @@ Item {
                             anchors.left: parent.left
                             anchors.leftMargin: 2
                             anchors.verticalCenter: parent.verticalCenter
-                            width: tickValue % 5 === 0 ? 10 : 5; height: 1
+                            width: tickValue % 5 === 0 ? 10 : 5; height: Math.round(1 * (theme ? theme.uiScale : 1))
                             color: root._lineColor
                         }
                         Text {
@@ -558,7 +558,7 @@ Item {
                             anchors.leftMargin: 14
                             anchors.verticalCenter: parent.verticalCenter
                             text: tickValue
-                            font.pixelSize: 8; color: root._textColor
+                            font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1)); color: root._textColor
                         }
                     }
                 }
@@ -568,19 +568,19 @@ Item {
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                width: parent.width - 2; height: 20
+                width: parent.width - 2; height: Math.round(20 * (theme ? theme.uiScale : 1))
                 color: "#1a2a3a"
                 border.color: Qt.rgba(1,1,1,.4)
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 Text {
                     anchors.centerIn: parent
                     text: root._displayAltitude.toFixed(1)
-                    font.pixelSize: 11; font.weight: Font.Bold; color: "#ffffff"
+                    font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold; color: "#ffffff"
                 }
             }
 
             // 右侧竖线
-            Rectangle { anchors.left: parent.left; width: 1; height: parent.height; color: Qt.rgba(1,1,1,.15) }
+            Rectangle { anchors.left: parent.left; width: Math.round(1 * (theme ? theme.uiScale : 1)); height: parent.height; color: Qt.rgba(1,1,1,.15) }
         }
 
         // ════════════════
@@ -591,7 +591,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left:   parent.left
             anchors.right:  parent.right
-            height: 20
+            height: Math.round(20 * (theme ? theme.uiScale : 1))
             color: root._panelBg
 
             Row {
@@ -604,8 +604,8 @@ Item {
                     ]
                     delegate: Row {
                         spacing: 4
-                        Text { text: modelData.label; font.pixelSize: 9; color: root._textColor }
-                        Text { text: modelData.value; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
+                        Text { text: modelData.label; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor }
+                        Text { text: modelData.value; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold; color: "#ffffff" }
                     }
                 }
             }
@@ -617,6 +617,6 @@ Item {
         anchors.fill: parent
         color: "transparent"
         border.color: Qt.rgba(1,1,1,.22)
-        border.width: 1
+        border.width: Math.round(1 * (theme ? theme.uiScale : 1))
     }
 }

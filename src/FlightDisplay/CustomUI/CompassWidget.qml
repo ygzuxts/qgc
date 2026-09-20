@@ -7,7 +7,7 @@ Item {
     id: root
 
     width:  size
-    height: size + 38   // 底部留航向数值空间
+    height: size + valueBarHeight   // 底部留航向数值空间
 
     property real size:        180
     property real heading:     0
@@ -15,6 +15,7 @@ Item {
     property real pitch:       0
     property var  theme:       null
     property real infoBarOpacity: 1.0
+    readonly property real valueBarHeight: Math.round(35 * (theme ? theme.uiScale : 1))
     property real _displayHeading: 0
     property real _displayRoll:    0
     property real _displayPitch:   0
@@ -114,7 +115,7 @@ Item {
                     x: root.size / 2 + _r * Math.cos(_rad) - width  / 2
                     y: root.size / 2 + _r * Math.sin(_rad) - height / 2
                     text: modelData.label
-                    font.pixelSize: 11
+                    font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1))
                     font.weight: modelData.bold ? Font.Bold : Font.Medium
                     color: modelData.color
                 }
@@ -177,18 +178,18 @@ Item {
             width: root.size * 0.07; height: width; radius: width / 2
             color: "#ffffff"
             border.color: "#c0c8d4"
-            border.width: 1
+            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
         }
     }
 
     // ── 底部：航向数值 + 横滚俯仰 ──
     Rectangle {
         anchors.top: dialCircle.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: Math.round(5 * (theme ? theme.uiScale : 1))
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 30
-        radius: 6
+        height: root.valueBarHeight - Math.round(5 * (theme ? theme.uiScale : 1))
+        radius: Math.round(6 * (theme ? theme.uiScale : 1))
         color: Qt.rgba(0.05, 0.10, 0.18, 0.82 * infoBarOpacity)
 
         Row {
@@ -202,22 +203,22 @@ Item {
             Column {
                 width: parent.width / 3
                 spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "横滚"; font.pixelSize: 8;  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayRoll.toFixed(1) + "°"; font.pixelSize: 10; font.weight: Font.DemiBold; color: "#ffffff" }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "横滚"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayRoll.toFixed(1) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.DemiBold; color: "#ffffff" }
             }
 
             Column {
                 width: parent.width / 3
                 spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "航向"; font.pixelSize: 8;  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: (((root._displayHeading % 360) + 360) % 360).toFixed(0) + "°"; font.pixelSize: 10; font.weight: Font.Bold; color: "#ffffff" }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "航向"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: (((root._displayHeading % 360) + 360) % 360).toFixed(0) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold; color: "#ffffff" }
             }
 
             Column {
                 width: parent.width / 3
                 spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "俯仰"; font.pixelSize: 8;  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayPitch.toFixed(1) + "°"; font.pixelSize: 10; font.weight: Font.DemiBold; color: "#ffffff" }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "俯仰"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayPitch.toFixed(1) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.DemiBold; color: "#ffffff" }
             }
         }
     }

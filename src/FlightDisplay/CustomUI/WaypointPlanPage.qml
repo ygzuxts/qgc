@@ -11,12 +11,15 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtLocation
 import QtPositioning
 
 import QGroundControl
 import QGroundControl.Controls
 import QGroundControl.FactControls
 import QGroundControl.FlightMap
+import QGroundControl.Palette
+import QGroundControl.ScreenTools
 
 Item {
     id: root
@@ -24,7 +27,35 @@ Item {
     property var state: null
     property var theme: null
     property var missionController: null
+    property real hudInstrumentSize: 0
+    property real hudTelemetryWidth: 0
+    property real hudHeight: 0
+    property real topInset: 0
+    property bool panelCollapsed: false
     signal closeRequested()
+
+    property QGCPalette qgcPal: QGCPalette { colorGroupEnabled: true }
+    readonly property color brandBlue: theme ? theme.blue : qgcPal.brandingPurple
+    readonly property color brandHover: theme ? theme.blueL : Qt.rgba(brandBlue.r, brandBlue.g, brandBlue.b, 0.12)
+    readonly property color brandPress: theme ? theme.bluePress : Qt.darker(brandBlue, 1.10)
+    readonly property color brandBorder: theme ? theme.blueBorder : Qt.rgba(brandBlue.r, brandBlue.g, brandBlue.b, 0.42)
+    readonly property real pageScale: theme ? theme.uiScale : 1
+    readonly property real sidePanelOpacity: state && state.sidePanelOpacity !== undefined ? Math.max(0.15, Math.min(1.0, state.sidePanelOpacity)) : 0.92
+    readonly property color sidePanelSurface: theme ? Qt.rgba(theme.surface.r, theme.surface.g, theme.surface.b, root.sidePanelOpacity) : Qt.rgba(1, 1, 1, root.sidePanelOpacity)
+    readonly property color sidePanelSurface2: theme ? Qt.rgba(theme.surface2.r, theme.surface2.g, theme.surface2.b, root.sidePanelOpacity) : Qt.rgba(0.97, 0.98, 0.99, root.sidePanelOpacity)
+    readonly property bool mobileLayout: (theme && theme.mobile) || root.width < 1100 || root.height < 650
+    readonly property real compactScale: mobileLayout ? 0.92 : 1.0
+    readonly property real panelHeaderH: Math.round((theme ? theme.sectionH : 44) * compactScale)
+    readonly property real panelButtonH: Math.round((theme ? theme.controlHMd : 34) * compactScale)
+    readonly property real panelSideMargin: Math.round((mobileLayout ? 10 : 14) * root.pageScale)
+    readonly property real panelGap: Math.round((mobileLayout ? 7 : 10) * root.pageScale)
+    readonly property real saveButtonSize: Math.round((mobileLayout ? 28 : 46) * root.pageScale)
+    readonly property real planHudInstrumentSize: root.hudInstrumentSize
+    readonly property real planHudTelemetryScale: root.mobileLayout ? 0.86 : 1.0
+    readonly property real planHudTelemetryWidth: root.hudTelemetryWidth > 0 ? root.hudTelemetryWidth * root.planHudTelemetryScale : 0
+    readonly property real panelWidth: root.mobileLayout
+                                       ? Math.max(220, Math.min(310, root.width * 0.32))
+                                       : Math.max(260, Math.min(360, root.width * 0.30))
 
     // ---- 控制器 ----
     readonly property var _masterController:        missionController ? missionController.masterController : null
@@ -43,6 +74,8 @@ Item {
     readonly property int toolCircleFence:  5
     readonly property int toolLandLocate:   6
     readonly property int mavCmdNavLand:    21
+    readonly property int mavCmdNavRTL:     20
+    readonly property int mavCmdNavVTOLLand: 85
 
     // ---- 状态 ----
     property int currentTool: toolTakeoff
@@ -54,12 +87,13 @@ Item {
     property int landSeqNum: -1
     property bool uniformSpeedEnabled: false
     property real uniformSpeedMps: 15.0
+    property bool editingSelectedField: false
 
     // ---- 启用逻辑（起飞点 → 航点/着陆/兴趣点 → 着陆定位）----
     readonly property bool takeoffEnabled:      !hasTakeoff && !!missionController
-    readonly property bool waypointEnabled:     hasTakeoff && !hasLand
-    readonly property bool landEnabled:         hasTakeoff && !hasLand && !!missionController
-    readonly property bool roiEnabled:          hasTakeoff && !hasLand
+    readonly property bool waypointEnabled:     hasTakeoff && (missionController ? (missionController.flyThroughCommandsAllowed || (hasLand && !_vehicleIsMultiRotor())) : !hasLand)
+    readonly property bool landEnabled:         hasTakeoff && !!missionController && missionController.isInsertLandValid
+    readonly property bool roiEnabled:          hasTakeoff && (missionController ? (missionController.flyThroughCommandsAllowed || (hasLand && !_vehicleIsMultiRotor())) : !hasLand)
     readonly property bool landLocateEnabled:   hasLand
     readonly property bool fenceEnabled:        !!_geoFenceController && _geoFenceController.supported
     readonly property bool fenceMode:           rightTab === 1
@@ -102,13 +136,19 @@ Item {
         if (!item) {
             return false
         }
+        if (_isRTLVisualItem(item)) {
+            return true
+        }
         if (item.isLandItem || item.isLandCommand) {
             return true
         }
+        var command = item.command !== undefined ? Number(item.command) : -1
         var name = item.commandName ? String(item.commandName) : ""
         var desc = item.commandDescription ? String(item.commandDescription) : ""
         var pattern = item.patternName ? String(item.patternName) : ""
-        return name === "Land" ||
+        return command === mavCmdNavLand ||
+               command === mavCmdNavVTOLLand ||
+               name === "Land" ||
                name === "VTOL Land" ||
                name === "Landing Pattern" ||
                pattern === "VTOL Landing" ||
@@ -118,18 +158,35 @@ Item {
                item.landingCoordinate !== undefined
     }
 
+    function _isRTLVisualItem(item) {
+        if (!item) {
+            return false
+        }
+        var command = item.command !== undefined ? Number(item.command) : -1
+        var name = item.commandName ? String(item.commandName) : ""
+        var desc = item.commandDescription ? String(item.commandDescription) : ""
+        return command === mavCmdNavRTL ||
+               name === "Return To Launch" ||
+               name === "Return to Launch" ||
+               name === "RTL" ||
+               desc === "Return To Launch" ||
+               desc === "Return to Launch"
+    }
+
     function _refreshTools() {
         hasTakeoff = _findTakeoff()
         landSeqNum = _findLandSeq()
         hasLand = landSeqNum > 0
         if (!hasTakeoff) {
             currentTool = toolTakeoff
-        } else if (!hasLand) {
-            if (currentTool !== toolWaypoint && currentTool !== toolLand && currentTool !== toolROI) {
-                currentTool = toolWaypoint
-            }
-        } else {
+        } else if (currentTool === toolWaypoint && !waypointEnabled) {
             currentTool = toolLandLocate
+        } else if (currentTool === toolROI && !roiEnabled) {
+            currentTool = toolLandLocate
+        } else if (currentTool === toolLand && !landEnabled) {
+            currentTool = waypointEnabled ? toolWaypoint : toolLandLocate
+        } else if (currentTool !== toolWaypoint && currentTool !== toolLand && currentTool !== toolROI && currentTool !== toolLandLocate) {
+            currentTool = waypointEnabled ? toolWaypoint : toolLandLocate
         }
     }
 
@@ -251,49 +308,39 @@ Item {
         return _planVehicle && _planVehicle.vtol
     }
 
-    function _vehicleIsFixedWing() {
-        return _planVehicle && _planVehicle.fixedWing && !_vehicleIsVTOL()
-    }
-
     function _vehicleIsMultiRotor() {
         return !_vehicleIsVTOL() && _planVehicle && _planVehicle.multiRotor
     }
 
-    function _createSimpleLandItem(landCoordinate) {
-        var item = missionController.insertSimpleMissionItem(landCoordinate, -1, true)
-        if (item) {
-            item.setMapCenterHintForCommandChange(landCoordinate)
-            item.command = mavCmdNavLand
-            if (item.coordinate !== undefined) {
-                item.coordinate = landCoordinate
+    function _landButtonText() {
+        return _vehicleIsMultiRotor() ? "返航" : "着陆"
+    }
+
+    function _insertIndexBeforeLandIfNeeded() {
+        if (!hasLand || _vehicleIsMultiRotor() || !_missionItems) {
+            return -1
+        }
+        for (var i = 1; i < _missionItems.count; i++) {
+            if (_isLandVisualItem(_missionItems.get(i))) {
+                return i
             }
         }
-        return item
+        return -1
     }
 
     function _createLandAtCoordinate(coordinate) {
         if (!landEnabled || !missionController) {
-            messageDialog.text = "当前状态不能添加着陆点"
+            messageDialog.text = _landButtonText() + "当前不可添加"
             messageDialog.open()
             return false
         }
         var landCoordinate = _normalizeMapCoordinate(coordinate)
         if (!landCoordinate.isValid) {
-            messageDialog.text = "地图坐标无效，无法添加着陆点"
+            messageDialog.text = "地图坐标无效，无法添加" + _landButtonText()
             messageDialog.open()
             return false
         }
-        var landItem = null
-        if (_vehicleIsVTOL() && missionController.insertComplexMissionItem) {
-            landItem = missionController.insertComplexMissionItem("VTOL Landing", landCoordinate, -1, true)
-        } else if (_vehicleIsFixedWing() && missionController.insertComplexMissionItem) {
-            landItem = missionController.insertComplexMissionItem("Fixed Wing Landing", landCoordinate, -1, true)
-        } else if (_vehicleIsMultiRotor()) {
-            landItem = _createSimpleLandItem(landCoordinate)
-        }
-        if (!landItem) {
-            landItem = missionController.insertLandItem(landCoordinate, -1, true)
-        }
+        var landItem = missionController.insertLandItem(landCoordinate, -1, true)
         if (landItem) {
             // 固定翼/复合翼着陆是复杂任务项：
             // landingCoordinate 是用户点的着陆点，coordinate 是最终进近点。
@@ -307,13 +354,59 @@ Item {
         if (selected) {
             currentTool = toolLandLocate
         } else {
-            messageDialog.text = "着陆点添加失败，请确认已创建起飞点且任务中没有已有着陆点"
+            messageDialog.text = _landButtonText() + "添加失败，请确认当前任务位置允许插入"
             messageDialog.open()
         }
         return selected
     }
 
+    function _vehicleCoordinateForTakeoff() {
+        var vehicle = root.state && root.state.activeVehicle ? root.state.activeVehicle : root._planVehicle
+        if (vehicle && vehicle.coordinate && vehicle.coordinate.isValid) {
+            return root._normalizeMapCoordinate(vehicle.coordinate)
+        }
+        if (vehicle && vehicle.homePosition && vehicle.homePosition.isValid) {
+            return root._normalizeMapCoordinate(vehicle.homePosition)
+        }
+        if (root.missionController && root.missionController.plannedHomePosition && root.missionController.plannedHomePosition.isValid) {
+            return root._normalizeMapCoordinate(root.missionController.plannedHomePosition)
+        }
+        return QtPositioning.coordinate()
+    }
+
+    function _createTakeoffFromVehicle() {
+        if (!root.takeoffEnabled || !root.missionController) {
+            return false
+        }
+        var coordinate = root._vehicleCoordinateForTakeoff()
+        if (!coordinate.isValid) {
+            messageDialog.text = "当前飞机位置无效，无法创建起飞点"
+            messageDialog.open()
+            return false
+        }
+        var takeoffItem = root.missionController.insertTakeoffItem(coordinate, -1, true)
+        if (!takeoffItem) {
+            messageDialog.text = "起飞点创建失败"
+            messageDialog.open()
+            return false
+        }
+        if (takeoffItem.launchCoordinate !== undefined) {
+            takeoffItem.launchCoordinate = coordinate
+        } else {
+            takeoffItem.coordinate = coordinate
+        }
+        root.hasTakeoff = true
+        root.pendingChanges = true
+        root.missionController.setCurrentPlanViewSeqNum(takeoffItem.sequenceNumber, true)
+        root.currentTool = root.toolWaypoint
+        return true
+    }
+
     function _setTool(tool) {
+        if (tool === toolTakeoff) {
+            _createTakeoffFromVehicle()
+            return
+        }
         currentTool = tool
     }
 
@@ -331,6 +424,9 @@ Item {
         if (item.isTakeoffItem) {
             return "起飞 " + seq
         }
+        if (_isRTLVisualItem(item)) {
+            return "返航 " + seq
+        }
         if (_isLandVisualItem(item)) {
             return "着陆 " + seq
         }
@@ -338,6 +434,42 @@ Item {
             return "兴趣点 " + seq
         }
         return "航点 " + seq
+    }
+
+    function _itemTypeText(item) {
+        if (!item) {
+            return "任务项"
+        }
+        if (item.isTakeoffItem) {
+            return "起飞"
+        }
+        if (_isRTLVisualItem(item)) {
+            return "返航"
+        }
+        if (_isLandVisualItem(item)) {
+            return "着陆"
+        }
+        if (item.commandName && String(item.commandName).indexOf("ROI") >= 0) {
+            return "兴趣点"
+        }
+        return "航点"
+    }
+
+    function _itemSeqText(item) {
+        return item && item.sequenceNumber !== undefined ? String(item.sequenceNumber) : ""
+    }
+
+    function _selectedCommandEditable() {
+        return root.selectedItem &&
+               root._itemTypeText(root.selectedItem) === "航点" &&
+               root.selectedItem.command !== undefined &&
+               root.selectedItem.setMapCenterHintForCommandChange !== undefined
+    }
+
+    function _openSelectedCommandDialog() {
+        if (root._selectedCommandEditable()) {
+            selectedCommandDialog.createObject(mainWindow).open()
+        }
     }
 
     function _coordText(item) {
@@ -407,7 +539,7 @@ Item {
         id: mapArea
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.right: rightPanel.left
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
         clip: true
 
@@ -433,27 +565,17 @@ Item {
                 if (root.rightTab !== 0) {
                     return
                 }
+                if (!root.hasTakeoff || root.currentTool === root.toolTakeoff) {
+                    return
+                }
+
                 planMap.focus = true
                 var coordinate = root._normalizeMapCoordinate(planMap.toCoordinate(Qt.point(mouse.x, mouse.y), false))
 
                 switch (root.currentTool) {
-                case root.toolTakeoff:
-                    if (root.takeoffEnabled && root.missionController) {
-                        var takeoffItem = root.missionController.insertTakeoffItem(coordinate, -1, true)
-                        if (takeoffItem) {
-                            takeoffItem.coordinate = coordinate
-                            if (takeoffItem.launchCoordinate !== undefined) {
-                                takeoffItem.launchCoordinate = coordinate
-                            }
-                            root.hasTakeoff = true
-                            root.missionController.setCurrentPlanViewSeqNum(takeoffItem.sequenceNumber, true)
-                            root.currentTool = root.toolWaypoint
-                        }
-                    }
-                    break
                 case root.toolWaypoint:
                     if (root.waypointEnabled && root.missionController) {
-                        var wpItem = root.missionController.insertSimpleMissionItem(coordinate, -1, true)
+                        var wpItem = root.missionController.insertSimpleMissionItem(coordinate, root._insertIndexBeforeLandIfNeeded(), true)
                         root._applyUniformSpeed(wpItem)
                     }
                     break
@@ -462,7 +584,7 @@ Item {
                     break
                 case root.toolROI:
                     if (root.roiEnabled && root.missionController) {
-                        root.missionController.insertROIMissionItem(coordinate, -1, true)
+                        root.missionController.insertROIMissionItem(coordinate, root._insertIndexBeforeLandIfNeeded(), true)
                     }
                     break
                 }
@@ -477,7 +599,7 @@ Item {
                     interactive: !root.fenceMode
                     onClicked: (sequenceNumber) => {
                         if (root.missionController) {
-                            root.missionController.setCurrentPlanViewSeqNum(sequenceNumber, false)
+                            root.missionController.setCurrentPlanViewSeqNum(sequenceNumber, true)
                         }
                     }
                 }
@@ -487,6 +609,18 @@ Item {
             MissionLineView {
                 model: root.missionController ? root.missionController.simpleFlightPathSegments : null
                 opacity: root.fenceMode ? 0.5 : 1
+            }
+
+            // 当前连接飞行器图标：沿用原版 PlanView 逻辑，显示所有已连接 vehicle
+            MapItemView {
+                model: QGroundControl.multiVehicleManager.vehicles
+                delegate: VehicleMapItem {
+                    vehicle: object
+                    coordinate: object.coordinate
+                    map: planMap
+                    size: ScreenTools.defaultFontPixelHeight * 3
+                    z: QGroundControl.zOrderMapItems - 1
+                }
             }
 
             // 电子围栏：GeoFenceMapVisuals 内部会 addMapItem，必须用 Loader 按需销毁，不能只 visible=false
@@ -515,14 +649,14 @@ Item {
         // 地图左上角：圆形保存按钮（信息栏下方）
         Rectangle {
             id: saveButton
-            width: 46
-            height: 46
-            radius: 23
+            width: root.saveButtonSize
+            height: root.saveButtonSize
+            radius: width / 2
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.topMargin: 10
-            anchors.leftMargin: 10
-            z: 30
+            anchors.topMargin: root.topInset + Math.round((root.mobileLayout ? 5 : 10) * root.pageScale)
+            anchors.leftMargin: Math.round((root.mobileLayout ? 5 : 10) * root.pageScale)
+            z: 60
             color: saveMouse.pressed
                    ? (theme ? theme.green : "#16a34a")
                    : saveMouse.containsMouse
@@ -534,7 +668,7 @@ Item {
             Text {
                 anchors.centerIn: parent
                 text: "✓"
-                font.pixelSize: theme ? theme.fontLg + 2 : 18
+                font.pixelSize: Math.round((theme ? theme.fontLg + 2 : 18) * (root.mobileLayout ? 0.62 : 1.0))
                 font.weight: Font.Bold
                 color: saveMouse.containsMouse || saveMouse.pressed ? "#ffffff" : (theme ? theme.green : "#16a34a")
             }
@@ -550,34 +684,48 @@ Item {
         Text {
             anchors.top: saveButton.bottom
             anchors.horizontalCenter: saveButton.horizontalCenter
-            anchors.topMargin: 2
-            z: 30
+            anchors.topMargin: Math.round((root.mobileLayout ? 1 : 2) * root.pageScale)
+            z: 60
             text: "保存"
-            font.pixelSize: theme ? theme.fontXs : 9
+            font.pixelSize: Math.max(7, Math.round((theme ? theme.fontXs : 9) * (root.mobileLayout ? 0.70 : 1.0)))
             color: theme ? theme.green : "#16a34a"
         }
 
-        // 左下角信息栏（照搬起飞界面 HUD：姿态/航向/速度/经纬度/高度）
-        FlyViewHUD {
-            id: planHud
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            state: root.state
-            theme: root.theme
-        }
+    }
+
+    // 左下角信息栏：尺寸和起飞界面一致，但宽度只占地图区域，不能压到右侧任务规划面板
+    FlyViewHUD {
+        id: planHud
+        anchors.left: mapArea.left
+        anchors.right: root.panelCollapsed ? mapArea.right : rightPanel.left
+        anchors.bottom: mapArea.bottom
+        height: root.hudHeight > 0 ? root.hudHeight : Math.min(parent.height * 0.72, Math.max(260, Math.round(280 * root.pageScale)))
+        z: 8
+        state: root.state
+        theme: root.theme
+        instrumentSizeOverride: root.planHudInstrumentSize
+        telemetryWidthOverride: root.planHudTelemetryWidth
+        telemetryScaleOverride: root.planHudTelemetryScale
+        telemetryVisible: true
+        compactMode: false
     }
 
     // ---------- 右侧“任务规划”面板 ----------
     Rectangle {
         id: rightPanel
         anchors.top: parent.top
+        anchors.topMargin: root.topInset
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        width: 344
-        color: theme ? theme.surface : "#ffffff"
+        width: root.panelWidth
+        visible: !root.panelCollapsed
+        color: root.sidePanelSurface
         clip: true
+        z: 70
+
+        DeadMouseArea {
+            anchors.fill: parent
+        }
 
         WheelHandler {
             target: null
@@ -601,8 +749,8 @@ Item {
             // 面板标题
             Rectangle {
                 width: parent.width
-                height: theme ? theme.sectionH : 44
-                color: theme ? theme.surface : "#ffffff"
+                height: root.panelHeaderH
+                color: root.sidePanelSurface
 
                 Rectangle {
                     anchors.bottom: parent.bottom
@@ -614,10 +762,10 @@ Item {
 
                 Text {
                     anchors.left: parent.left
-                    anchors.leftMargin: 14
+                    anchors.leftMargin: root.panelSideMargin
                     anchors.verticalCenter: parent.verticalCenter
                     text: "任务规划"
-                    font.pixelSize: theme ? theme.fontLg : 15
+                    font.pixelSize: Math.round((theme ? theme.fontLg : 15) * root.compactScale)
                     font.weight: Font.DemiBold
                     color: theme ? theme.text : "#1a1d23"
                 }
@@ -625,9 +773,9 @@ Item {
 
             // 航线规划 / 电子围栏 切换
             RowLayout {
-                width: parent.width - 24
+                width: parent.width - root.panelSideMargin * 2
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
+                spacing: root.panelGap
 
                 RectBtn {
                     Layout.fillWidth: true
@@ -641,29 +789,30 @@ Item {
                     Layout.fillWidth: true
                     label: "⌗ 电子围栏"
                     btnSelected: root.rightTab === 1
-                    btnEnabled: root.fenceEnabled
+                    btnEnabled: true
                     onClicked: root.rightTab = 1
                 }
             }
 
             Flickable {
                 width: parent.width
-                height: parent.height - (theme ? theme.sectionH : 44) - (theme ? theme.controlHMd + 14 : 50)
+                height: parent.height - root.panelHeaderH - root.panelButtonH - root.panelGap
                 contentWidth: width
                 contentHeight: panelContent.implicitHeight
                 clip: true
+                interactive: !root.editingSelectedField
                 ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
                 Column {
                     id: panelContent
-                    width: parent.width - 28
-                    x: 14
-                    spacing: 12
+                    width: parent.width - root.panelSideMargin * 2
+                    x: root.panelSideMargin
+                    spacing: root.panelGap
 
                     // ======== 航线规划 ========
                     Column {
                         width: parent.width
-                        spacing: 10
+                        spacing: root.panelGap
                         visible: root.rightTab === 0
 
                         SectionTitle { text: "点击地图新增"; theme: root.theme }
@@ -671,8 +820,8 @@ Item {
                         GridLayout {
                             width: parent.width
                             columns: 2
-                            columnSpacing: 8
-                            rowSpacing: 8
+                            columnSpacing: root.panelGap
+                            rowSpacing: root.panelGap
 
                             RectBtn {
                                 Layout.fillWidth: true
@@ -690,7 +839,7 @@ Item {
                             }
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "着陆"
+                                label: root._landButtonText()
                                 btnSelected: root.currentTool === root.toolLand
                                 btnEnabled: root.landEnabled
                                 onClicked: root._setTool(root.toolLand)
@@ -719,7 +868,7 @@ Item {
                             height: root.hasSelection ? selectedCardContent.implicitHeight + 22 : 0
                             visible: root.hasSelection
                             radius: theme ? theme.radiusLg : 8
-                            color: theme ? theme.surface : "#ffffff"
+                            color: root.sidePanelSurface
                             border.width: 1
                             border.color: theme ? theme.border : "#d7dde6"
                             clip: true
@@ -736,13 +885,46 @@ Item {
                                     width: parent.width
                                     spacing: 8
 
-                                    Text {
+                                    RowLayout {
                                         Layout.fillWidth: true
-                                        text: root._itemTitle(root.selectedItem)
-                                        font.pixelSize: theme ? theme.fontLg : 15
-                                        font.weight: Font.DemiBold
-                                        color: theme ? theme.text : "#111827"
-                                        elide: Text.ElideRight
+                                        spacing: Math.round(4 * root.pageScale)
+
+                                        Text {
+                                            id: selectedCommandText
+                                            text: root._itemTypeText(root.selectedItem)
+                                            font.pixelSize: theme ? theme.fontLg : 15
+                                            font.weight: Font.DemiBold
+                                            color: root._selectedCommandEditable()
+                                                   ? (commandTextMouse.containsMouse ? root.brandBlue : (theme ? theme.text : "#111827"))
+                                                   : (theme ? theme.text : "#111827")
+                                            elide: Text.ElideRight
+
+                                            MouseArea {
+                                                id: commandTextMouse
+                                                anchors.fill: parent
+                                                enabled: root._selectedCommandEditable()
+                                                hoverEnabled: enabled
+                                                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                onClicked: root._openSelectedCommandDialog()
+                                            }
+                                        }
+
+                                        Text {
+                                            visible: root._selectedCommandEditable()
+                                            text: "▾"
+                                            font.pixelSize: Math.max(10, Math.round((theme ? theme.fontMd : 12) * root.compactScale))
+                                            font.weight: Font.DemiBold
+                                            color: commandTextMouse.containsMouse ? root.brandBlue : (theme ? theme.text2 : "#64748b")
+                                        }
+
+                                        Text {
+                                            Layout.fillWidth: true
+                                            text: root._itemSeqText(root.selectedItem)
+                                            font.pixelSize: theme ? theme.fontLg : 15
+                                            font.weight: Font.DemiBold
+                                            color: theme ? theme.text : "#111827"
+                                            elide: Text.ElideRight
+                                        }
                                     }
 
                                     RectBtn {
@@ -774,8 +956,10 @@ Item {
                                     spacing: 8
 
                                     FactTextField {
+                                        id: selectedAltitudeField
                                         Layout.fillWidth: true
                                         fact: root.selectedItem && root.selectedItem.altitude ? root.selectedItem.altitude : null
+                                        onActiveFocusChanged: root.editingSelectedField = activeFocus || selectedSpeedField.activeFocus
                                     }
 
                                     Text {
@@ -804,9 +988,10 @@ Item {
                                         selectByMouse: true
                                         font.pixelSize: theme ? theme.fontSm : 11
                                         color: theme ? theme.text : "#111827"
+                                        onActiveFocusChanged: root.editingSelectedField = activeFocus || selectedAltitudeField.activeFocus
                                         background: Rectangle {
                                             radius: 3
-                                            color: theme ? theme.surface : "#ffffff"
+                                            color: root.sidePanelSurface
                                             border.width: 1
                                             border.color: theme ? theme.border : "#cbd5e1"
                                         }
@@ -815,6 +1000,7 @@ Item {
                                                 var v = Number(text)
                                                 if (v === v && v >= 0) {
                                                     root.selectedItem.specifiedFlightSpeed = v
+                                                    root.pendingChanges = true
                                                 }
                                             }
                                         }
@@ -833,7 +1019,7 @@ Item {
                             width: parent.width
                             height: 64
                             radius: theme ? theme.radiusLg : 8
-                            color: theme ? theme.surface2 : "#f8fafc"
+                            color: root.sidePanelSurface2
                             border.width: 1
                             border.color: theme ? theme.border : "#e4e8ed"
                             visible: !root.hasSelection
@@ -1103,6 +1289,48 @@ Item {
         }
     }
 
+    Rectangle {
+        id: panelCollapseHandle
+        width: Math.max(22, Math.round(26 * root.pageScale))
+        height: Math.max(48, Math.round(58 * root.pageScale))
+        radius: Math.round(width / 2)
+        color: root.sidePanelSurface
+        border.color: theme ? theme.border : "#d7dde6"
+        border.width: 1
+        z: 80
+        anchors.right: root.panelCollapsed ? parent.right : rightPanel.left
+        anchors.rightMargin: root.panelCollapsed ? 0 : -Math.round(width / 2)
+        anchors.top: parent.top
+        anchors.topMargin: root.topInset + Math.round((parent.height - root.topInset - height) / 2)
+
+        Text {
+            anchors.centerIn: parent
+            text: root.panelCollapsed ? "‹" : "›"
+            font.pixelSize: Math.max(18, Math.round(22 * root.pageScale))
+            font.weight: Font.Bold
+            color: theme ? theme.text : "#111827"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.panelCollapsed = !root.panelCollapsed
+        }
+    }
+
+    Component {
+        id: selectedCommandDialog
+
+        CustomPlanMissionCommandDialog {
+            vehicle: root._planVehicle
+            missionItem: root.selectedItem
+            map: planMap
+            theme: root.theme
+            flyThroughCommandsAllowed: true
+        }
+    }
+
     // ================= 弹窗 =================
 
     // 保存成功提示
@@ -1161,7 +1389,7 @@ Item {
                     width: 120
                     height: 32
                     radius: theme ? theme.radius : 6
-                    color: okMouse.containsMouse ? (theme ? theme.blue : "#000066") : (theme ? theme.blueL : "#E6E6F0")
+                    color: okMouse.containsMouse ? root.brandBlue : root.brandHover
                     border.width: 1
                     border.color: theme ? theme.blueBorder : "#8080B3"
 
@@ -1170,7 +1398,7 @@ Item {
                         text: "确定"
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
-                        color: theme ? theme.blue : "#000066"
+                        color: okMouse.containsMouse ? "#ffffff" : root.brandBlue
                     }
 
                     MouseArea {
@@ -1237,7 +1465,7 @@ Item {
                     width: 88
                     height: 34
                     radius: theme ? theme.radius : 6
-                    color: promptSaveMouse.containsMouse ? (theme ? theme.blue : "#000066") : (theme ? theme.blueL : "#E6E6F0")
+                    color: promptSaveMouse.containsMouse ? root.brandBlue : root.brandHover
                     border.width: 1
                     border.color: theme ? theme.blueBorder : "#8080B3"
 
@@ -1246,7 +1474,7 @@ Item {
                         text: "保存"
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
-                        color: theme ? theme.blue : "#000066"
+                        color: promptSaveMouse.containsMouse ? "#ffffff" : root.brandBlue
                     }
 
                     MouseArea {
@@ -1359,7 +1587,7 @@ Item {
                     width: 120
                     height: 32
                     radius: theme ? theme.radius : 6
-                    color: msgOkMouse.containsMouse ? (theme ? theme.blue : "#000066") : (theme ? theme.blueL : "#E6E6F0")
+                    color: msgOkMouse.containsMouse ? root.brandBlue : root.brandHover
                     border.width: 1
                     border.color: theme ? theme.blueBorder : "#8080B3"
 
@@ -1368,7 +1596,7 @@ Item {
                         text: "确定"
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
-                        color: theme ? theme.blue : "#000066"
+                        color: msgOkMouse.containsMouse ? "#ffffff" : root.brandBlue
                     }
 
                     MouseArea {
@@ -1392,18 +1620,18 @@ Item {
         property bool danger: false
         signal clicked
 
-        implicitHeight: theme ? theme.controlHMd : 34
+        implicitHeight: root.panelButtonH
         radius: theme ? theme.radius : 6
         color: btnSelected
-               ? (btnMouse.containsMouse ? (theme ? theme.blue : "#00004D") : (theme ? theme.blue : "#000066"))
+               ? (btnMouse.containsMouse ? root.brandPress : root.brandBlue)
                : danger
                  ? (btnMouse.containsMouse ? (theme ? theme.red : "#dc2626") : (theme ? theme.redL : "#fee2e2"))
                  : btnMouse.containsMouse && btnEnabled
-                   ? (theme ? theme.blueL : "#E6E6F0")
-                   : (theme ? theme.surface2 : "#f8fafc")
+                   ? root.brandHover
+                   : root.sidePanelSurface2
         border.width: 1
         border.color: btnSelected
-                      ? (theme ? theme.blueBorder : "#000066")
+                      ? root.brandBorder
                       : danger
                         ? (theme ? theme.red : "#dc2626")
                         : (theme ? theme.border : "#d7dde6")
@@ -1413,14 +1641,16 @@ Item {
 
         Text {
             anchors.centerIn: parent
+            width: parent.width - Math.round(8 * root.pageScale)
+            horizontalAlignment: Text.AlignHCenter
             text: parent.label
-            font.pixelSize: theme ? theme.fontMd : 12
+            font.pixelSize: Math.max(10, Math.round((theme ? theme.fontMd : 12) * root.compactScale))
             font.weight: Font.Medium
             color: btnSelected || (danger && btnMouse.containsMouse && btnEnabled)
                    ? "#ffffff"
                    : danger
                      ? (theme ? theme.red : "#dc2626")
-                     : (btnMouse.containsMouse && btnEnabled ? (theme ? theme.blue : "#000066") : (theme ? theme.text : "#1a1d23"))
+                     : (btnMouse.containsMouse && btnEnabled ? root.brandBlue : (theme ? theme.text : "#1a1d23"))
             elide: Text.ElideRight
         }
 

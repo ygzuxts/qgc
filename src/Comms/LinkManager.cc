@@ -385,7 +385,14 @@ void LinkManager::loadLinkConfigurationList()
 
 void LinkManager::_addUDPAutoConnectLink()
 {
-    if (!_autoConnectSettings->autoConnectUDP()->rawValue().toBool()) {
+    const bool udpAutoConnectEnabled = _autoConnectSettings->autoConnectUDP()->rawValue().toBool();
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+    const bool keepDesktopSimulatorUdpEnabled = true;
+#else
+    const bool keepDesktopSimulatorUdpEnabled = false;
+#endif
+
+    if (!udpAutoConnectEnabled && !keepDesktopSimulatorUdpEnabled) {
         return;
     }
 

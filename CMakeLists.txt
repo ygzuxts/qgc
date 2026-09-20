@@ -171,7 +171,7 @@ if(QGC_ENABLE_HERELINK AND ANDROID)
 else()
     set(QGC_QT_MINIMUM_VERSION "6.8.3" CACHE STRING "Minimum Supported Qt Version")
     set(QGC_QT_MAXIMUM_VERSION "6.8.3" CACHE STRING "Maximum Supported Qt Version")
-    set(QGC_QT_ANDROID_MIN_SDK_VERSION "28" CACHE STRING "Android Min SDK Version")
+    set(QGC_QT_ANDROID_MIN_SDK_VERSION "27" CACHE STRING "Android Min SDK Version")
 endif()
 
 find_package(Qt6

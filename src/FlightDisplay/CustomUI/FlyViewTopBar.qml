@@ -39,6 +39,12 @@ Rectangle {
     readonly property color brandPress: root.theme ? root.theme.bluePress : "#00004D"
     readonly property color brandBorder: root.theme ? root.theme.blueBorder : "#8080B3"
     readonly property real interfaceDropdownExtraHeight: 0
+    readonly property bool compactPopupLayout: root.theme && root.theme.mobile
+    readonly property real popupScale: root.compactPopupLayout ? 0.78 : 1.0
+    readonly property real popupUnit: (root.theme ? root.theme.uiScale : 1) * root.popupScale
+    readonly property real interfacePopupWidth: root.compactPopupLayout ? Math.round(168 * (root.theme ? root.theme.uiScale : 1)) : Math.round(228 * (root.theme ? root.theme.uiScale : 1))
+    readonly property real interfacePopupHeaderH: Math.round(46 * root.popupUnit)
+    readonly property real interfacePopupBodyH: Math.round(226 * root.popupUnit)
     readonly property var activeVehicle: root.state ? root.state.activeVehicle : null
     readonly property bool vehicleConnected: root.state && root.state.vehicleConnected
     readonly property bool communicationLost: !!(root.activeVehicle && root.activeVehicle.vehicleLinkManager && root.activeVehicle.vehicleLinkManager.communicationLost)
@@ -102,7 +108,7 @@ Rectangle {
         }
     }
 
-    height: theme ? Math.max(theme.topBarH, 58) : 58
+    height: theme ? Math.max(theme.topBarH, Math.round(44 * theme.uiScale)) : 58
     color: theme ? Qt.rgba(theme.surface.r, theme.surface.g, theme.surface.b, 0.0) : "transparent"
 
     Rectangle {
@@ -116,19 +122,23 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 1
+        height: Math.round(1 * (theme ? theme.uiScale : 1))
         color: root.theme ? root.theme.border : "#e4e8ed"
     }
 
     Item {
         anchors.fill: parent
 
+        DeadMouseArea {
+            anchors.fill: parent
+        }
+
         Rectangle {
             id: logoButton
             anchors.left: parent.left
             anchors.leftMargin: theme ? theme.spacingSm : 8
             anchors.verticalCenter: parent.verticalCenter
-            width: theme ? Math.max(theme.controlHMd + 10, 54) : 54
+            width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 54
             height: width
             radius: theme ? theme.radiusLg + 2 : 10
             color: aircraftMouse.pressed
@@ -136,7 +146,7 @@ Rectangle {
                    : aircraftMouse.containsMouse
                      ? root.brandHover
                      : "#ffffff"
-            border.width: 1
+            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
             border.color: aircraftMouse.containsMouse || aircraftMouse.pressed
                           ? root.brandBorder
                           : (root.theme ? root.theme.border : "#d9e2ec")
@@ -150,12 +160,34 @@ Rectangle {
                 mipmap: true
             }
 
+            Timer {
+                id: switchNativeHoldTimer
+                interval: 6000
+                repeat: false
+                onTriggered: {
+                    root.interfaceDisplayExpanded = false
+                    root.themeSelectExpanded = false
+                    root.uiSelectExpanded = false
+                    if (root.state && root.state.setCustomFlyViewEnabled) {
+                        root.state.setCustomFlyViewEnabled(false)
+                    }
+                }
+            }
+
             MouseArea {
                 id: aircraftMouse
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.interfaceDisplayExpanded = !root.interfaceDisplayExpanded
+                onPressed: switchNativeHoldTimer.restart()
+                onReleased: {
+                    if (switchNativeHoldTimer.running) {
+                        switchNativeHoldTimer.stop()
+                        root.interfaceDisplayExpanded = !root.interfaceDisplayExpanded
+                    }
+                }
+                onCanceled: switchNativeHoldTimer.stop()
+                onExited: if (pressed) switchNativeHoldTimer.stop()
             }
         }
 
@@ -168,7 +200,7 @@ Rectangle {
 
             Rectangle {
                 id: flightStatusModePill
-                width: theme ? theme.baseWidth * 16.8 : 178
+                width: Math.min(root.width * 0.36, Math.max(theme ? theme.baseWidth * 20.5 : 218, contentRow.implicitWidth + Math.round(22 * (theme ? theme.uiScale : 1))))
                 height: theme ? theme.controlHMd : 32
                 radius: height / 2
                 color: flightModeMouse.pressed
@@ -176,41 +208,42 @@ Rectangle {
                        : flightModeMouse.containsMouse || root.flightModePanelVisible
                          ? root.brandHover
                          : (root.theme && root.theme.darkMode ? "#000000" : "#ffffff")
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: flightModeMouse.containsMouse || flightModeMouse.pressed || root.flightModePanelVisible
                               ? root.brandBorder
                               : (root.theme && root.theme.darkMode ? "#333333" : Qt.rgba(0.83, 0.86, 0.91, 1.0))
 
                 Row {
+                    id: contentRow
                     anchors.fill: parent
                     anchors.leftMargin: 10
                     anchors.rightMargin: 8
                     spacing: 7
 
                     Row {
-                        width: 68
+                        width: statusTextItem.implicitWidth + statusArrowText.implicitWidth + Math.round(18 * (theme ? theme.uiScale : 1))
                         height: parent.height
                         spacing: 4
 
                         Rectangle {
-                            width: 6
-                            height: 6
+                            width: Math.round(6 * (theme ? theme.uiScale : 1))
+                            height: Math.round(6 * (theme ? theme.uiScale : 1))
                             radius: 3
                             anchors.verticalCenter: parent.verticalCenter
                             color: root.statusColor()
                         }
 
                         Text {
-                            width: parent.width - x - 10
+                            id: statusTextItem
                             anchors.verticalCenter: parent.verticalCenter
                             text: root.statusText()
                             font.pixelSize: theme ? theme.fontSm : 11
                             font.weight: Font.Medium
                             color: root.statusColor()
-                            elide: Text.ElideRight
                         }
 
                         Text {
+                            id: statusArrowText
                             anchors.verticalCenter: parent.verticalCenter
                             text: root.flightModePanelVisible ? "▲" : "▼"
                             font.pixelSize: theme ? theme.fontXs : 9
@@ -219,20 +252,19 @@ Rectangle {
                     }
 
                     Rectangle {
-                        width: 1
-                        height: 17
+                        width: Math.round(1 * (theme ? theme.uiScale : 1))
+                        height: Math.round(17 * (theme ? theme.uiScale : 1))
                         anchors.verticalCenter: parent.verticalCenter
                         color: root.theme && root.theme.darkMode ? "#333333" : "#d7dde8"
                     }
 
                     Text {
-                        width: 76
+                        width: implicitWidth
                         anchors.verticalCenter: parent.verticalCenter
                         text: root.modeDisplayName(modeText)
                         font.pixelSize: theme ? theme.fontSm : 11
                         font.weight: Font.Bold
                         color: root.panelText
-                        elide: Text.ElideRight
                     }
 
                     Text {
@@ -240,7 +272,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         text: root.flightModePanelVisible ? "▲" : "▼"
                         font.pixelSize: theme ? theme.fontSm : 11
-                        color: "#000066"
+                        color: root.brandBlue
                     }
                 }
 
@@ -255,14 +287,15 @@ Rectangle {
 
             Rectangle {
                 id: armStatePill
-                width: theme ? theme.baseWidth * 8.2 : 96
+                width: Math.max(theme ? theme.baseWidth * 8.2 : 96, armStateRow.implicitWidth + Math.round(18 * (theme ? theme.uiScale : 1)))
                 height: theme ? theme.controlHMd : 32
                 radius: height / 2
                 color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: root.theme && root.theme.darkMode ? "#333333" : Qt.rgba(0.83, 0.86, 0.91, 1.0)
 
                 Row {
+                    id: armStateRow
                     anchors.centerIn: parent
                     spacing: theme ? theme.spacingSm : 8
 
@@ -287,13 +320,13 @@ Rectangle {
             Rectangle {
                 id: disconnectPill
                 visible: root.activeVehicle && root.communicationLost
-                width: 84
+                width: Math.round(84 * (theme ? theme.uiScale : 1))
                 height: theme ? theme.controlHMd : 32
                 radius: height / 2
                 color: disconnectMouse.pressed
                        ? Qt.rgba(220 / 255, 38 / 255, 38 / 255, 0.16)
                        : (disconnectMouse.containsMouse ? Qt.rgba(220 / 255, 38 / 255, 38 / 255, 0.08) : "transparent")
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: "#dc2626"
 
                 Text {
@@ -328,8 +361,8 @@ Rectangle {
 
                 QGCColoredImage {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 36
-                    height: 42
+                    width: Math.round(36 * (theme ? theme.uiScale : 1))
+                    height: Math.round(42 * (theme ? theme.uiScale : 1))
                     source: "/qmlimages/BatteryGreen.svg"
                     color: "#00c853"
                     fillMode: Image.PreserveAspectFit
@@ -338,7 +371,7 @@ Rectangle {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.batteryTopText
-                    font.pixelSize: 17
+                    font.pixelSize: Math.round(17 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Medium
                     color: root.telemetryTextColor
                 }
@@ -350,8 +383,8 @@ Rectangle {
 
                 QGCColoredImage {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 44
-                    height: 44
+                    width: Math.round(44 * (theme ? theme.uiScale : 1))
+                    height: Math.round(44 * (theme ? theme.uiScale : 1))
                     source: "/qmlimages/Gps.svg"
                     color: root.telemetryTextColor
                     fillMode: Image.PreserveAspectFit
@@ -363,14 +396,14 @@ Rectangle {
 
                     Text {
                         text: root.gpsSatTopText
-                        font.pixelSize: 14
+                        font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Medium
                         color: root.telemetryTextColor
                     }
 
                     Text {
                         text: root.gpsHdopTopText
-                        font.pixelSize: 14
+                        font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Medium
                         color: root.telemetryTextColor
                         lineHeight: 0.9
@@ -387,7 +420,7 @@ Rectangle {
             spacing: theme ? theme.spacingMd : 12
 
             Rectangle {
-                width: theme ? Math.max(theme.controlHMd + 10, 52) : 52
+                width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 52
                 height: width
                 radius: theme ? theme.radiusLg + 2 : 10
                 color: moreMouse.pressed
@@ -395,7 +428,7 @@ Rectangle {
                        : moreMouse.containsMouse
                          ? root.brandBlue
                          : (root.theme && root.theme.darkMode ? Qt.rgba(31 / 255, 41 / 255, 55 / 255, 0.78) : "#ffffff")
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: moreMouse.containsMouse || moreMouse.pressed
                               ? root.brandBorder
                               : (root.theme && root.theme.darkMode ? Qt.rgba(148 / 255, 163 / 255, 184 / 255, 0.42) : "#d7e2f0")
@@ -418,7 +451,7 @@ Rectangle {
             }
 
             Rectangle {
-                width: theme ? Math.max(theme.controlHMd + 10, 52) : 52
+                width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 52
                 height: width
                 radius: theme ? theme.radiusLg + 2 : 10
                 color: pageMouse.pressed
@@ -426,7 +459,7 @@ Rectangle {
                        : pageMouse.containsMouse
                          ? root.brandHover
                          : (root.theme && root.theme.darkMode ? Qt.rgba(31 / 255, 41 / 255, 55 / 255, 0.78) : "#ffffff")
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: pageMouse.containsMouse || pageMouse.pressed
                               ? root.brandBorder
                               : (root.theme && root.theme.darkMode ? Qt.rgba(148 / 255, 163 / 255, 184 / 255, 0.42) : "#d7e2f0")
@@ -455,8 +488,8 @@ Rectangle {
         id: interfaceDisplayPopup
         x: logoButton.x
         y: root.height + 2
-        width: 228
-        height: root.interfaceDisplaySectionExpanded ? 330 : 48
+        width: Math.min(root.interfacePopupWidth, root.width - logoButton.x - Math.round(8 * (theme ? theme.uiScale : 1)))
+        height: root.interfaceDisplaySectionExpanded ? root.interfacePopupHeaderH + root.interfacePopupBodyH : root.interfacePopupHeaderH
         padding: 0
         topPadding: 0
         bottomPadding: 0
@@ -471,7 +504,7 @@ Rectangle {
         background: Rectangle {
             radius: 12
             color: root.panelBg
-            border.width: 1
+            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
             border.color: root.panelOuterBorder
         }
 
@@ -496,30 +529,30 @@ Rectangle {
                 Rectangle {
                     y: 0
                     width: parent.width
-                    height: 46
+                    height: root.interfacePopupHeaderH
                     radius: 10
                     color: root.panelBg
-                    border.width: 0
+                    border.width: Math.round(0 * (theme ? theme.uiScale : 1))
                     clip: true
 
                     Text {
                         anchors.left: parent.left
-                        anchors.leftMargin: 20
+                        anchors.leftMargin: Math.round((root.compactPopupLayout ? 14 : 20) * root.popupUnit)
                         anchors.verticalCenter: parent.verticalCenter
                         text: "界面显示"
-                        font.pixelSize: 18
+                        font.pixelSize: Math.round((root.compactPopupLayout ? 15 : 18) * root.popupUnit)
                         font.weight: Font.Bold
                         color: root.panelText
                     }
 
                     Text {
                         anchors.right: parent.right
-                        anchors.rightMargin: 20
+                        anchors.rightMargin: Math.round((root.compactPopupLayout ? 14 : 20) * root.popupUnit)
                         anchors.verticalCenter: parent.verticalCenter
                         text: root.interfaceDisplaySectionExpanded ? "▲" : "▼"
-                        font.pixelSize: 12
+                        font.pixelSize: Math.round(12 * root.popupUnit)
                         font.weight: Font.Bold
-                        color: "#000066"
+                        color: root.brandBlue
                     }
 
                     MouseArea {
@@ -530,57 +563,57 @@ Rectangle {
                 }
 
                 Item {
-                    y: 46
+                    y: root.interfacePopupHeaderH
                     width: parent.width
-                    height: root.interfaceDisplaySectionExpanded ? 284 : 0
+                    height: root.interfaceDisplaySectionExpanded ? root.interfacePopupBodyH : 0
                     visible: root.interfaceDisplaySectionExpanded
                     clip: false
 
                     Column {
                         anchors.fill: parent
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
-                        anchors.topMargin: 2
-                        anchors.bottomMargin: 10
-                        spacing: 8
+                        anchors.leftMargin: Math.round((root.compactPopupLayout ? 8 : 12) * root.popupUnit)
+                        anchors.rightMargin: Math.round((root.compactPopupLayout ? 8 : 12) * root.popupUnit)
+                        anchors.topMargin: Math.round(2 * root.popupUnit)
+                        anchors.bottomMargin: Math.round(10 * root.popupUnit)
+                        spacing: Math.round((root.compactPopupLayout ? 6 : 8) * root.popupUnit)
 
                         Item {
                             width: parent.width
-                            height: 58
+                            height: Math.round(58 * root.popupUnit)
                             z: root.themeSelectExpanded ? 80 : 1
 
                         Text {
                             y: 0
                             text: "主题模式"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * root.popupUnit)
                             color: root.panelText2
                         }
 
                         Rectangle {
                             id: themeSelectBox
-                            y: 22
+                            y: Math.round(22 * root.popupUnit)
                             width: parent.width
-                            height: 34
+                            height: Math.round(34 * root.popupUnit)
                             radius: 2
                             color: root.themeSelectExpanded ? root.panelSelectBg : root.panelFieldBg
-                            border.width: 1
+                            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                             border.color: root.panelFieldBorder
 
                             Text {
                                 anchors.left: parent.left
-                                anchors.leftMargin: 12
+                                anchors.leftMargin: Math.round(10 * root.popupUnit)
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.theme && root.theme.darkMode ? "深色主题" : "浅色主题"
-                                font.pixelSize: 12
+                                font.pixelSize: Math.round(12 * root.popupUnit)
                                 color: root.panelText
                             }
 
                             Text {
                                 anchors.right: parent.right
-                                anchors.rightMargin: 10
+                                anchors.rightMargin: Math.round(8 * root.popupUnit)
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: "⌃\n⌄"
-                                font.pixelSize: 14
+                                font.pixelSize: Math.round(14 * root.popupUnit)
                                 lineHeight: 0.62
                                 horizontalAlignment: Text.AlignHCenter
                                 color: root.panelText
@@ -598,13 +631,13 @@ Rectangle {
 
                         Rectangle {
                             width: parent.width
-                            height: 68
+                            height: Math.round(68 * root.popupUnit)
                             y: themeSelectBox.y + themeSelectBox.height
                             z: 200
                             visible: root.themeSelectExpanded
                             clip: true
                             color: root.panelBg
-                            border.width: 1
+                            border.width: Math.round(1 * root.popupUnit)
                             border.color: root.panelFieldBorder
 
                             Column {
@@ -612,15 +645,15 @@ Rectangle {
 
                                 Rectangle {
                                     width: parent.width
-                                    height: 34
+                                    height: Math.round(34 * root.popupUnit)
                                     color: root.theme && !root.theme.darkMode ? root.panelSelectBg : root.panelBg
 
                                     Text {
                                         anchors.left: parent.left
-                                        anchors.leftMargin: 12
+                                        anchors.leftMargin: Math.round(10 * root.popupUnit)
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: "浅色主题"
-                                        font.pixelSize: 12
+                                        font.pixelSize: Math.round(12 * root.popupUnit)
                                         font.weight: root.theme && !root.theme.darkMode ? Font.Bold : Font.Normal
                                         color: root.panelText
                                     }
@@ -640,15 +673,15 @@ Rectangle {
 
                                 Rectangle {
                                     width: parent.width
-                                    height: 34
+                                    height: Math.round(34 * root.popupUnit)
                                     color: root.theme && root.theme.darkMode ? root.panelSelectBg : root.panelBg
 
                                     Text {
                                         anchors.left: parent.left
-                                        anchors.leftMargin: 12
+                                        anchors.leftMargin: Math.round(10 * root.popupUnit)
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: "深色主题"
-                                        font.pixelSize: 12
+                                        font.pixelSize: Math.round(12 * root.popupUnit)
                                         font.weight: root.theme && root.theme.darkMode ? Font.Bold : Font.Normal
                                         color: root.panelText
                                     }
@@ -671,7 +704,7 @@ Rectangle {
                                 anchors.fill: parent
                                 z: 100
                                 color: "transparent"
-                                border.width: 1
+                                border.width: Math.round(1 * root.popupUnit)
                                 border.color: root.panelFieldBorder
                             }
                         }
@@ -679,13 +712,14 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 58
+                        height: Math.round(0 * (theme ? theme.uiScale : 1))
+                        visible: false
                         z: root.uiSelectExpanded ? 80 : 1
 
                         Text {
                             y: 0
                             text: "界面模式"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
 
@@ -693,10 +727,10 @@ Rectangle {
                             id: uiSelectBox
                             y: 22
                             width: parent.width
-                            height: 34
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
                             radius: 2
                             color: root.uiSelectExpanded ? root.panelSelectBg : root.panelFieldBg
-                            border.width: 1
+                            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                             border.color: root.panelFieldBorder
 
                             Text {
@@ -704,7 +738,7 @@ Rectangle {
                                 anchors.leftMargin: 12
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.state && root.state.customFlyViewEnabled === false ? "原版界面" : "自定义界面"
-                                font.pixelSize: 12
+                                font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                 color: root.panelText
                             }
 
@@ -713,7 +747,7 @@ Rectangle {
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: "⌃\n⌄"
-                                font.pixelSize: 14
+                                font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
                                 lineHeight: 0.62
                                 horizontalAlignment: Text.AlignHCenter
                                 color: root.panelText
@@ -731,13 +765,13 @@ Rectangle {
 
                         Rectangle {
                             width: parent.width
-                            height: 68
+                            height: Math.round(68 * (theme ? theme.uiScale : 1))
                             y: uiSelectBox.y + uiSelectBox.height
                             z: 200
                             visible: root.uiSelectExpanded
                             clip: true
                             color: root.panelBg
-                            border.width: 1
+                            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                             border.color: root.panelFieldBorder
 
                             Column {
@@ -745,7 +779,7 @@ Rectangle {
 
                                 Rectangle {
                                     width: parent.width
-                                    height: 34
+                                    height: Math.round(34 * (theme ? theme.uiScale : 1))
                                     color: root.state && root.state.customFlyViewEnabled !== false ? root.panelSelectBg : root.panelBg
 
                                     Text {
@@ -753,7 +787,7 @@ Rectangle {
                                         anchors.leftMargin: 12
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: "自定义界面"
-                                        font.pixelSize: 12
+                                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                         font.weight: root.state && root.state.customFlyViewEnabled !== false ? Font.Bold : Font.Normal
                                         color: root.panelText
                                     }
@@ -770,7 +804,7 @@ Rectangle {
 
                                 Rectangle {
                                     width: parent.width
-                                    height: 34
+                                    height: Math.round(34 * (theme ? theme.uiScale : 1))
                                     color: root.state && root.state.customFlyViewEnabled === false ? root.panelSelectBg : root.panelBg
 
                                     Text {
@@ -778,7 +812,7 @@ Rectangle {
                                         anchors.leftMargin: 12
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: "原版界面"
-                                        font.pixelSize: 12
+                                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                         font.weight: root.state && root.state.customFlyViewEnabled === false ? Font.Bold : Font.Normal
                                         color: root.panelText
                                     }
@@ -799,7 +833,7 @@ Rectangle {
                                 anchors.fill: parent
                                 z: 100
                                 color: "transparent"
-                                border.width: 1
+                                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                                 border.color: root.panelFieldBorder
                             }
                         }
@@ -807,33 +841,33 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 0
+                        height: Math.round(0 * (theme ? theme.uiScale : 1))
                         visible: false
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "底部展开栏"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
 
                         Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 42
-                            height: 22
+                            width: Math.round(42 * (theme ? theme.uiScale : 1))
+                            height: Math.round(22 * (theme ? theme.uiScale : 1))
                             radius: 11
-                            color: root.state && root.state.showHudExpandBar ? "#000066" : (root.theme && root.theme.darkMode ? "#333333" : "#e5e7eb")
-                            border.width: 0
+                            color: root.state && root.state.showHudExpandBar ? root.brandBlue : (root.theme && root.theme.darkMode ? "#333333" : "#e5e7eb")
+                            border.width: Math.round(0 * (theme ? theme.uiScale : 1))
 
                             Rectangle {
                                 x: root.state && root.state.showHudExpandBar ? parent.width - width - 2 : 2
                                 y: 2
-                                width: 18
-                                height: 18
+                                width: Math.round(18 * (theme ? theme.uiScale : 1))
+                                height: Math.round(18 * (theme ? theme.uiScale : 1))
                                 radius: 9
                                 color: "#ffffff"
-                                border.width: 1
+                                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                                 border.color: "#c9d4e6"
                             }
 
@@ -851,12 +885,12 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 20
+                        height: Math.round(20 * (theme ? theme.uiScale : 1))
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "侧边栏透明度"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
 
@@ -864,14 +898,14 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.round((root.state && root.state.sidePanelOpacity !== undefined ? root.state.sidePanelOpacity : 0.92) * 100) + "%"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.brandBlue
                         }
                     }
 
                     Slider {
                         width: parent.width
-                        height: 30
+                        height: Math.round(30 * (theme ? theme.uiScale : 1))
                         from: 0
                         to: 1
                         stepSize: 0.01
@@ -882,7 +916,7 @@ Rectangle {
                             x: parent.leftPadding
                             y: parent.topPadding + parent.availableHeight / 2 - height / 2
                             width: parent.availableWidth
-                            height: 4
+                            height: Math.round(4 * (theme ? theme.uiScale : 1))
                             radius: 2
                             color: root.theme && root.theme.darkMode ? "#333333" : "#e5e7eb"
 
@@ -896,23 +930,23 @@ Rectangle {
                         handle: Rectangle {
                             x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
                             y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                            width: 16
-                            height: 16
+                            width: Math.round(16 * (theme ? theme.uiScale : 1))
+                            height: Math.round(16 * (theme ? theme.uiScale : 1))
                             radius: 8
                             color: "#ffffff"
-                            border.width: 1
+                            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                             border.color: "#c4c4c4"
                         }
                     }
 
                     Item {
                         width: parent.width
-                        height: 20
+                        height: Math.round(20 * (theme ? theme.uiScale : 1))
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "信息栏透明度"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
 
@@ -920,14 +954,14 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.round((root.state && root.state.infoBarOpacity !== undefined ? root.state.infoBarOpacity : 0.82) * 100) + "%"
-                            font.pixelSize: 12
-                            color: "#000066"
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
                         }
                     }
 
                     Slider {
                         width: parent.width
-                        height: 30
+                        height: Math.round(30 * (theme ? theme.uiScale : 1))
                         from: 0
                         to: 1
                         stepSize: 0.01
@@ -938,7 +972,7 @@ Rectangle {
                             x: parent.leftPadding
                             y: parent.topPadding + parent.availableHeight / 2 - height / 2
                             width: parent.availableWidth
-                            height: 4
+                            height: Math.round(4 * (theme ? theme.uiScale : 1))
                             radius: 2
                             color: root.theme && root.theme.darkMode ? "#333333" : "#e5e7eb"
 
@@ -952,11 +986,11 @@ Rectangle {
                         handle: Rectangle {
                             x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
                             y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                            width: 16
-                            height: 16
+                            width: Math.round(16 * (theme ? theme.uiScale : 1))
+                            height: Math.round(16 * (theme ? theme.uiScale : 1))
                             radius: 8
                             color: "#ffffff"
-                            border.width: 1
+                            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                             border.color: "#c4c4c4"
                         }
                     }
@@ -968,7 +1002,7 @@ Rectangle {
                 anchors.margins: 1
                 radius: 12
                 color: "transparent"
-                border.width: 2
+                border.width: Math.round(2 * (theme ? theme.uiScale : 1))
                 border.color: root.panelOuterBorder
                 z: 999
             }
@@ -999,7 +1033,7 @@ Rectangle {
     /*
     Popup {
         id: flightModePopup
-                                height: 34
+                                height: Math.round(34 * (theme ? theme.uiScale : 1))
                                 color: root.theme && !root.theme.darkMode ? "#f3f3f3" : "#ffffff"
 
                                 Text {
@@ -1007,7 +1041,7 @@ Rectangle {
                                     anchors.leftMargin: 12
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "浅色主题"
-                                    font.pixelSize: 12
+                                    font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                     font.weight: root.theme && !root.theme.darkMode ? Font.Bold : Font.Normal
                                     color: "#111827"
                                 }
@@ -1024,7 +1058,7 @@ Rectangle {
 
                             Rectangle {
                                 width: parent.width
-                                height: 34
+                                height: Math.round(34 * (theme ? theme.uiScale : 1))
                                 color: root.theme && root.theme.darkMode ? "#f3f3f3" : "#ffffff"
 
                                 Text {
@@ -1032,7 +1066,7 @@ Rectangle {
                                     anchors.leftMargin: 12
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "深色主题"
-                                    font.pixelSize: 12
+                                    font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                     font.weight: root.theme && root.theme.darkMode ? Font.Bold : Font.Normal
                                     color: "#111827"
                                 }
@@ -1055,23 +1089,23 @@ Rectangle {
 
                         Text {
                             text: "界面模式"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: "#4b5563"
                         }
 
                         Rectangle {
                             width: parent.width
-                            height: 34
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
                             radius: 2
                             color: root.uiSelectExpanded ? "#d3d3d3" : "#e7e7e7"
-                            border.width: 0
+                            border.width: Math.round(0 * (theme ? theme.uiScale : 1))
 
                             Text {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 12
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.state && root.state.customFlyViewEnabled === false ? "原版界面" : "自定义界面"
-                                font.pixelSize: 12
+                                font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                 color: "#111827"
                             }
 
@@ -1080,7 +1114,7 @@ Rectangle {
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.uiSelectExpanded ? "⌃" : "⌄"
-                                font.pixelSize: 20
+                                font.pixelSize: Math.round(20 * (theme ? theme.uiScale : 1))
                                 color: "#333333"
                             }
 
@@ -1102,7 +1136,7 @@ Rectangle {
 
                             Rectangle {
                                 width: parent.width
-                                height: 34
+                                height: Math.round(34 * (theme ? theme.uiScale : 1))
                                 color: root.state && root.state.customFlyViewEnabled !== false ? "#f3f3f3" : "#ffffff"
 
                                 Text {
@@ -1110,7 +1144,7 @@ Rectangle {
                                     anchors.leftMargin: 12
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "自定义界面"
-                                    font.pixelSize: 12
+                                    font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                     font.weight: root.state && root.state.customFlyViewEnabled !== false ? Font.Bold : Font.Normal
                                     color: "#111827"
                                 }
@@ -1127,7 +1161,7 @@ Rectangle {
 
                             Rectangle {
                                 width: parent.width
-                                height: 34
+                                height: Math.round(34 * (theme ? theme.uiScale : 1))
                                 color: root.state && root.state.customFlyViewEnabled === false ? "#f3f3f3" : "#ffffff"
 
                                 Text {
@@ -1135,7 +1169,7 @@ Rectangle {
                                     anchors.leftMargin: 12
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "原版界面"
-                                    font.pixelSize: 12
+                                    font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                     font.weight: root.state && root.state.customFlyViewEnabled === false ? Font.Bold : Font.Normal
                                     color: "#111827"
                                 }
@@ -1154,32 +1188,32 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 34
+                        height: Math.round(34 * (theme ? theme.uiScale : 1))
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "底部展开栏"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: "#4b5563"
                         }
 
                         Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 42
-                            height: 22
+                            width: Math.round(42 * (theme ? theme.uiScale : 1))
+                            height: Math.round(22 * (theme ? theme.uiScale : 1))
                             radius: 11
-                            color: root.state && root.state.showHudExpandBar ? "#000066" : "#e5e7eb"
-                            border.width: 0
+                            color: root.state && root.state.showHudExpandBar ? root.brandBlue : "#e5e7eb"
+                            border.width: Math.round(0 * (theme ? theme.uiScale : 1))
 
                             Rectangle {
                                 x: root.state && root.state.showHudExpandBar ? parent.width - width - 2 : 2
                                 y: 2
-                                width: 18
-                                height: 18
+                                width: Math.round(18 * (theme ? theme.uiScale : 1))
+                                height: Math.round(18 * (theme ? theme.uiScale : 1))
                                 radius: 9
                                 color: "#ffffff"
-                                border.width: 1
+                                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                                 border.color: "#c9d4e6"
                             }
 
@@ -1197,12 +1231,12 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 20
+                        height: Math.round(20 * (theme ? theme.uiScale : 1))
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "侧边栏透明度"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: "#4b5563"
                         }
 
@@ -1210,14 +1244,14 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.round((root.state && root.state.sidePanelOpacity !== undefined ? root.state.sidePanelOpacity : 0.92) * 100) + "%"
-                            font.pixelSize: 12
-                            color: "#000066"
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
                         }
                     }
 
                     Slider {
                         width: parent.width
-                        height: 36
+                        height: Math.round(36 * (theme ? theme.uiScale : 1))
                         from: 0
                         to: 1
                         stepSize: 0.01
@@ -1228,12 +1262,12 @@ Rectangle {
 
                     Item {
                         width: parent.width
-                        height: 20
+                        height: Math.round(20 * (theme ? theme.uiScale : 1))
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "信息栏透明度"
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: "#4b5563"
                         }
 
@@ -1241,14 +1275,14 @@ Rectangle {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             text: Math.round((root.state && root.state.infoBarOpacity !== undefined ? root.state.infoBarOpacity : 0.82) * 100) + "%"
-                            font.pixelSize: 12
-                            color: "#000066"
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
                         }
                     }
 
                     Slider {
                         width: parent.width
-                        height: 36
+                        height: Math.round(36 * (theme ? theme.uiScale : 1))
                         from: 0
                         to: 1
                         stepSize: 0.01
@@ -1282,7 +1316,7 @@ Rectangle {
         id: flightModePopup
         x: modeButton.x + leftStatusRow.x
         y: root.height + 2
-        width: 218
+        width: Math.round(218 * (theme ? theme.uiScale : 1))
         height: Math.min(620, 116 + Math.max(1, root.flightModeList.length) * 48)
         modal: false
         focus: true
@@ -1293,7 +1327,7 @@ Rectangle {
         background: Rectangle {
             radius: 8
             color: "#ffffff"
-            border.width: 1
+            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
             border.color: "#8fb3f5"
         }
 
@@ -1307,7 +1341,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.topMargin: 12
                 text: "飞行模式"
-                font.pixelSize: 18
+                font.pixelSize: Math.round(18 * (theme ? theme.uiScale : 1))
                 font.weight: Font.Bold
                 color: "#111111"
             }
@@ -1323,7 +1357,7 @@ Rectangle {
                 text: root.state && root.state.vehicleConnected
                         ? ("Disconnected · 当前 " + root.modeDisplayName(modeText) + "\nmodes: " + root.flightModeList.length)
                         : "Disconnected · 当前 --\nmodes: 0"
-                font.pixelSize: 12
+                font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                 color: "#32507a"
                 wrapMode: Text.WordWrap
             }
@@ -1337,7 +1371,7 @@ Rectangle {
                 anchors.top: flightModeSummary.bottom
                 anchors.topMargin: 10
                 width: parent.width
-                height: 1
+                height: Math.round(1 * (theme ? theme.uiScale : 1))
                 color: "#d8e2ef"
             }
 
@@ -1366,7 +1400,7 @@ Rectangle {
                             required property string modelData
 
                             width: modeListColumn.width
-                            height: 42
+                            height: Math.round(42 * (theme ? theme.uiScale : 1))
                             radius: 7
                             color: modelData === modeText
                                    ? root.brandHover
@@ -1379,7 +1413,7 @@ Rectangle {
                                 anchors.leftMargin: 12
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.modeDisplayName(modelData)
-                                font.pixelSize: 13
+                                font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                                 font.weight: modelData === modeText ? Font.Bold : Font.Normal
                                 color: "#172033"
                             }
@@ -1406,7 +1440,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         text: "未连接，暂无可用模式"
-                        font.pixelSize: 12
+                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: "#24415f"
                     }
                 }

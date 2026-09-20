@@ -204,7 +204,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         z: QGroundControl.zOrderTopMost + 10
-        visible: !_useCustomFlyView && !QGroundControl.videoManager.fullScreen
+        visible: !_useCustomFlyView && !QGroundControl.videoManager.fullScreen && _flyViewSettings.showViewSwitchBar.rawValue
 
         readonly property real panelWidth:    ScreenTools.defaultFontPixelWidth * 22
         readonly property real handleHeight:  ScreenTools.defaultFontPixelHeight * 1.6

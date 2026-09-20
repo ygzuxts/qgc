@@ -42,6 +42,7 @@ SettingsPage {
     property Fact   _viewer3DOsmFilePath:                   _viewer3DSettings.osmFilePath
     property Fact   _viewer3DBuildingLevelHeight:           _viewer3DSettings.buildingLevelHeight
     property Fact   _viewer3DAltitudeBias:                  _viewer3DSettings.altitudeBias
+    property Fact   _showViewSwitchBar:                     _flyViewSettings.showViewSwitchBar
 
     QGCFileDialogController { id: fileController }
 
@@ -111,6 +112,14 @@ SettingsPage {
             fact:               _updateHomePosition
             visible:            _updateHomePosition.visible
             property Fact _updateHomePosition: _flyViewSettings.updateHomePosition
+        }
+
+        QGCCheckBoxSlider {
+            Layout.fillWidth:   true
+            text:               qsTr("显示视图切换栏")
+            checked:            _showViewSwitchBar.rawValue
+            onCheckedChanged:   _showViewSwitchBar.rawValue = checked
+            visible:            _showViewSwitchBar.visible
         }
     }
 

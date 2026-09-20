@@ -39,13 +39,38 @@ Rectangle {
     readonly property color brandPress: theme ? theme.bluePress : "#00004D"
     readonly property color brandBorder: theme ? theme.blueBorder : "#8080B3"
     property bool takeoffTargetExpanded: false
+    property bool takeoffAltConfirmed: true
 
     // 背景透明度由外层 FlyViewRightPanel 统一控制，避免文字/按钮跟着透明。
     color: "transparent"
     implicitHeight: content.implicitHeight + 22
 
-    Component.onCompleted: takeoffTargetExpanded = false
-    onVisibleChanged: if (visible) takeoffTargetExpanded = false
+    Component.onCompleted: {
+        takeoffTargetExpanded = false
+        syncTakeoffAltFromParam()
+    }
+    onVisibleChanged: {
+        if (visible) {
+            takeoffTargetExpanded = false
+            syncTakeoffAltFromParam()
+        }
+    }
+    onTakeoffSafetyFactChanged: syncTakeoffAltFromParam()
+
+    Connections {
+        target: root.takeoffSafetyFact
+        ignoreUnknownSignals: true
+        function onRawValueChanged() {
+            if (root.takeoffAltConfirmed) {
+                root.syncTakeoffAltFromParam()
+            }
+        }
+        function onValueChanged() {
+            if (root.takeoffAltConfirmed) {
+                root.syncTakeoffAltFromParam()
+            }
+        }
+    }
 
     FactPanelController { id: safetyController }
 
@@ -84,10 +109,10 @@ Rectangle {
 
     function actionIcon(index) {
         switch (index) {
-        case 0: return "⌁"
-        case 1: return "⌙"
-        case 2: return "↩"
-        default: return "Ⅱ"
+        case 0: return "qrc:/res/nicewing_takeoff.svg"
+        case 1: return "qrc:/res/nicewing_land.svg"
+        case 2: return "qrc:/res/nicewing_rtl.svg"
+        default: return "qrc:/res/nicewing_pause.svg"
         }
     }
 
@@ -250,6 +275,70 @@ Rectangle {
         if (state) state.executeRTL()
     }
 
+    function _clampTakeoffAlt(value) {
+        var numberValue = Number(value)
+        if (!(numberValue === numberValue)) {
+            numberValue = 50
+        }
+        return Math.max(0, Math.min(500, Math.round(numberValue)))
+    }
+
+    function _takeoffAltText(value) {
+        return String(root._clampTakeoffAlt(value))
+    }
+
+    function _currentTakeoffAltInputValue() {
+        if (takeoffAltInput && takeoffAltInput.text.length > 0) {
+            return root._clampTakeoffAlt(takeoffAltInput.text)
+        }
+        return state ? root._clampTakeoffAlt(state.takeoffAlt) : 50
+    }
+
+    function _applyTakeoffAltToUi(value, confirmed) {
+        var alt = root._clampTakeoffAlt(value)
+        if (state) {
+            state.takeoffAlt = alt
+        }
+        if (takeoffAltInput) {
+            takeoffAltInput.text = root._takeoffAltText(alt)
+        }
+        root.takeoffAltConfirmed = confirmed
+    }
+
+    function syncTakeoffAltFromParam() {
+        if (takeoffSafetyFact) {
+            root._applyTakeoffAltToUi(takeoffSafetyFact.rawValue, true)
+        } else if (state) {
+            root._applyTakeoffAltToUi(state.takeoffAlt, true)
+        }
+    }
+
+    function defaultTakeoffAlt() {
+        if (takeoffSafetyFact && takeoffSafetyFact.defaultValueAvailable) {
+            return root._clampTakeoffAlt(takeoffSafetyFact.defaultValue)
+        }
+        if (takeoffSafetyFact) {
+            return root._clampTakeoffAlt(takeoffSafetyFact.rawValue)
+        }
+        return 50
+    }
+
+    function useDefaultTakeoffAlt() {
+        root._applyTakeoffAltToUi(root.defaultTakeoffAlt(), false)
+    }
+
+    function adjustTakeoffAlt(delta) {
+        root._applyTakeoffAltToUi(root._currentTakeoffAltInputValue() + delta, false)
+    }
+
+    function confirmTakeoffAlt() {
+        var alt = root._currentTakeoffAltInputValue()
+        if (takeoffSafetyFact) {
+            takeoffSafetyFact.value = alt
+        }
+        root._applyTakeoffAltToUi(alt, true)
+    }
+
     function safetyLabel(index) {
         switch (index) {
         case 0: return "返航高度"
@@ -273,7 +362,7 @@ Rectangle {
         Layout.fillWidth: true
         radius: 8
         color: root.cardBg
-        border.width: 1
+        border.width: Math.round(1 * (theme ? theme.uiScale : 1))
         border.color: root.cardBorder
         implicitHeight: inner.implicitHeight + 20
 
@@ -295,7 +384,7 @@ Rectangle {
         property real holdProgress: 0
         property bool holding: false
         property string tone: "normal"
-        property int buttonHeight: 42
+        property int buttonHeight: Math.round(42 * (theme ? theme.uiScale : 1))
         signal clicked
 
         radius: 8
@@ -334,7 +423,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             text: smallActionRoot.label
-            font.pixelSize: 13
+            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
             font.weight: Font.Medium
             color: smallActionRoot.tone === "danger"
                    ? (smallActionRoot.enabledState ? "#ef4444" : "#fca5a5")
@@ -345,7 +434,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             width: parent.width * smallActionRoot.holdProgress
-            height: 4
+            height: Math.round(4 * (theme ? theme.uiScale : 1))
             radius: 0
             visible: smallActionRoot.enabledState && smallActionRoot.requireHold && smallActionRoot.holding
             color: smallActionRoot.tone === "danger" ? "#ef4444" : root.brandBlue
@@ -386,6 +475,39 @@ Rectangle {
         }
     }
 
+    component TakeoffAltButton: Rectangle {
+        id: takeoffAltButtonRoot
+        property string label: ""
+        property bool primary: false
+        signal activated
+
+        radius: 6
+        clip: true
+        color: takeoffAltButtonMouse.pressed
+               ? (primary ? root.brandPress : root.brandHover)
+               : takeoffAltButtonMouse.containsMouse
+                 ? (primary ? root.brandBlue : root.brandHover)
+                 : (primary ? root.brandBlue : (theme && theme.darkMode ? "#111111" : "#ffffff"))
+        border.width: 1
+        border.color: primary ? root.brandBorder : root.cardBorder
+
+        Text {
+            anchors.centerIn: parent
+            text: takeoffAltButtonRoot.label
+            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+            font.weight: Font.Medium
+            color: takeoffAltButtonRoot.primary ? "#ffffff" : root.textMain
+        }
+
+        MouseArea {
+            id: takeoffAltButtonMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: takeoffAltButtonRoot.activated()
+        }
+    }
+
     ColumnLayout {
         id: content
         width: parent.width
@@ -398,45 +520,45 @@ Rectangle {
         anchors.rightMargin: 12
 
         PanelCard {
-            implicitHeight: 48
+            implicitHeight: Math.round(48 * (theme ? theme.uiScale : 1))
             contentItem: RowLayout {
                 width: parent.width
                 Text {
                     text: "飞行时间"
-                    font.pixelSize: 16
+                    font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                     color: root.textMain
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                 }
                 Text {
                     text: state && state.flightTime ? state.flightTime : "--:--"
-                    font.pixelSize: 17
+                    font.pixelSize: Math.round(17 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Bold
-                    color: "#000066"
+                    color: root.brandBlue
                 }
             }
         }
 
         PanelCard {
             visible: root.showMissionControl
-            implicitHeight: 150
+            implicitHeight: Math.round(150 * (theme ? theme.uiScale : 1))
             contentItem: Column {
                 width: parent.width
                 spacing: 12
 
                 Row {
                     width: parent.width
-                    height: 24
+                    height: Math.round(24 * (theme ? theme.uiScale : 1))
                     Text {
                         text: "任务控制"
-                        font.pixelSize: 16
+                        font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Bold
                         color: root.textMain
                     }
                     Text {
                         anchors.right: parent.right
                         text: root.missionIsActive() ? (state && state.missionPaused ? "已暂停" : "执行中") : "待执行"
-                        font.pixelSize: 13
+                        font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                         color: root.missionIsActive() ? "#16a34a" : root.textSub
                     }
                 }
@@ -494,18 +616,18 @@ Rectangle {
 
                 Row {
                     width: parent.width
-                    height: 24
+                    height: Math.round(24 * (theme ? theme.uiScale : 1))
                     Text {
                         text: "起飞目标..."
-                        font.pixelSize: 16
+                        font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Bold
                         color: root.textMain
                     }
                     Text {
                         anchors.right: parent.right
                         text: root.takeoffTargetExpanded ? "收起" : "展开"
-                        font.pixelSize: 15
-                        color: "#000066"
+                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                        color: root.brandBlue
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -522,75 +644,75 @@ Rectangle {
 
                     Text {
                         text: "一键起飞高度"
-                        font.pixelSize: 15
+                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                         color: root.textMain
                     }
                     Text {
-                        text: "MIS_TAKEOFF_ALT"
-                        font.pixelSize: 12
+                        text: root.takeoffSafetyParamName.length > 0 ? root.takeoffSafetyParamName : "本地起飞目标高度"
+                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
                     Row {
                         spacing: 8
                         TextInput {
-                            width: 54
-                            height: 36
-                            text: state ? String(state.takeoffAlt) : "50"
+                            id: takeoffAltInput
+                            width: Math.round(54 * (theme ? theme.uiScale : 1))
+                            height: Math.round(36 * (theme ? theme.uiScale : 1))
+                            text: "50"
                             selectByMouse: true
-                            font.pixelSize: 14
+                            font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
                             color: root.textMain
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             validator: IntValidator { bottom: 0; top: 500 }
-                            onEditingFinished: if (state) state.takeoffAlt = Math.max(0, Math.min(500, parseInt(text)))
+                            onTextEdited: root.takeoffAltConfirmed = false
+                            onEditingFinished: root._applyTakeoffAltToUi(text, false)
                             Rectangle {
                                 anchors.fill: parent
                                 z: -1
                                 color: root.theme && root.theme.darkMode ? "#0b0b0b" : "#ffffff"
-                                border.width: 1
+                                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                                 border.color: root.cardBorder
                             }
                         }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "m"
-                            font.pixelSize: 14
+                            font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
                             color: root.textSub
                         }
-                        SmallActionButton {
-                            width: 34
-                            buttonHeight: 34
+                        TakeoffAltButton {
+                            width: Math.round(34 * (theme ? theme.uiScale : 1))
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
                             label: "-"
-                            enabledState: true
-                            onClicked: if (state) state.adjustTakeoffAlt(-1)
+                            onActivated: root.adjustTakeoffAlt(-1)
                         }
-                        SmallActionButton {
-                            width: 34
-                            buttonHeight: 34
+                        TakeoffAltButton {
+                            width: Math.round(34 * (theme ? theme.uiScale : 1))
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
                             label: "+"
-                            enabledState: true
-                            onClicked: if (state) state.adjustTakeoffAlt(1)
+                            onActivated: root.adjustTakeoffAlt(1)
                         }
                     }
                     Row {
                         spacing: 8
-                        SmallActionButton {
-                            width: 98
-                            buttonHeight: 34
-                            label: "使用默认值..."
-                            enabledState: true
-                            onClicked: if (state) state.takeoffAlt = 50
+                        TakeoffAltButton {
+                            width: Math.round(98 * (theme ? theme.uiScale : 1))
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
+                            label: "使用默认值"
+                            onActivated: root.useDefaultTakeoffAlt()
                         }
-                        SmallActionButton {
-                            width: 70
-                            buttonHeight: 34
-                            label: "已确认"
-                            enabledState: true
+                        TakeoffAltButton {
+                            width: Math.round(70 * (theme ? theme.uiScale : 1))
+                            height: Math.round(34 * (theme ? theme.uiScale : 1))
+                            label: root.takeoffAltConfirmed ? "已确认" : "确认数值"
+                            primary: !root.takeoffAltConfirmed
+                            onActivated: root.confirmTakeoffAlt()
                         }
                     }
                     Text {
                         text: "范围 0–500 m"
-                        font.pixelSize: 12
+                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
                 }
@@ -605,7 +727,7 @@ Rectangle {
                 property bool holding: false
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 72
+                Layout.preferredHeight: Math.round(72 * (theme ? theme.uiScale : 1))
                 radius: 8
                 clip: true
                 color: !root.actionEnabled(index)
@@ -615,7 +737,7 @@ Rectangle {
                          : guidedActionMouse.containsMouse
                            ? (theme && theme.darkMode ? "#0b1220" : "#f7fbff")
                            : (theme && theme.darkMode ? root.cardBg : "#ffffff")
-                border.width: 1
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: root.actionEnabled(index) && (guidedActionMouse.containsMouse || guidedActionButton.holding)
                               ? "#8080B3"
                               : root.cardBorder
@@ -642,11 +764,14 @@ Rectangle {
                     anchors.centerIn: parent
                     spacing: 16
 
-                    Text {
+                    QGCColoredImage {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: root.actionIcon(index)
-                        font.pixelSize: index === 3 ? 34 : 28
-                        font.weight: Font.Bold
+                        width: Math.round(34 * (theme ? theme.uiScale : 1))
+                        height: Math.round(34 * (theme ? theme.uiScale : 1))
+                        sourceSize.width: width
+                        sourceSize.height: height
+                        source: root.actionIcon(index)
+                        fillMode: Image.PreserveAspectFit
                         color: root.actionEnabled(index) ? (guidedActionButton.holding || guidedActionMouse.containsMouse ? root.brandBlue : root.textMain) : root.textMuted
                     }
 
@@ -656,14 +781,14 @@ Rectangle {
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: root.actionLabel(index)
-                            font.pixelSize: 16
+                            font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                             font.weight: Font.Medium
                             color: root.actionEnabled(index) ? (guidedActionButton.holding || guidedActionMouse.containsMouse ? root.brandBlue : root.textMain) : root.textMuted
                         }
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: root.actionHint(index)
-                            font.pixelSize: 12
+                            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.textSub
                         }
                     }
@@ -673,7 +798,7 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     width: parent.width * guidedActionButton.holdProgress
-                    height: 4
+                    height: Math.round(4 * (theme ? theme.uiScale : 1))
                     radius: 0
                     visible: root.actionEnabled(index) && guidedActionButton.holding
                     color: root.brandBlue
@@ -708,14 +833,14 @@ Rectangle {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 1
+            Layout.preferredHeight: Math.round(1 * (theme ? theme.uiScale : 1))
             color: root.cardBorder
         }
 
         Text {
             Layout.fillWidth: true
             text: "安全设置"
-            font.pixelSize: 15
+            font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
             font.weight: Font.Bold
             color: root.textSub
             leftPadding: 2
@@ -727,7 +852,7 @@ Rectangle {
                 width: parent.width
                 text: "参数未就绪，当前\n无法读取和修改飞\n控安全参数"
                 wrapMode: Text.WordWrap
-                font.pixelSize: 15
+                font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                 lineHeight: 1.15
                 color: root.textMain
             }
@@ -742,13 +867,13 @@ Rectangle {
                     spacing: 4
                     Text {
                         text: root.safetyLabel(index)
-                        font.pixelSize: 15
+                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Bold
                         color: root.textMain
                     }
                     Text {
                         text: root.safetyValue(index)
-                        font.pixelSize: 12
+                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
                 }
@@ -763,7 +888,7 @@ Rectangle {
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         width: Math.min(450, parent ? parent.width - 48 : 450)
-        height: 252
+        height: Math.round(252 * (theme ? theme.uiScale : 1))
         x: parent ? (parent.width - width) / 2 : 0
         y: parent ? (parent.height - height) / 2 : 0
         padding: 0
@@ -771,7 +896,7 @@ Rectangle {
         background: Rectangle {
             radius: 0
             color: theme && theme.darkMode ? "#111111" : "#ffffff"
-            border.width: 1
+            border.width: Math.round(1 * (theme ? theme.uiScale : 1))
             border.color: theme && theme.darkMode ? "#3a3a3a" : "#d7dde6"
         }
 
@@ -780,7 +905,7 @@ Rectangle {
 
             Column {
                 width: startMissionCheckPopup.width
-                height: 210
+                height: Math.round(210 * (theme ? theme.uiScale : 1))
                 leftPadding: 18
                 rightPadding: 18
                 topPadding: 14
@@ -788,7 +913,7 @@ Rectangle {
 
                 Text {
                     text: "开始任务前检查"
-                    font.pixelSize: 15
+                    font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Bold
                     color: root.textMain
                 }
@@ -804,26 +929,26 @@ Rectangle {
 
                     Row {
                         width: startMissionCheckPopup.width - 36
-                        height: 17
+                        height: Math.round(17 * (theme ? theme.uiScale : 1))
                         spacing: 8
 
                         Text {
                             text: "•"
-                            width: 10
-                            font.pixelSize: 18
+                            width: Math.round(10 * (theme ? theme.uiScale : 1))
+                            font.pixelSize: Math.round(18 * (theme ? theme.uiScale : 1))
                             color: "#16a34a"
                             verticalAlignment: Text.AlignVCenter
                         }
                         Text {
                             text: modelData.label
-                            font.pixelSize: 13
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: root.textMain
                             verticalAlignment: Text.AlignVCenter
                         }
                         Text {
                             width: parent.width - 10 - 8 - 110
                             text: modelData.value
-                            font.pixelSize: 13
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: root.textMain
                             horizontalAlignment: Text.AlignRight
                             verticalAlignment: Text.AlignVCenter
@@ -836,34 +961,34 @@ Rectangle {
                     width: startMissionCheckPopup.width - 36
                     text: "GPS 或电池项为警告时仍可执行，但请确认现场飞行条件安全。"
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 13
+                    font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                     color: "#f59e0b"
                 }
             }
 
             Row {
                 width: startMissionCheckPopup.width
-                height: 42
+                height: Math.round(42 * (theme ? theme.uiScale : 1))
 
                 Row {
                     anchors.centerIn: parent
                     spacing: 12
 
                     Rectangle {
-                        width: 88
-                        height: 30
+                        width: Math.round(88 * (theme ? theme.uiScale : 1))
+                        height: Math.round(30 * (theme ? theme.uiScale : 1))
                         radius: 4
                         color: confirmMouse.pressed
                                ? root.brandPress
                                : confirmMouse.containsMouse
                                  ? root.brandHover
                                  : (theme && theme.darkMode ? "#2b2b2b" : "#ffffff")
-                        border.width: 1
+                        border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                         border.color: confirmMouse.containsMouse || confirmMouse.pressed ? root.brandBorder : (theme && theme.darkMode ? "#3a3a3a" : "#cfd4dc")
                         Text {
                             anchors.centerIn: parent
                             text: "确定"
-                            font.pixelSize: 13
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: confirmMouse.pressed ? "#ffffff" : (confirmMouse.containsMouse ? root.brandBlue : root.textMain)
                         }
                         MouseArea {
@@ -878,20 +1003,20 @@ Rectangle {
                     }
 
                     Rectangle {
-                        width: 88
-                        height: 30
+                        width: Math.round(88 * (theme ? theme.uiScale : 1))
+                        height: Math.round(30 * (theme ? theme.uiScale : 1))
                         radius: 4
                         color: cancelMouse.pressed
                                ? root.brandPress
                                : cancelMouse.containsMouse
                                  ? root.brandHover
                                  : (theme && theme.darkMode ? "#2b2b2b" : "#ffffff")
-                        border.width: 1
+                        border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                         border.color: cancelMouse.containsMouse || cancelMouse.pressed ? root.brandBorder : (theme && theme.darkMode ? "#3a3a3a" : "#cfd4dc")
                         Text {
                             anchors.centerIn: parent
                             text: "取消"
-                            font.pixelSize: 13
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: cancelMouse.pressed ? "#ffffff" : (cancelMouse.containsMouse ? root.brandBlue : root.textMain)
                         }
                         MouseArea {

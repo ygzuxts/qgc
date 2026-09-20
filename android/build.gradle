@@ -47,8 +47,7 @@ android {
      * Changing them manually might break the compilation!
      *******************************************************/
 
-    // namespace = androidPackageName
-    namespace = "org.mavlink.qgroundcontrol"
+    namespace = "com.futurewings.nicewing"
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
     ndkVersion = androidNdkVersion
@@ -93,9 +92,12 @@ android {
     }
 
     defaultConfig {
+        applicationId "com.futurewings.nicewing"
         resConfig "en"
         minSdkVersion qtMinSdkVersion
         targetSdkVersion qtTargetSdkVersion
+        versionCode 5008000
+        versionName "5.0.8"
         ndk.abiFilters = qtTargetAbiList.split(",")
 
         // println "applicationId: ${applicationId}"

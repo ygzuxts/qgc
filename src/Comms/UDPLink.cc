@@ -72,6 +72,15 @@ void UDPConfiguration::setAutoConnect(bool autoc)
             if (!targetHostIP.isEmpty()) {
                 addHost(targetHostIP, targetHostPort);
             }
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+            else {
+                // PX4/Gazebo SITL commonly listens for GCS traffic on localhost:14540.
+                // Keep listening on the normal auto-connect port (14550), but also send
+                // our GCS heartbeat to the simulator so it can establish the UDP session.
+                addHost(QStringLiteral("127.0.0.1"), 14540);
+                addHost(QStringLiteral("127.0.0.1"), 18570);
+            }
+#endif
         }
         else {
             setLocalPort(0);

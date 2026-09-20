@@ -39,6 +39,7 @@ Item {
     property var activeVehicle
     property var missionController
     property var guidedController
+    property var _flyViewSettings: QGroundControl.settingsManager.flyViewSettings
     property bool customFlyViewEnabled: false
     property var setCustomFlyViewEnabled
     readonly property bool wantsMapVisible: customFlyViewEnabled
@@ -51,7 +52,7 @@ Item {
     property bool settingsPageVisible: false
     property real leftW: Math.max(minLeftW, Math.min(maxLeftW, theme.leftPanelW))
     property real rightW: Math.max(minRightW, Math.min(maxRightW, theme.rightPanelW))
-    property real hudH: ScreenTools.isMobile ? 280 : 320
+    property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobile ? 0.44 : 0.52)))
     property bool hudCollapsed: false
     property bool showLeftPanel: _panelSettings.showLeftPanel
     property bool showRightPanel: _panelSettings.showRightPanel
@@ -59,19 +60,25 @@ Item {
     property bool showHudExpandBar: _panelSettings.showHudExpandBar
     property real infoBarOpacity: _panelSettings.infoBarOpacity
     property bool showBottomActionBar: _panelSettings.showBottomActionBar
+    property bool showViewSwitchBar: _flyViewSettings.showViewSwitchBar.rawValue
     readonly property var uiTheme: theme
     readonly property bool taskListPageActive: currentTab === 1 && !customPlanShellVisible
     readonly property bool takeoffPageActive: currentTab === 0 && !customPlanShellVisible
     readonly property bool bottomBarVisible: false
     readonly property real effectiveLeftW: taskListPageActive && showLeftPanel ? leftW : 0
     readonly property real effectiveRightW: takeoffPageActive && showRightPanel ? rightW : 0
-    readonly property real minLeftW: width * (ScreenTools.isMobile ? 0.16 : 0.104)
-    readonly property real maxLeftW: width * (ScreenTools.isMobile ? 0.24 : 0.208)
-    readonly property real minRightW: width * (ScreenTools.isMobile ? 0.22 : 0.115)
+    readonly property real minLeftW: width * (ScreenTools.isMobile ? 0.17 : 0.104)
+    readonly property real maxLeftW: width * (ScreenTools.isMobile ? 0.34 : 0.208)
+    readonly property real minRightW: width * (ScreenTools.isMobile ? 0.18 : 0.115)
     readonly property real maxRightW: width * (ScreenTools.isMobile ? 0.34 : 0.219)
-    readonly property real minHudH: ScreenTools.isMobile ? 230 : 280
-    readonly property real maxHudH: ScreenTools.isMobile ? 320 : 360
+    readonly property real qgcAndroidInstrumentSize: ScreenTools.defaultFontPixelHeight * 6.4
+    readonly property real minHudH: Math.round(Math.max(height * (ScreenTools.isMobile ? 0.38 : 0.45), ScreenTools.isMobile ? qgcAndroidInstrumentSize * 2 + theme.spacingXl * 2 + Math.round(10 * theme.uiScale) : 0))
+    readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobile ? 0.50 : 0.58), ScreenTools.isMobile ? minHudH : 0))
     readonly property real bottomBarH: theme.bottomBarH
+    readonly property real sharedHudInstrumentSize: ScreenTools.isMobile
+                                                    ? Math.max(qgcAndroidInstrumentSize * 0.92, Math.min(qgcAndroidInstrumentSize, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
+                                                    : Math.max(96, Math.min(172, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
+    readonly property real sharedHudTelemetryWidth: Math.max(220, Math.min(Math.round(430 * theme.uiScale), width - theme.spacingXl - sharedHudInstrumentSize - Math.max(8, Math.round(18 * theme.uiScale)) - theme.spacingXl))
 
     Component.onCompleted: {
         _root.currentTab = 1
@@ -113,6 +120,8 @@ Item {
 
     FlyViewTheme {
         id: theme
+        viewportWidth: _root.width
+        viewportHeight: _root.height
     }
 
     FlyViewState {
@@ -244,7 +253,7 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: _root.takeoffPageActive ? hudArea.top : parent.bottom
+            anchors.bottom: parent.bottom
 
             HoverHandler {
                 id: mapViewportHover
@@ -354,9 +363,13 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             height: _root.takeoffPageActive && !_root.hudCollapsed ? _root.hudH : 0
-            clip: true
+            visible: _root.takeoffPageActive && !_root.hudCollapsed
+            clip: false
+            z: 8
             state: state
             theme: theme
+            instrumentSizeOverride: _root.sharedHudInstrumentSize
+            telemetryWidthOverride: _root.sharedHudTelemetryWidth
         }
     }
 
@@ -434,20 +447,24 @@ Item {
 
     Loader {
         id: customPlanShellLoader
-        anchors.top: topBar.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         active: _root.customFlyViewEnabled && _root.customPlanShellVisible
         asynchronous: true
         visible: _root.customFlyViewEnabled && _root.customPlanShellVisible
-        z: 40
+        z: 110
 
         sourceComponent: Component {
             WaypointPlanPage {
                 state: state
                 theme: theme
                 missionController: _root.missionController
+                hudInstrumentSize: _root.sharedHudInstrumentSize
+                hudTelemetryWidth: _root.sharedHudTelemetryWidth
+                hudHeight: _root.hudH
+                topInset: topBar.height
                 onCloseRequested: {
                     _root.currentTab = 1
                     _root.customPlanShellVisible = false
@@ -483,7 +500,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         z: 30
-        visible: !_root.customFlyViewEnabled
+        visible: !_root.customFlyViewEnabled && _root.showViewSwitchBar
 
         readonly property real panelWidth:    ScreenTools.defaultFontPixelWidth * 22
         readonly property real handleHeight:  ScreenTools.defaultFontPixelHeight * 1.6

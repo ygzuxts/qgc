@@ -9,7 +9,9 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import QtQuick.Layouts
+import QtCore
 
 import QGroundControl
 import QGroundControl.Controls
@@ -37,6 +39,16 @@ AnalyzePage {
             height: availableHeight
             width: availableWidth
             property int _consoleOutputLen: 0
+            property bool savedCommandPanelVisible: false
+
+            Settings {
+                id: savedCommandSettings
+                property string commandsJson: "[]"
+            }
+
+            ListModel {
+                id: savedCommandModel
+            }
 
             function scrollToBottom() {
                 if (flickable.contentHeight > flickable.height) {
@@ -68,6 +80,62 @@ AnalyzePage {
                 textConsole.insert(textConsole.length, command_leftover)
                 textConsole.cursorPosition = textConsole.length - command_post.length
             }
+
+            function loadSavedCommands() {
+                savedCommandModel.clear()
+                var commands = []
+                try {
+                    commands = JSON.parse(savedCommandSettings.commandsJson)
+                } catch (e) {
+                    commands = []
+                }
+
+                for (var i = 0; i < commands.length; i++) {
+                    savedCommandModel.append({
+                        "commandName": commands[i].commandName || commands[i].name || "",
+                        "commandText": commands[i].commandText || commands[i].command || ""
+                    })
+                }
+            }
+
+            function saveSavedCommands() {
+                var commands = []
+                for (var i = 0; i < savedCommandModel.count; i++) {
+                    var item = savedCommandModel.get(i)
+                    commands.push({
+                        "commandName": item.commandName,
+                        "commandText": item.commandText
+                    })
+                }
+                savedCommandSettings.commandsJson = JSON.stringify(commands)
+            }
+
+            function setConsoleCommand(commandText) {
+                if (!commandText || commandText.trim() === "") {
+                    return
+                }
+
+                if (_separateCommandInput) {
+                    commandInput.text = commandText
+                    commandInput.forceActiveFocus()
+                } else {
+                    getCommandAndClear()
+                    textConsole.insert(textConsole.length, commandText)
+                    textConsole.cursorPosition = textConsole.length
+                    textConsole.forceActiveFocus()
+                }
+                scrollToBottom()
+            }
+
+            function sendSavedCommand(commandText) {
+                if (!commandText || commandText.trim() === "") {
+                    return
+                }
+                conController.sendCommand(commandText)
+                scrollToBottom()
+            }
+
+            Component.onCompleted: loadSavedCommands()
 
             Connections {
                 target: conController
@@ -106,40 +174,256 @@ AnalyzePage {
                 }
             }
 
-            QGCFlickable {
-                id: flickable
+            RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                contentWidth: textConsole.width
-                contentHeight: textConsole.height
+                spacing: ScreenTools.defaultFontPixelWidth
+                layoutDirection: Qt.RightToLeft
 
-                TextArea.flickable: TextArea {
-                    id: textConsole
-                    width: availableWidth
-                    wrapMode: Text.WordWrap
-                    readOnly: _separateCommandInput
-                    textFormat: TextEdit.RichText
-                    inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhMultiLine
-                    text: "> "
-                    focus: true
-                    color: qgcPal.text
-                    selectedTextColor: qgcPal.windowShade
-                    selectionColor: qgcPal.text
-                    font.pointSize: ScreenTools.defaultFontPointSize
-                    font.family: ScreenTools.fixedFontFamily
+                Rectangle {
+                    Layout.preferredWidth: Math.max(ScreenTools.defaultFontPixelWidth * 34, 260)
+                    Layout.fillHeight: true
+                    visible: savedCommandPanelVisible
+                    color: qgcPal.windowShade
+                    border.color: qgcPal.text
+                    border.width: 1
+                    radius: ScreenTools.defaultFontPixelHeight / 3
 
-                    Component.onCompleted: {
-                        root.isLoaded = true
-                        _consoleOutputLen = textConsole.length
-                        textConsole.cursorPosition = _consoleOutputLen
-                        if (!_separateCommandInput) {
-                            textConsole.forceActiveFocus()
+                    ColumnLayout {
+                        id: savedCommandLayout
+                        anchors.fill: parent
+                        anchors.margins: ScreenTools.defaultFontPixelHeight / 2
+                        spacing: ScreenTools.defaultFontPixelHeight / 2
+                        layoutDirection: Qt.LeftToRight
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: ScreenTools.defaultFontPixelHeight / 2
+
+                            QGCLabel {
+                                Layout.fillWidth: true
+                                text: qsTr("快捷命令")
+                                font.bold: true
+                            }
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: ScreenTools.defaultFontPixelWidth
+
+                                QGCButton {
+                                    Layout.fillWidth: true
+                                    text: qsTr("收起")
+                                    onClicked: savedCommandPanelVisible = false
+                                }
+
+                                QGCButton {
+                                    Layout.fillWidth: true
+                                    text: qsTr("添加命令")
+                                    onClicked: savedCommandDialogComponent.createObject(mainWindow, {
+                                        editIndex: -1,
+                                        initialName: "",
+                                        initialCommand: ""
+                                    }).open()
+                                }
+                            }
+                        }
+
+                        QGCLabel {
+                            Layout.fillWidth: true
+                            visible: savedCommandModel.count === 0
+                            text: qsTr("暂无保存的命令。可以添加 listener sensor_mag 这类命令，一键填入控制台。")
+                            wrapMode: Text.WordWrap
+                            color: qgcPal.text
+                            font.pointSize: ScreenTools.smallFontPointSize
+                        }
+
+                        ListView {
+                            id: savedCommandListView
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            clip: true
+                            spacing: ScreenTools.defaultFontPixelHeight / 2
+                            model: savedCommandModel
+
+                            delegate: Rectangle {
+                                width: savedCommandListView.width
+                                height: ScreenTools.defaultFontPixelHeight * 7.2
+                                color: qgcPal.window
+                                border.color: qgcPal.button
+                                border.width: 1
+                                radius: ScreenTools.defaultFontPixelHeight / 3
+
+                                property real _margin: ScreenTools.defaultFontPixelHeight / 2
+                                property real _gap: ScreenTools.defaultFontPixelHeight / 2
+                                property real _buttonHeight: ScreenTools.defaultFontPixelHeight * 2.2
+
+                                Rectangle {
+                                    id: savedCommandNameButton
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.margins: parent._margin
+                                    height: parent._buttonHeight
+                                    color: savedCommandNameMouse.pressed ? qgcPal.buttonHighlight : (savedCommandNameMouse.containsMouse ? qgcPal.button : qgcPal.windowShade)
+                                    border.color: qgcPal.button
+                                    border.width: 1
+                                    radius: ScreenTools.defaultFontPixelHeight / 4
+
+                                    QGCLabel {
+                                        anchors.fill: parent
+                                        anchors.leftMargin: ScreenTools.defaultFontPixelWidth
+                                        anchors.rightMargin: ScreenTools.defaultFontPixelWidth
+                                        text: commandName !== "" ? commandName : commandText
+                                        color: qgcPal.text
+                                        elide: Text.ElideRight
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+
+                                    MouseArea {
+                                        id: savedCommandNameMouse
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onClicked: setConsoleCommand(commandText)
+                                    }
+                                }
+
+                                Row {
+                                    id: savedCommandActions
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: savedCommandNameButton.bottom
+                                    anchors.topMargin: parent._gap
+                                    anchors.leftMargin: parent._margin
+                                    anchors.rightMargin: parent._margin
+                                    height: parent._buttonHeight
+                                    spacing: ScreenTools.defaultFontPixelWidth
+
+                                    Rectangle {
+                                        width: (savedCommandActions.width - savedCommandActions.spacing * 2) / 3
+                                        height: parent.height
+                                        color: sendMouse.pressed ? qgcPal.buttonHighlight : (sendMouse.containsMouse ? qgcPal.button : qgcPal.windowShade)
+                                        border.color: qgcPal.button
+                                        border.width: 1
+                                        radius: ScreenTools.defaultFontPixelHeight / 4
+
+                                        QGCLabel {
+                                            anchors.fill: parent
+                                            text: qsTr("发送")
+                                            color: qgcPal.text
+                                            horizontalAlignment: Text.AlignHCenter
+                                            verticalAlignment: Text.AlignVCenter
+                                        }
+
+                                        MouseArea {
+                                            id: sendMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: sendSavedCommand(commandText)
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        width: (savedCommandActions.width - savedCommandActions.spacing * 2) / 3
+                                        height: parent.height
+                                        color: editMouse.pressed ? qgcPal.buttonHighlight : (editMouse.containsMouse ? qgcPal.button : qgcPal.windowShade)
+                                        border.color: qgcPal.button
+                                        border.width: 1
+                                        radius: ScreenTools.defaultFontPixelHeight / 4
+
+                                        QGCLabel {
+                                            anchors.fill: parent
+                                            text: qsTr("编辑")
+                                            color: qgcPal.text
+                                            horizontalAlignment: Text.AlignHCenter
+                                            verticalAlignment: Text.AlignVCenter
+                                        }
+
+                                        MouseArea {
+                                            id: editMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: savedCommandDialogComponent.createObject(mainWindow, {
+                                                editIndex: index,
+                                                initialName: commandName,
+                                                initialCommand: commandText
+                                            }).open()
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        width: (savedCommandActions.width - savedCommandActions.spacing * 2) / 3
+                                        height: parent.height
+                                        color: deleteMouse.pressed ? qgcPal.buttonHighlight : (deleteMouse.containsMouse ? qgcPal.button : qgcPal.windowShade)
+                                        border.color: qgcPal.button
+                                        border.width: 1
+                                        radius: ScreenTools.defaultFontPixelHeight / 4
+
+                                        QGCLabel {
+                                            anchors.fill: parent
+                                            text: qsTr("删除")
+                                            color: qgcPal.text
+                                            horizontalAlignment: Text.AlignHCenter
+                                            verticalAlignment: Text.AlignVCenter
+                                        }
+
+                                        MouseArea {
+                                            id: deleteMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: {
+                                                savedCommandModel.remove(index)
+                                                saveSavedCommands()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                }
 
-                    background: Rectangle { color: qgcPal.windowShade }
+                QGCButton {
+                    Layout.alignment: Qt.AlignTop
+                    visible: !savedCommandPanelVisible
+                    text: qsTr("快捷命令")
+                    onClicked: savedCommandPanelVisible = true
+                }
 
-                    Keys.onPressed: (event) => {
+                QGCFlickable {
+                    id: flickable
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    contentWidth: textConsole.width
+                    contentHeight: textConsole.height
+
+                    TextArea.flickable: TextArea {
+                        id: textConsole
+                        width: availableWidth
+                        wrapMode: Text.WordWrap
+                        readOnly: _separateCommandInput
+                        textFormat: TextEdit.RichText
+                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhMultiLine
+                        text: "> "
+                        focus: true
+                        color: qgcPal.text
+                        selectedTextColor: qgcPal.windowShade
+                        selectionColor: qgcPal.text
+                        font.pointSize: ScreenTools.defaultFontPointSize
+                        font.family: ScreenTools.fixedFontFamily
+
+                        Component.onCompleted: {
+                            root.isLoaded = true
+                            _consoleOutputLen = textConsole.length
+                            textConsole.cursorPosition = _consoleOutputLen
+                            if (!_separateCommandInput) {
+                                textConsole.forceActiveFocus()
+                            }
+                        }
+
+                        background: Rectangle { color: qgcPal.windowShade }
+
+                        Keys.onPressed: (event) => {
                         // ignore tabs
                         if (event.key == Qt.Key_Tab) {
                             event.accepted = true
@@ -236,6 +520,64 @@ AnalyzePage {
                     }
                 }
             }
+            }
+
+            Component {
+                id: savedCommandDialogComponent
+
+                QGCPopupDialog {
+                    title: editIndex >= 0 ? qsTr("编辑命令") : qsTr("添加命令")
+                    buttons: Dialog.Save | Dialog.Cancel
+                    acceptButtonEnabled: nameField.text !== "" && commandField.text !== ""
+
+                    property int editIndex: -1
+                    property string initialName: ""
+                    property string initialCommand: ""
+
+                    onAccepted: {
+                        var commandItem = {
+                            "commandName": nameField.text,
+                            "commandText": commandField.text
+                        }
+
+                        if (editIndex >= 0) {
+                            savedCommandModel.set(editIndex, commandItem)
+                        } else {
+                            savedCommandModel.append(commandItem)
+                        }
+                        saveSavedCommands()
+                    }
+
+                    ColumnLayout {
+                        width: Math.max(ScreenTools.defaultFontPixelWidth * 42, 420)
+                        spacing: ScreenTools.defaultFontPixelHeight / 2
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: ScreenTools.defaultFontPixelWidth
+
+                            QGCLabel { text: qsTr("名称") }
+                            QGCTextField {
+                                id: nameField
+                                Layout.fillWidth: true
+                                text: initialName
+                            }
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: ScreenTools.defaultFontPixelWidth
+
+                            QGCLabel { text: qsTr("命令") }
+                            QGCTextField {
+                                id: commandField
+                                Layout.fillWidth: true
+                                text: initialCommand
+                            }
+                        }
+                    }
+                }
+            }
 
             RowLayout {
                 Layout.fillWidth: true
@@ -244,7 +586,7 @@ AnalyzePage {
                 QGCTextField {
                     id: commandInput
                     Layout.fillWidth: true
-                    placeholderText:  qsTr("Enter Commands here...")
+                    placeholderText:  qsTr("在此输入命令...")
                     inputMethodHints: Qt.ImhNoAutoUppercase
                     onAccepted: sendCommand()
 
@@ -257,7 +599,7 @@ AnalyzePage {
                 }
 
                 QGCButton {
-                    text: qsTr("Send")
+                    text: qsTr("发送")
                     onClicked: commandInput.sendCommand()
                 }
             }

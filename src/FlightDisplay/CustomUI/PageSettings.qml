@@ -28,7 +28,9 @@ Rectangle {
     readonly property color subTextColor: pageDark ? "#9aa7bc" : "#8a97aa"
     readonly property color hoverColor: brandHoverColor
     readonly property color blueColor: brandColor
-    readonly property real navWidth: Math.max(220, Math.min(270, root.width * 0.22))
+    readonly property real pageScale: theme ? theme.uiScale : 1
+    readonly property bool compactLayout: root.width < 1000
+    readonly property real navWidth: compactLayout ? Math.max(132, Math.min(190, root.width * 0.20)) : Math.max(220, Math.min(270, root.width * 0.22))
 
     color: bgColor
 
@@ -78,7 +80,7 @@ Rectangle {
         case "ADSB Server": return "ADSB 服务"
         case "Comm Links": return "通信链路"
         case "Maps": return "地图"
-        case "PX4 Log Transfer": return "PX4 日志传输"
+        case "PX4 Log Transfer": return "日志传输"
         case "Remote ID": return "远程识别"
         case "Console": return "控制台"
         case "Help": return "帮助"
@@ -136,20 +138,20 @@ Rectangle {
         readonly property bool selected: root.selectedIndex === pageIndex
 
         width: parent ? parent.width : 0
-        height: pageVisibleState ? 48 : 0
+        height: pageVisibleState ? Math.round((root.compactLayout ? 42 : 48) * root.pageScale) : 0
         visible: pageVisibleState
         radius: 6
         color: selected ? root.blueColor : (navMouse.containsMouse ? root.hoverColor : "transparent")
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 14
-            anchors.rightMargin: 12
-            spacing: 10
+            anchors.leftMargin: Math.round((root.compactLayout ? 8 : 14) * root.pageScale)
+            anchors.rightMargin: Math.round((root.compactLayout ? 8 : 12) * root.pageScale)
+            spacing: Math.round((root.compactLayout ? 6 : 10) * root.pageScale)
 
             Text {
                 text: "•"
-                font.pixelSize: 18
+                font.pixelSize: Math.max(14, Math.round(18 * root.pageScale))
                 font.weight: Font.Bold
                 color: selected ? "#ffffff" : Qt.rgba(root.brandColor.r, root.brandColor.g, root.brandColor.b, root.pageDark ? 0.55 : 0.35)
                 Layout.alignment: Qt.AlignVCenter
@@ -157,7 +159,7 @@ Rectangle {
 
             Text {
                 text: navItem.title
-                font.pixelSize: 15
+                font.pixelSize: Math.max(12, Math.round((root.compactLayout ? 13 : 15) * root.pageScale))
                 font.weight: selected ? Font.Bold : Font.Medium
                 color: selected ? "#ffffff" : root.textColor
                 Layout.fillWidth: true
@@ -191,13 +193,13 @@ Rectangle {
 
             Column {
                 anchors.fill: parent
-                anchors.margins: 18
-                spacing: 14
+                anchors.margins: Math.round((root.compactLayout ? 10 : 18) * root.pageScale)
+                spacing: Math.round((root.compactLayout ? 10 : 14) * root.pageScale)
 
                 Rectangle {
                     width: parent.width
-                    height: 48
-                    radius: 8
+                    height: Math.round(48 * root.pageScale)
+                    radius: Math.round(8 * root.pageScale)
                     color: backMouse.containsMouse ? root.hoverColor : root.bgColor
                     border.width: 1
                     border.color: root.lineColor
@@ -205,7 +207,7 @@ Rectangle {
                     Text {
                         anchors.centerIn: parent
                         text: "返回"
-                        font.pixelSize: 15
+                        font.pixelSize: Math.max(12, Math.round(15 * root.pageScale))
                         color: root.pageDark ? "#E6E6F0" : root.brandColor
                     }
 
@@ -220,17 +222,9 @@ Rectangle {
 
                 Text {
                     text: "系统设置"
-                    font.pixelSize: 22
+                    font.pixelSize: Math.max(16, Math.round((root.compactLayout ? 18 : 22) * root.pageScale))
                     font.weight: Font.Bold
                     color: root.textColor
-                }
-
-                Text {
-                    width: parent.width
-                    text: "原版 QGC 设置项，当前页面只更换外观容器。"
-                    font.pixelSize: 12
-                    color: root.subTextColor
-                    wrapMode: Text.WordWrap
                 }
 
                 Flickable {
@@ -267,8 +261,8 @@ Rectangle {
 
             Column {
                 anchors.fill: parent
-                anchors.margins: 24
-                spacing: 16
+                anchors.margins: Math.round((root.compactLayout ? 12 : 24) * root.pageScale)
+                spacing: Math.round((root.compactLayout ? 10 : 16) * root.pageScale)
 
                 Column {
                     width: parent.width
@@ -279,7 +273,7 @@ Rectangle {
                             var item = settingsPagesModel.get(root.selectedIndex)
                             return item ? root._titleFor(item.name) : "通用"
                         }
-                        font.pixelSize: 24
+                        font.pixelSize: Math.max(20, Math.round(24 * root.pageScale))
                         font.weight: Font.Bold
                         color: root.textColor
                     }
@@ -289,25 +283,37 @@ Rectangle {
                             var item = settingsPagesModel.get(root.selectedIndex)
                             return item ? root._descFor(item.name) : ""
                         }
-                        font.pixelSize: 14
+                        font.pixelSize: Math.max(12, Math.round(14 * root.pageScale))
                         color: root.subTextColor
                     }
                 }
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height - 58
-                    radius: 10
+                    height: parent.height - Math.round((root.compactLayout ? 48 : 58) * root.pageScale)
+                    radius: Math.round(10 * root.pageScale)
                     color: root.cardColor
                     border.width: 1
                     border.color: root.lineColor
                     clip: true
 
-                    Loader {
-                        id: originalSettingsLoader
+                    Flickable {
+                        id: settingsContentFlick
                         anchors.fill: parent
-                        anchors.margins: 16
-                        source: root.selectedUrl
+                        anchors.margins: Math.round((root.compactLayout ? 8 : 16) * root.pageScale)
+                        contentWidth: Math.max(width, 680 * root.pageScale, originalSettingsLoader.item ? originalSettingsLoader.item.implicitWidth : 0)
+                        contentHeight: Math.max(height, originalSettingsLoader.item ? originalSettingsLoader.item.implicitHeight : 0)
+                        clip: true
+                        flickableDirection: Flickable.HorizontalAndVerticalFlick
+                        ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
+                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+
+                        Loader {
+                            id: originalSettingsLoader
+                            width: settingsContentFlick.contentWidth
+                            height: Math.max(settingsContentFlick.height, item ? item.implicitHeight : settingsContentFlick.height)
+                            source: root.selectedUrl
+                        }
                     }
                 }
             }

@@ -23,6 +23,7 @@ Item {
     id: _root
 
     property var map        ///< Map control to place item in
+    property bool interactive: true
 
     signal clicked(int sequenceNumber)
 
@@ -37,6 +38,7 @@ Item {
     property var    _landingPointObject
     property bool   _useLoiterToAlt:            _missionItem.useLoiterToAlt.rawValue
     property real   _landingAreaBearing:        _missionItem.landingCoordinate.azimuthTo(_missionItem.slopeStartCoordinate)
+    property bool   _editingAllowed:            !_missionItem.flyView || (map && map.planView && interactive)
 
     function hideItemVisuals() {
         objMgr.destroyObjects()
@@ -94,11 +96,11 @@ Item {
     Component.onCompleted: {
         if (_missionItem.landingCoordSet) {
             showItemVisuals()
-            if (!_missionItem.flyView && _missionItem.isCurrentItem) {
+            if (_editingAllowed && _missionItem.isCurrentItem) {
                 showDragAreas()
             }
             _setFlightPath()
-        } else if (!_missionItem.flyView && _missionItem.isCurrentItem) {
+        } else if (_editingAllowed && _missionItem.isCurrentItem) {
             showMouseArea()
         }
     }
@@ -115,7 +117,7 @@ Item {
         target: _missionItem
 
         onIsCurrentItemChanged: {
-            if (_missionItem.flyView) {
+            if (!_editingAllowed) {
                 return
             }
             if (_missionItem.isCurrentItem) {
@@ -131,7 +133,7 @@ Item {
         }
 
         onLandingCoordSetChanged: {
-            if (_missionItem.flyView) {
+            if (!_editingAllowed) {
                 return
             }
             if (_missionItem.landingCoordSet) {

@@ -33,6 +33,10 @@
         <file alias="notile.png">resources/notile.png</file>
         <file alias="NoVideoBackground.jpg">resources/NoVideoBackground.jpg</file>
         <file alias="Pause.svg">resources/Pause.svg</file>
+        <file alias="nicewing_land.svg">resources/custom/nicewing_land.svg</file>
+        <file alias="nicewing_pause.svg">resources/custom/nicewing_pause.svg</file>
+        <file alias="nicewing_rtl.svg">resources/custom/nicewing_rtl.svg</file>
+        <file alias="nicewing_takeoff.svg">resources/custom/nicewing_takeoff.svg</file>
         <file alias="pause-mission.svg">resources/pause-mission.svg</file>
         <file alias="pencil.svg">resources/pencil.svg</file>
         <file alias="Play.svg">resources/Play.svg</file>
