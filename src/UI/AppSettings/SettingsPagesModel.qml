@@ -49,6 +49,13 @@ ListModel {
     }
 
     ListElement {
+        name: qsTr("NTRIP")
+        url: "qrc:/qml/QGroundControl/AppSettings/NTRIPSettings.qml"
+        iconUrl: "qrc:/InstrumentValueIcons/usb.svg"
+        pageVisible: function() { return true }
+    }
+
+    ListElement {
         name: qsTr("ADSB Server")
         url: "qrc:/qml/QGroundControl/AppSettings/ADSBServerSettings.qml"
         iconUrl: "qrc:/InstrumentValueIcons/airplane.svg"

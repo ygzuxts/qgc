@@ -87,11 +87,13 @@ void AudioOutput::init(Fact *mutedFact)
         }
     });
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     (void) connect(_engine, &QTextToSpeech::aboutToSynthesize, this, [this](qsizetype id) {
         qCDebug(AudioOutputLog) << "TTS About To Synthesize ID:" << id;
         _textQueueSize--;
         qCDebug(AudioOutputLog) << "Queue Size:" << _textQueueSize;
     });
+#endif
 
     (void) connect(mutedFact, &Fact::valueChanged, this, [this](QVariant value) {
         setMuted(value.toBool());
@@ -110,9 +112,11 @@ void AudioOutput::init(Fact *mutedFact)
         (void) connect(_engine, &QTextToSpeech::volumeChanged, this, [](double volume) {
             qCDebug(AudioOutputLog) << "TTS Volume changed to:" << volume;
         });
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
         (void) connect(_engine, &QTextToSpeech::sayingWord, this, [](const QString &word, qsizetype id, qsizetype start, qsizetype length) {
             qCDebug(AudioOutputLog) << "TTS Saying:" << word << "ID:" << id << "Start:" << start << "Length:" << length;
         });
+#endif
     }
 
     setMuted(mutedFact->rawValue().toBool());
@@ -142,16 +146,20 @@ void AudioOutput::say(const QString &text, TextMods textMods)
         return;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     if (!_engine->engineCapabilities().testFlag(QTextToSpeech::Capability::Speak)) {
         qCWarning(AudioOutputLog) << "Speech Not Supported:" << text;
         return;
     }
+#endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     if (_textQueueSize >= kMaxTextQueueSize) {
         (void) QMetaObject::invokeMethod(_engine, "stop", Qt::AutoConnection, QTextToSpeech::BoundaryHint::Default);
         _textQueueSize = 0;
         qCWarning(AudioOutputLog) << "Text queue exceeded maximum size. Stopped current speech.";
     }
+#endif
 
     QString outText = _fixTextMessageForAudio(text);
 
@@ -159,6 +167,7 @@ void AudioOutput::say(const QString &text, TextMods textMods)
         outText = tr("%1").arg(outText);
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     qsizetype index;
     if (QMetaObject::invokeMethod(_engine, "enqueue", Qt::AutoConnection, qReturnArg(index), outText)) {
         if (index != -1) {
@@ -168,6 +177,9 @@ void AudioOutput::say(const QString &text, TextMods textMods)
     } else {
         qCWarning(AudioOutputLog) << "Failed to invoke Enqueue method.";
     }
+#else
+    (void) QMetaObject::invokeMethod(_engine, "say", Qt::AutoConnection, outText);
+#endif
 }
 
 QString AudioOutput::_fixTextMessageForAudio(const QString &string)

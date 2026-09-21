@@ -24,6 +24,7 @@
 #include "FlyViewSettings.h"
 #include "GimbalControllerSettings.h"
 #include "MapsSettings.h"
+#include "NTRIPSettings.h"
 #include "OfflineMapsSettings.h"
 #include "PlanViewSettings.h"
 #include "RemoteIDSettings.h"
@@ -82,6 +83,7 @@ void SettingsManager::init()
     _flyViewSettings = new FlyViewSettings(this);
     _gimbalControllerSettings = new GimbalControllerSettings(this);
     _mapsSettings = new MapsSettings(this);
+    _ntripSettings = new NTRIPSettings(this);
     _offlineMapsSettings = new OfflineMapsSettings(this);
     _planViewSettings = new PlanViewSettings(this);
     _remoteIDSettings = new RemoteIDSettings(this);
@@ -108,6 +110,7 @@ FlightModeSettings *SettingsManager::flightModeSettings() const { return _flight
 FlyViewSettings *SettingsManager::flyViewSettings() const { return _flyViewSettings; }
 GimbalControllerSettings *SettingsManager::gimbalControllerSettings() const { return _gimbalControllerSettings; }
 MapsSettings *SettingsManager::mapsSettings() const { return _mapsSettings; }
+NTRIPSettings *SettingsManager::ntripSettings() const { return _ntripSettings; }
 OfflineMapsSettings *SettingsManager::offlineMapsSettings() const { return _offlineMapsSettings; }
 PlanViewSettings *SettingsManager::planViewSettings() const { return _planViewSettings; }
 RemoteIDSettings *SettingsManager::remoteIDSettings() const { return _remoteIDSettings; }

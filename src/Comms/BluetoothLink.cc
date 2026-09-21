@@ -449,7 +449,9 @@ void BluetoothLink::_writeBytes(const QByteArray& bytes)
 void BluetoothLink::_checkPermission()
 {
     QBluetoothPermission permission;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     permission.setCommunicationModes(QBluetoothPermission::Access);
+#endif
 
     const Qt::PermissionStatus permissionStatus = QCoreApplication::instance()->checkPermission(permission);
     if (permissionStatus == Qt::PermissionStatus::Undetermined) {

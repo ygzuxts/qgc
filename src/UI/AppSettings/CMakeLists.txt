@@ -17,6 +17,7 @@ qt_add_qml_module(AppSettingsModule
         MapSettings.qml
         MockLink.qml
         MockLinkSettings.qml
+        NTRIPSettings.qml
         NmeaGpsSettings.qml
         PlanViewSettings.qml
         PX4LogTransferSettings.qml

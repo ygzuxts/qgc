@@ -456,6 +456,9 @@ public:
     /// @return true: message sent, false: Link no longer connected
     bool sendMessageOnLinkThreadSafe(LinkInterface* link, mavlink_message_t message);
 
+    /// Sends the current NTRIP account settings to the 4G module.
+    Q_INVOKABLE bool sendNtripConfigTo4GModule(const QString& host, int port, const QString& mountpoint, const QString& username, const QString& password);
+
     /// Sends the specified messages multiple times to the vehicle in order to attempt to
     /// guarantee that it makes it to the vehicle.
     void sendMessageMultiple(mavlink_message_t message);

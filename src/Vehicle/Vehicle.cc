@@ -67,9 +67,22 @@
 #include "MockLink.h"
 #endif
 
+#include <QtCore/QByteArray>
 #include <QtCore/QDateTime>
 
 QGC_LOGGING_CATEGORY(VehicleLog, "VehicleLog")
+
+namespace {
+constexpr uint16_t kNtripConfigTunnelPayloadType = 42000U;
+constexpr uint8_t kNtripConfigVersion = 1U;
+constexpr uint8_t kNtripConfigFieldHost = 1U;
+constexpr uint8_t kNtripConfigFieldPort = 2U;
+constexpr uint8_t kNtripConfigFieldMountpoint = 3U;
+constexpr uint8_t kNtripConfigFieldAuthBasic = 4U;
+constexpr uint8_t kNtripConfigFieldApply = 5U;
+constexpr int kNtripConfigHeaderLength = 3;
+constexpr int kNtripConfigMaxFieldLength = 128 - kNtripConfigHeaderLength;
+}
 
 #define UPDATE_TIMER 50
 #define DEFAULT_LAT  38.965767f
@@ -1504,6 +1517,53 @@ bool Vehicle::sendMessageOnLinkThreadSafe(LinkInterface* link, mavlink_message_t
     emit messagesSentChanged();
 
     return true;
+}
+
+bool Vehicle::sendNtripConfigTo4GModule(const QString& host, int port, const QString& mountpoint, const QString& username, const QString& password)
+{
+    const auto sharedLink = vehicleLinkManager()->primaryLink().lock();
+    if (!sharedLink) {
+        qCWarning(VehicleLog) << "sendNtripConfigTo4GModule: no primary link";
+        return false;
+    }
+
+    const auto sendField = [this, &sharedLink](uint8_t field, const QByteArray& value) -> bool {
+        if (value.size() > kNtripConfigMaxFieldLength) {
+            qCWarning(VehicleLog) << "sendNtripConfigTo4GModule: field too long" << field << value.size();
+            return false;
+        }
+
+        uint8_t payload[128] = {};
+        payload[0] = kNtripConfigVersion;
+        payload[1] = field;
+        payload[2] = static_cast<uint8_t>(value.size());
+        if (!value.isEmpty()) {
+            memcpy(&payload[kNtripConfigHeaderLength], value.constData(), static_cast<size_t>(value.size()));
+        }
+
+        mavlink_message_t msg = {};
+        mavlink_msg_tunnel_pack_chan(MAVLinkProtocol::instance()->getSystemId(),
+                                     MAVLinkProtocol::getComponentId(),
+                                     sharedLink->mavlinkChannel(),
+                                     &msg,
+                                     id(),
+                                     MAV_COMP_ID_ONBOARD_COMPUTER,
+                                     kNtripConfigTunnelPayloadType,
+                                     static_cast<uint8_t>(kNtripConfigHeaderLength + value.size()),
+                                     payload);
+        return sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
+    };
+
+    const QByteArray hostBytes = host.trimmed().toUtf8();
+    const QByteArray portBytes = QByteArray::number(port);
+    const QByteArray mountpointBytes = mountpoint.trimmed().toUtf8();
+    const QByteArray authBytes = (username.trimmed() + QStringLiteral(":") + password).toUtf8().toBase64();
+
+    return sendField(kNtripConfigFieldHost, hostBytes) &&
+           sendField(kNtripConfigFieldPort, portBytes) &&
+           sendField(kNtripConfigFieldMountpoint, mountpointBytes) &&
+           sendField(kNtripConfigFieldAuthBasic, authBytes) &&
+           sendField(kNtripConfigFieldApply, QByteArrayLiteral("1"));
 }
 
 int Vehicle::motorCount()

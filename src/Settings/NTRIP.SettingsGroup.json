@@ -1,0 +1,88 @@
+{
+    "version":      1,
+    "fileType":     "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":         "ntripServerConnectEnabled",
+    "shortDesc":    "Connect",
+    "longDesc":     "Connect to the NTRIP caster and forward RTCM data to the active vehicle.",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":         "ntripServerHostAddress",
+    "shortDesc":    "Host",
+    "longDesc":     "NTRIP caster host address.",
+    "type":         "string",
+    "default":      "103.143.19.54"
+},
+{
+    "name":         "ntripServerPort",
+    "shortDesc":    "Port",
+    "longDesc":     "NTRIP caster TCP port.",
+    "type":         "Uint32",
+    "default":      8003,
+    "min":          1,
+    "max":          65535
+},
+{
+    "name":         "ntripUsername",
+    "shortDesc":    "Username",
+    "longDesc":     "NTRIP account username.",
+    "type":         "string",
+    "default":      ""
+},
+{
+    "name":         "ntripPassword",
+    "shortDesc":    "Password",
+    "longDesc":     "NTRIP account password.",
+    "type":         "string",
+    "default":      ""
+},
+{
+    "name":         "ntripMountpoint",
+    "shortDesc":    "Mountpoint",
+    "longDesc":     "NTRIP caster mountpoint.",
+    "type":         "string",
+    "default":      "RTCM33GRCEJpro"
+},
+{
+    "name":         "ntripWhitelist",
+    "shortDesc":    "RTCM whitelist",
+    "longDesc":     "Comma-separated RTCM message IDs to forward. Leave empty to forward all RTCM messages.",
+    "type":         "string",
+    "default":      ""
+},
+{
+    "name":         "ntripUseTls",
+    "shortDesc":    "Use TLS",
+    "longDesc":     "Use TLS when connecting to the NTRIP caster.",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":         "ntripUdpForwardEnabled",
+    "shortDesc":    "UDP forward",
+    "longDesc":     "Forward received RTCM data to a UDP target as well as to the active vehicle.",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":         "ntripUdpTargetAddress",
+    "shortDesc":    "UDP address",
+    "longDesc":     "UDP target address for forwarded RTCM data.",
+    "type":         "string",
+    "default":      "127.0.0.1"
+},
+{
+    "name":         "ntripUdpTargetPort",
+    "shortDesc":    "UDP port",
+    "longDesc":     "UDP target port for forwarded RTCM data.",
+    "type":         "Uint32",
+    "default":      13320,
+    "min":          1,
+    "max":          65535
+}
+]
+}

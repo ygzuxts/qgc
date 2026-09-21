@@ -21,6 +21,7 @@
 #include "QGCMapEngineManager.h"
 #include "ADSBVehicleManager.h"
 #include "MissionCommandTree.h"
+#include "NTRIPManager.h"
 #include "HorizontalFactValueGrid.h"
 #include "FlightPathSegment.h"
 #include "InstrumentValueData.h"
@@ -113,6 +114,7 @@ QGroundControlQmlGlobal::QGroundControlQmlGlobal(QObject *parent)
     , _adsbVehicleManager(ADSBVehicleManager::instance())
     , _qgcPositionManager(QGCPositionManager::instance())
     , _missionCommandTree(MissionCommandTree::instance())
+    , _ntripManager(NTRIPManager::instance())
     , _videoManager(VideoManager::instance())
     , _linkManager(LinkManager::instance())
     , _multiVehicleManager(MultiVehicleManager::instance())

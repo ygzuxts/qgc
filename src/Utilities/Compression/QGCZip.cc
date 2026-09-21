@@ -2,8 +2,13 @@
 #include "QGCLoggingCategory.h"
 
 #include <QtCore/QDir>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
 #include <QtCore/private/qzipreader_p.h>
 #include <QtCore/private/qzipwriter_p.h>
+#else
+#include <QtGui/private/qzipreader_p.h>
+#include <QtGui/private/qzipwriter_p.h>
+#endif
 
 QGC_LOGGING_CATEGORY(QGCZipLog, "qgc.utilities.compression.qgczip")
 
