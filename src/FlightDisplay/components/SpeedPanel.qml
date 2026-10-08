@@ -18,7 +18,7 @@ Column {
     QfiAirspeedIndicator {
         anchors.horizontalCenter: parent.horizontalCenter
         radius: root.sideGaugeSize / 2
-        airspeed: Math.max(0, FlightTelemetryModel.displayAirspeedKnots)
+        airspeed: Math.max(0, FlightTelemetryModel.displayAirspeed)
     }
 
     Rectangle {
@@ -32,7 +32,7 @@ Column {
 
         Text {
             anchors.centerIn: parent
-            text: flightState.dataSuppressed ? "--" : Math.max(0, FlightTelemetryModel.displayAirspeedKnots).toFixed(0)
+            text: flightState.dataSuppressed ? "--" : Math.max(0, FlightTelemetryModel.displayAirspeed).toFixed(1)
             color: FlightPalette.lcdText
             font.family: FlightPalette.cockpitFont
             font.pixelSize: Math.round(root.sideGaugeSize * 0.105)
@@ -44,7 +44,7 @@ Column {
 
     Text {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "速度 kt"
+        text: "速度 m/s"
         color: FlightPalette.textLo
         font.family: FlightPalette.cockpitFont
         font.pixelSize: Math.round(root.sideGaugeSize * 0.052)

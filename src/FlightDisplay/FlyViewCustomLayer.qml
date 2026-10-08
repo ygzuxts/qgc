@@ -36,6 +36,7 @@ Item {
     property var parentToolInsets               // These insets tell you what screen real estate is available for positioning the controls in your overlay
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
+    signal originalQgcModeRequested()
 
     // since this file is a placeholder for the custom layer in a standard build, we will just pass through the parent insets
     QGCToolInsets {
@@ -57,6 +58,7 @@ Item {
     FlightConsole {
         anchors.fill: parent
         z: 10000
+        onOriginalQgcModeRequested: _root.originalQgcModeRequested()
 
         MouseArea {
             anchors.fill: parent

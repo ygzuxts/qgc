@@ -36,6 +36,7 @@ Item {
     // These should only be used by MainRootWindow
     property var planController:    _planController
     property var guidedController:  _guidedController
+    property bool originalQgcMode:  false
 
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
@@ -81,12 +82,13 @@ Item {
 
     FlyViewToolBar {
         id:         toolbar
-        visible:    false
+        visible:    _root.originalQgcMode
+        z:          QGroundControl.zOrderTopMost
     }
 
     Item {
         id:                 mapHolder
-        anchors.top:        parent.top
+        anchors.top:        _root.originalQgcMode ? toolbar.bottom : parent.top
         anchors.bottom:     parent.bottom
         anchors.left:       parent.left
         anchors.right:      parent.right
@@ -97,7 +99,7 @@ Item {
             rightPanelWidth:        ScreenTools.defaultFontPixelHeight * 9
             pipView:                _pipView
             pipMode:                !_mainWindowIsMap
-            toolInsets:             customOverlay.totalToolInsets
+            toolInsets:             _root.originalQgcMode ? widgetLayer.totalToolInsets : customOverlay.totalToolInsets
             mapName:                "FlightDisplayView"
             enabled:                !viewer3DWindow.isOpen
         }
@@ -119,7 +121,7 @@ Item {
             show:                   QGroundControl.videoManager.hasVideo && !QGroundControl.videoManager.fullScreen &&
                                         (videoControl.pipState.state === videoControl.pipState.pipState || mapControl.pipState.state === mapControl.pipState.pipState)
             z:                      QGroundControl.zOrderWidgets
-            visible:                false
+            visible:                _root.originalQgcMode
 
             property real leftEdgeBottomInset: visible ? width + anchors.margins : 0
             property real bottomEdgeLeftInset: visible ? height + anchors.margins : 0
@@ -136,7 +138,7 @@ Item {
             mapControl:             _mapControl
             utmspActTrigger:        utmspSendActTrigger
             isViewer3DOpen:         viewer3DWindow.isOpen
-            visible:                false
+            visible:                _root.originalQgcMode
         }
 
         FlyViewCustomLayer {
@@ -145,7 +147,8 @@ Item {
             z:                  _fullItemZorder + 2
             parentToolInsets:   widgetLayer.totalToolInsets
             mapControl:         _mapControl
-            visible:            !QGroundControl.videoManager.fullScreen
+            visible:            !QGroundControl.videoManager.fullScreen && !_root.originalQgcMode
+            onOriginalQgcModeRequested: _root.originalQgcMode = true
         }
 
         // Development tool for visualizing the insets for a paticular layer, show if needed
@@ -180,6 +183,82 @@ Item {
             id:                     viewer3DWindow
             anchors.fill:           parent
             visible:                false
+        }
+    }
+
+    Item {
+        id:                 originalModeReturnRail
+        anchors.right:      parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        width:              expanded ? ScreenTools.defaultFontPixelWidth * 14 : ScreenTools.defaultFontPixelHeight * 2.2
+        height:             ScreenTools.defaultFontPixelHeight * 7
+        visible:            _root.originalQgcMode
+        z:                  QGroundControl.zOrderTopMost + 1
+
+        property bool expanded: false
+
+        Behavior on width { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+
+        Rectangle {
+            anchors.fill:   parent
+            color:          Qt.rgba(0, 0, 0, 0.72)
+            radius:         ScreenTools.defaultFontPixelWidth * 0.75
+            border.color:   Qt.rgba(1, 1, 1, 0.18)
+        }
+
+        Text {
+            anchors.centerIn: parent
+            visible:          !originalModeReturnRail.expanded
+            text:             "<"
+            color:            "white"
+            font.pixelSize:   ScreenTools.defaultFontPixelHeight * 1.25
+            font.bold:        true
+        }
+
+        Column {
+            anchors.fill:       parent
+            anchors.margins:    ScreenTools.defaultFontPixelWidth
+            visible:            originalModeReturnRail.expanded
+            spacing:            ScreenTools.defaultFontPixelHeight * 0.45
+
+            Text {
+                width:          parent.width
+                text:           "界面"
+                color:          Qt.rgba(1, 1, 1, 0.72)
+                font.pixelSize: ScreenTools.smallFontPixelHeight
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Rectangle {
+                width:          parent.width
+                height:         ScreenTools.defaultFontPixelHeight * 2.6
+                radius:         ScreenTools.defaultFontPixelWidth * 0.5
+                color:          dashboardMouse.pressed ? Qt.rgba(1, 1, 1, 0.26) : Qt.rgba(1, 1, 1, 0.14)
+                border.color:   Qt.rgba(1, 1, 1, 0.22)
+
+                Text {
+                    anchors.centerIn: parent
+                    text:             "仪表盘"
+                    color:            "white"
+                    font.pixelSize:   ScreenTools.defaultFontPixelHeight * 0.85
+                    font.bold:        true
+                }
+
+                MouseArea {
+                    id:             dashboardMouse
+                    anchors.fill:   parent
+                    onClicked: {
+                        originalModeReturnRail.expanded = false
+                        _root.originalQgcMode = false
+                    }
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled:      !originalModeReturnRail.expanded
+            onClicked:    originalModeReturnRail.expanded = true
         }
     }
 }

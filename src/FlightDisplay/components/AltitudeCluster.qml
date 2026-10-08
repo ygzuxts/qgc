@@ -18,7 +18,7 @@ Column {
     QfiAltimeter {
         anchors.horizontalCenter: parent.horizontalCenter
         radius: root.sideGaugeSize / 2
-        altitude: flightState.dataSuppressed ? 0 : FlightTelemetryModel.displayAltitudeFeet
+        altitude: flightState.dataSuppressed ? 0 : FlightTelemetryModel.displayAltitude
         pressure: 29.92
     }
 

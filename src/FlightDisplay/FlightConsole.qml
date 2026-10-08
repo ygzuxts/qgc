@@ -8,6 +8,8 @@ Item {
     anchors.fill: parent
     focus: true
 
+    signal originalQgcModeRequested()
+
     property bool lightMode: false
     property bool controlOverlayOpen: false
     property bool joystickOverlayOpen: false
@@ -79,6 +81,7 @@ Item {
                 flightState: flightState
                 z: 12
                 onThemeToggleRequested: window.lightMode = !window.lightMode
+                onOriginalQgcModeRequested: window.originalQgcModeRequested()
             }
 
             WarningBanner {

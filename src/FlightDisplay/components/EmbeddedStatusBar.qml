@@ -11,15 +11,16 @@ RowLayout {
     property bool compactLandscape: false
     property var flightState
     signal themeToggleRequested()
+    signal originalQgcModeRequested()
     readonly property bool telemetryAvailable: !flightState.dataSuppressed && FlightTelemetryModel.activeVehicle
     readonly property string gpsText: telemetryAvailable
-                                      ? ("SAT " + FlightTelemetryModel.displayGpsSat + "  HDOP " + FlightTelemetryModel.displayGpsHdop.toFixed(1))
-                                      : "SAT --  HDOP --"
+                                      ? ("卫星 " + FlightTelemetryModel.displayGpsSat + "  精度 " + FlightTelemetryModel.displayGpsHdop.toFixed(1))
+                                      : "卫星 --  精度 --"
     readonly property string clockText: Qt.formatTime(FlightTelemetryModel.localTime, "hh:mm")
-    readonly property int statusModuleHeight: compactLandscape ? 42 : 46
+    readonly property int statusModuleHeight: compactLandscape ? 54 : 68
 
-    height: compactLandscape ? 48 : 62
-    spacing: compactLandscape ? 10 : 14
+    height: compactLandscape ? 58 : 78
+    spacing: compactLandscape ? 12 : 18
 
     Item {
         Layout.preferredWidth: Math.max(68, futureInlineText.implicitWidth + 22)
@@ -60,25 +61,42 @@ RowLayout {
             id: futureInlineMouse
             anchors.fill: parent
             pressAndHoldInterval: 550
+            property int tapCount: 0
+
+            Timer {
+                id: futureInlineTapReset
+                interval: 3000
+                repeat: false
+                onTriggered: futureInlineMouse.tapCount = 0
+            }
+
+            onClicked: {
+                tapCount++
+                futureInlineTapReset.restart()
+
+                if (tapCount >= 3) {
+                    futureInlineTapReset.stop()
+                    tapCount = 0
+                    root.originalQgcModeRequested()
+                }
+            }
+
             onPressAndHold: root.themeToggleRequested()
         }
     }
 
-    Item { Layout.fillWidth: true }
-
     Item {
         Layout.alignment: Qt.AlignVCenter
-        Layout.preferredWidth: compactLandscape ? 62 : 72
+        Layout.preferredWidth: compactLandscape ? 160 : 214
         Layout.preferredHeight: root.statusModuleHeight
 
-        Column {
+        Row {
             anchors.centerIn: parent
-            spacing: compactLandscape ? 1 : 2
+            spacing: compactLandscape ? 7 : 10
 
             QGCColoredImage {
-                id: satelliteGlyph
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: compactLandscape ? 17 : 20
+                anchors.verticalCenter: parent.verticalCenter
+                width: compactLandscape ? 32 : 42
                 height: width
                 source: "/qmlimages/Gps.svg"
                 fillMode: Image.PreserveAspectFit
@@ -86,20 +104,22 @@ RowLayout {
             }
 
             Text {
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
                 text: root.gpsText
                 color: FlightPalette.textHi
                 font.family: FlightPalette.cockpitFont
-                font.pixelSize: compactLandscape ? 7 : 8
+                font.pixelSize: compactLandscape ? 13 : 17
                 font.bold: true
             }
         }
     }
 
+    Item { Layout.fillWidth: true }
+
     Item {
         Layout.alignment: Qt.AlignVCenter
-        Layout.preferredWidth: compactLandscape ? 58 : 66
-        Layout.preferredHeight: root.statusModuleHeight
+        Layout.preferredWidth: compactLandscape ? 92 : 118
+        Layout.preferredHeight: compactLandscape ? 62 : 78
 
         Canvas {
             id: batteryGauge
@@ -113,7 +133,6 @@ RowLayout {
                 var cy = h * 0.68
                 var r = Math.min(w * 0.42, h * 0.56)
                 var start = Math.PI
-                var end = Math.PI * 2
                 var batteryValue = root.flightState.batteryReadingValid ? Math.max(0, Math.min(100, FlightTelemetryModel.displayBattery)) : 0
                 var angle = start + (batteryValue / 100) * Math.PI
 
@@ -192,7 +211,7 @@ RowLayout {
             text: root.flightState.batteryReadingValid ? ("电量 " + Math.round(FlightTelemetryModel.displayBattery) + "%") : "电量 --"
             color: FlightPalette.textHi
             font.family: FlightPalette.cockpitFont
-            font.pixelSize: compactLandscape ? 7 : 8
+            font.pixelSize: compactLandscape ? 12 : 15
             font.bold: true
         }
     }

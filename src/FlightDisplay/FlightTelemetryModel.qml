@@ -41,7 +41,7 @@ QtObject {
     property string modePillText: displayConnected ? translatedFlightMode(activeVehicle.flightMode) : "未连接"
     property string armPillText: displayConnected ? (armed ? "已解锁" : "已上锁") : "未连接"
     property color modePillColor: displayConnected ? (flying ? FlightPalette.statusGreen : FlightPalette.statusYellow) : FlightPalette.statusOff
-    property color armPillColor: displayConnected ? (armed ? FlightPalette.statusYellow : FlightPalette.statusGreen) : FlightPalette.statusOff
+    property color armPillColor: displayConnected ? (armed ? FlightPalette.statusGreen : FlightPalette.statusYellow) : FlightPalette.statusOff
     property real heading: factValue(activeVehicle ? activeVehicle.vehicle.heading : null, 0)
     property real turnRate: 0
     property real _lastHeading: heading
