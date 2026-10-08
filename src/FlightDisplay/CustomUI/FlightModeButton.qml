@@ -140,7 +140,7 @@ Item {
                 Text {
                     id: caretText
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.panelVisible ? "▲" : "▼"
+                    text: root.panelVisible ? "▼" : "▲"
                     font.pixelSize: 9
                     color: root.panelVisible
                            ? (theme ? theme.blue : "#000066")

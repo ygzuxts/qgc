@@ -25,11 +25,13 @@ class FactPanelController : public QObject
     Q_OBJECT
     Q_MOC_INCLUDE("Vehicle.h")
     Q_MOC_INCLUDE("Fact.h")
-    Q_PROPERTY(Vehicle *vehicle MEMBER _vehicle CONSTANT)
+    Q_PROPERTY(Vehicle *vehicle READ vehicle NOTIFY vehicleChanged)
 
 public:
     explicit FactPanelController(QObject *parent = nullptr);
     virtual ~FactPanelController();
+
+    Vehicle *vehicle() const { return _vehicle; }
 
     Q_INVOKABLE Fact *getParameterFact(int componentId, const QString &name, bool reportMissing = true) const;
     Q_INVOKABLE bool parameterExists(int componentId, const QString &name) const;
@@ -40,6 +42,10 @@ public:
 
 signals:
     void missingParametersAvailable();
+    void vehicleChanged(Vehicle *vehicle);
+
+private slots:
+    void _setVehicle(Vehicle *vehicle);
 
 protected:
     /// Checks for existence of the specified parameters
@@ -51,7 +57,6 @@ protected:
 
     Vehicle *_vehicle = nullptr;
 
-private slots:
     void _checkForMissingParameters();
 
 private:

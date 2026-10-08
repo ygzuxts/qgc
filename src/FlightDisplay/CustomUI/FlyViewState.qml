@@ -500,6 +500,13 @@ QtObject {
   return fact ? fact.valueString : fallback
  }
 
+ function _vehicleFact(name) {
+  if (!activeVehicle || !activeVehicle.vehicle) {
+   return null
+  }
+  return activeVehicle.vehicle[name] ? activeVehicle.vehicle[name] : null
+ }
+
  function _resetTelemetry() {
   altitude = NaN
   absoluteAltitude = NaN
@@ -613,7 +620,8 @@ QtObject {
   mavlinkLossPercent = activeVehicle.mavlinkLossPercent
   flightMode = activeVehicle.flightMode ? activeVehicle.flightMode : "--"
   flightModeDisplayText = flightMode
-  flightTime = activeVehicle.flightTime ? activeVehicle.flightTime.valueString : "--:--"
+  var flightTimeFact = _vehicleFact("flightTime")
+  flightTime = _factString(flightTimeFact ? flightTimeFact : activeVehicle.flightTime, "--:--")
 
   if (!activeVehicle.gps) {
    gpsStatus = "GPS N/A"
@@ -650,8 +658,8 @@ QtObject {
  }
 
  property var telemetryTimer: Timer {
-  interval: 150
-  running: true
+  interval: 250
+  running: customFlyViewEnabled && vehicleAvailable
   repeat: true
   onTriggered: _refreshTelemetry()
  }

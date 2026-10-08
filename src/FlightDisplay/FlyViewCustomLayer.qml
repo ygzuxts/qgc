@@ -164,6 +164,7 @@ Item {
         visible: _root.customFlyViewEnabled
         z: 120
         onFlightModeButtonClicked: _root.flightModePanelVisible = !_root.flightModePanelVisible
+        onFlightModePanelCloseRequested: _root.flightModePanelVisible = false
         onSettingsRequested: {
             _root.flightModePanelVisible = false
             _root.settingsPageVisible = true

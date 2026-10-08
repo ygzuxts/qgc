@@ -15,6 +15,7 @@ Rectangle {
     property var theme: null
     readonly property var activeVehicle: state ? state.activeVehicle : null
     readonly property var guided: state ? state.guidedController : null
+    readonly property var safetyControllerVehicle: safetyController.vehicle
     readonly property bool vehicleConnected: !!(state && state.vehicleConnected)
     readonly property bool vehicleAvailable: !!(state && state.vehicleAvailable)
     readonly property bool parametersReady: !!(activeVehicle && activeVehicle.parameterManager && activeVehicle.parameterManager.parametersReady)
@@ -40,6 +41,11 @@ Rectangle {
     readonly property color brandBorder: theme ? theme.blueBorder : "#8080B3"
     property bool takeoffTargetExpanded: false
     property bool takeoffAltConfirmed: true
+    property bool actionsExpanded: false
+    property bool actionAltConfirmed: true
+    property bool actionSpeedConfirmed: true
+    property var safetyConfirmed: [ true, true, true, true ]
+    property var safetyExpanded: [ false, false, false, false ]
 
     // 背景透明度由外层 FlyViewRightPanel 统一控制，避免文字/按钮跟着透明。
     color: "transparent"
@@ -52,10 +58,13 @@ Rectangle {
     onVisibleChanged: {
         if (visible) {
             takeoffTargetExpanded = false
+            actionsExpanded = false
+            syncActionValuesFromVehicle()
             syncTakeoffAltFromParam()
         }
     }
     onTakeoffSafetyFactChanged: syncTakeoffAltFromParam()
+    onActiveVehicleChanged: syncActionValuesFromVehicle()
 
     Connections {
         target: root.takeoffSafetyFact
@@ -75,7 +84,7 @@ Rectangle {
     FactPanelController { id: safetyController }
 
     function _resolveFirstFact(names) {
-        if (!parametersReady) {
+        if (!parametersReady || !safetyControllerVehicle) {
             return null
         }
         for (var i = 0; i < names.length; i++) {
@@ -87,7 +96,7 @@ Rectangle {
     }
 
     function _resolveFirstParamName(names) {
-        if (!parametersReady) {
+        if (!parametersReady || !safetyControllerVehicle) {
             return ""
         }
         for (var i = 0; i < names.length; i++) {
@@ -339,6 +348,93 @@ Rectangle {
         root._applyTakeoffAltToUi(alt, true)
     }
 
+    function additionalActionEnabled(kind) {
+        if (!activeVehicle || !root.vehicleConnected || !activeVehicle.armed || !activeVehicle.flying || !activeVehicle.guidedModeSupported) {
+            return false
+        }
+        if (kind === "speed") {
+            return activeVehicle.haveMRSpeedLimits || activeVehicle.fixedWing || activeVehicle.vtolInFwdFlight
+        }
+        return true
+    }
+
+    function _clampActionAltitude(value) {
+        var numberValue = Number(value)
+        if (!(numberValue === numberValue)) {
+            numberValue = activeVehicle && activeVehicle.altitudeRelative ? Number(activeVehicle.altitudeRelative.rawValue) : 50
+        }
+        return Math.max(0, Math.min(1000, Math.round(numberValue)))
+    }
+
+    function _clampActionSpeed(value) {
+        var numberValue = Number(value)
+        if (!(numberValue === numberValue)) {
+            numberValue = 5
+        }
+        return Math.max(0.1, Math.min(100, Math.round(numberValue * 10) / 10))
+    }
+
+    function syncActionValuesFromVehicle() {
+        if (actionAltEditor && activeVehicle && activeVehicle.altitudeRelative) {
+            actionAltEditor.valueText = String(root._clampActionAltitude(activeVehicle.altitudeRelative.rawValue))
+        }
+        if (actionSpeedEditor) {
+            var speed = state && state.groundSpeed === state.groundSpeed ? Number(state.groundSpeed) : 5
+            actionSpeedEditor.valueText = root._clampActionSpeed(Math.max(1, speed)).toFixed(1)
+        }
+        root.actionAltConfirmed = true
+        root.actionSpeedConfirmed = true
+    }
+
+    function useDefaultActionAltitude() {
+        if (activeVehicle && activeVehicle.altitudeRelative) {
+            actionAltEditor.valueText = String(root._clampActionAltitude(activeVehicle.altitudeRelative.rawValue))
+        } else {
+            actionAltEditor.valueText = "50"
+        }
+        root.actionAltConfirmed = false
+    }
+
+    function useDefaultActionSpeed() {
+        actionSpeedEditor.valueText = "5.0"
+        root.actionSpeedConfirmed = false
+    }
+
+    function adjustActionAltitude(delta) {
+        actionAltEditor.valueText = String(root._clampActionAltitude(Number(actionAltEditor.valueText) + delta))
+        root.actionAltConfirmed = false
+    }
+
+    function adjustActionSpeed(delta) {
+        actionSpeedEditor.valueText = root._clampActionSpeed(Number(actionSpeedEditor.valueText) + delta).toFixed(1)
+        root.actionSpeedConfirmed = false
+    }
+
+    function confirmActionAltitude() {
+        if (!activeVehicle) {
+            return
+        }
+        var targetAlt = root._clampActionAltitude(actionAltEditor.valueText)
+        var currentAlt = activeVehicle.altitudeRelative ? Number(activeVehicle.altitudeRelative.rawValue) : 0
+        activeVehicle.guidedModeChangeAltitude(targetAlt - currentAlt, false)
+        actionAltEditor.valueText = String(targetAlt)
+        root.actionAltConfirmed = true
+    }
+
+    function confirmActionSpeed() {
+        if (!activeVehicle) {
+            return
+        }
+        var targetSpeed = root._clampActionSpeed(actionSpeedEditor.valueText)
+        if (activeVehicle.vtolInFwdFlight || activeVehicle.fixedWing) {
+            activeVehicle.guidedModeChangeEquivalentAirspeedMetersSecond(targetSpeed)
+        } else {
+            activeVehicle.guidedModeChangeGroundSpeedMetersSecond(targetSpeed)
+        }
+        actionSpeedEditor.valueText = targetSpeed.toFixed(1)
+        root.actionSpeedConfirmed = true
+    }
+
     function safetyLabel(index) {
         switch (index) {
         case 0: return "返航高度"
@@ -355,6 +451,161 @@ Rectangle {
         case 2: return batteryThresholdFact ? batteryThresholdFact.valueString : "--"
         default: return linkLossTimeoutFact ? linkLossTimeoutFact.valueString : "--"
         }
+    }
+
+    function safetyFact(index) {
+        switch (index) {
+        case 0: return rtlAltFact
+        case 1: return takeoffSafetyFact
+        case 2: return batteryThresholdFact
+        default: return linkLossTimeoutFact
+        }
+    }
+
+    function safetyParamName(index) {
+        switch (index) {
+        case 0: return rtlAltParamName.length > 0 ? rtlAltParamName : "RTL_RETURN_ALT"
+        case 1: return takeoffSafetyParamName.length > 0 ? takeoffSafetyParamName : "MIS_TAKEOFF_ALT"
+        case 2: return batteryThresholdParamName.length > 0 ? batteryThresholdParamName : "BAT_LOW_THR"
+        default: return linkLossTimeoutParamName.length > 0 ? linkLossTimeoutParamName : "COM_DL_LOSS_T"
+        }
+    }
+
+    function safetyUnit(index) {
+        if (index === 2) {
+            return batteryThresholdParamName.indexOf("VOLT") !== -1 ? "V" : (batteryThresholdParamName.indexOf("MAH") !== -1 ? "mAh" : "")
+        }
+        return index === 3 ? "s" : "m"
+    }
+
+    function safetyStep(index) {
+        if (index === 2) {
+            return batteryThresholdParamName === "BAT_LOW_THR" ? 0.01 : 0.1
+        }
+        return index === 3 ? 1 : 1
+    }
+
+    function safetyDecimals(index) {
+        return index === 2 ? (batteryThresholdParamName === "BAT_LOW_THR" ? 2 : 1) : 0
+    }
+
+    function safetyRangeText(index) {
+        switch (index) {
+        case 0: return "范围 0–1000 m"
+        case 1: return "范围 0–500 m"
+        case 2: return batteryThresholdParamName === "BAT_LOW_THR" ? "范围 0.00–1.00" : "按当前飞控参数单位"
+        default: return "范围 0–300 s"
+        }
+    }
+
+    function safetyRawValue(index) {
+        var fact = root.safetyFact(index)
+        if (!fact) {
+            return NaN
+        }
+        var value = fact.rawValue !== undefined && fact.rawValue !== null ? Number(fact.rawValue) : NaN
+        if (value === value) {
+            return value
+        }
+        value = fact.value !== undefined && fact.value !== null ? Number(fact.value) : NaN
+        if (value === value) {
+            return value
+        }
+        if (fact.valueString !== undefined && fact.valueString !== null) {
+            value = parseFloat(String(fact.valueString).replace(",", "."))
+            if (value === value) {
+                return value
+            }
+        }
+        return NaN
+    }
+
+    function safetyValueText(index) {
+        var value = root.safetyRawValue(index)
+        if (!(value === value)) {
+            return ""
+        }
+        return value.toFixed(root.safetyDecimals(index))
+    }
+
+    function clampSafetyValue(index, value) {
+        var numberValue = Number(value)
+        if (!(numberValue === numberValue)) {
+            numberValue = root.safetyRawValue(index)
+        }
+        if (!(numberValue === numberValue)) {
+            numberValue = 0
+        }
+        switch (index) {
+        case 0: numberValue = Math.max(0, Math.min(1000, numberValue)); break
+        case 1: numberValue = Math.max(0, Math.min(500, numberValue)); break
+        case 2:
+            if (batteryThresholdParamName === "BAT_LOW_THR") {
+                numberValue = Math.max(0, Math.min(1, numberValue))
+            }
+            break
+        default: numberValue = Math.max(0, Math.min(300, numberValue)); break
+        }
+        return Number(numberValue.toFixed(root.safetyDecimals(index)))
+    }
+
+    function safetyConfirmedAt(index) {
+        return safetyConfirmed[index] !== false
+    }
+
+    function setSafetyConfirmed(index, confirmed) {
+        var values = safetyConfirmed.slice(0)
+        values[index] = confirmed
+        safetyConfirmed = values
+    }
+
+    function safetyExpandedAt(index) {
+        return safetyExpanded[index] === true
+    }
+
+    function toggleSafetyExpanded(index) {
+        var values = safetyExpanded.slice(0)
+        values[index] = !values[index]
+        safetyExpanded = values
+    }
+
+    function safetyCollapsedValue(index) {
+        var factText = root.safetyValue(index)
+        if (factText && factText !== "--") {
+            return factText
+        }
+        var value = root.safetyValueText(index)
+        var unit = root.safetyUnit(index)
+        if (value.length === 0) {
+            return "--"
+        }
+        return unit.length > 0 ? (value + " " + unit) : value
+    }
+
+    function useDefaultSafetyValue(index, editor) {
+        var fact = root.safetyFact(index)
+        if (fact && fact.defaultValueAvailable) {
+            editor.valueText = root.clampSafetyValue(index, fact.defaultValue).toFixed(root.safetyDecimals(index))
+        } else {
+            editor.valueText = root.safetyValueText(index)
+        }
+        root.setSafetyConfirmed(index, false)
+    }
+
+    function adjustSafetyValue(index, editor, delta) {
+        editor.valueText = root.clampSafetyValue(index, Number(editor.valueText) + delta).toFixed(root.safetyDecimals(index))
+        root.setSafetyConfirmed(index, false)
+    }
+
+    function confirmSafetyValue(index, editor) {
+        var fact = root.safetyFact(index)
+        if (!fact) {
+            return
+        }
+        var value = root.clampSafetyValue(index, editor.valueText)
+        fact.value = value
+        editor.valueText = value.toFixed(root.safetyDecimals(index))
+        root.setSafetyConfirmed(index, true)
     }
 
     component PanelCard: Rectangle {
@@ -483,6 +734,7 @@ Rectangle {
 
         radius: 6
         clip: true
+        opacity: enabled ? 1 : 0.45
         color: takeoffAltButtonMouse.pressed
                ? (primary ? root.brandPress : root.brandHover)
                : takeoffAltButtonMouse.containsMouse
@@ -502,9 +754,135 @@ Rectangle {
         MouseArea {
             id: takeoffAltButtonMouse
             anchors.fill: parent
+            enabled: takeoffAltButtonRoot.enabled
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: takeoffAltButtonRoot.activated()
+        }
+    }
+
+    component ActionValueEditor: Column {
+        id: editorRoot
+
+        property string title: ""
+        property string subtitle: ""
+        property string unit: ""
+        property string rangeText: ""
+        property alias valueText: valueInput.text
+        property bool confirmed: true
+        property bool enabledState: true
+        property bool showHeader: true
+        signal minus
+        signal plus
+        signal useDefault
+        signal confirm
+        signal edited
+
+        spacing: 6
+        opacity: enabledState ? 1 : 0.48
+
+        Text {
+            width: parent.width
+            visible: editorRoot.showHeader
+            height: visible ? implicitHeight : 0
+            text: editorRoot.title
+            font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
+            font.weight: Font.Bold
+            color: root.textMain
+            elide: Text.ElideRight
+        }
+
+        Text {
+            width: parent.width
+            visible: editorRoot.showHeader
+            height: visible ? implicitHeight : 0
+            text: editorRoot.subtitle
+            font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
+            color: root.textSub
+            elide: Text.ElideRight
+        }
+
+        Row {
+            width: parent.width
+            spacing: 8
+            height: Math.round(34 * (theme ? theme.uiScale : 1))
+
+            TextInput {
+                id: valueInput
+                width: Math.round(44 * (theme ? theme.uiScale : 1))
+                height: parent.height
+                enabled: editorRoot.enabledState
+                selectByMouse: true
+                font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                color: root.textMain
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                validator: DoubleValidator { bottom: 0; top: 1000; decimals: 1 }
+                onTextEdited: editorRoot.edited()
+
+                Rectangle {
+                    anchors.fill: parent
+                    z: -1
+                    radius: 2
+                    color: root.theme && root.theme.darkMode ? "#0b0b0b" : "#ffffff"
+                    border.width: Math.round(1 * (theme ? theme.uiScale : 1))
+                    border.color: root.cardBorder
+                }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: editorRoot.unit
+                font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                color: root.textSub
+            }
+
+            TakeoffAltButton {
+                width: Math.round(30 * (theme ? theme.uiScale : 1))
+                height: parent.height
+                enabled: editorRoot.enabledState
+                label: "−"
+                onActivated: editorRoot.minus()
+            }
+
+            TakeoffAltButton {
+                width: Math.round(30 * (theme ? theme.uiScale : 1))
+                height: parent.height
+                enabled: editorRoot.enabledState
+                label: "+"
+                onActivated: editorRoot.plus()
+            }
+        }
+
+        Row {
+            width: parent.width
+            spacing: 8
+            height: Math.round(32 * (theme ? theme.uiScale : 1))
+
+            TakeoffAltButton {
+                width: Math.round(94 * (theme ? theme.uiScale : 1))
+                height: parent.height
+                enabled: editorRoot.enabledState
+                label: "使用默认值"
+                onActivated: editorRoot.useDefault()
+            }
+
+            TakeoffAltButton {
+                width: Math.round(74 * (theme ? theme.uiScale : 1))
+                height: parent.height
+                enabled: editorRoot.enabledState
+                label: editorRoot.confirmed ? "已确认" : "确认执行"
+                primary: !editorRoot.confirmed
+                onActivated: editorRoot.confirm()
+            }
+        }
+
+        Text {
+            width: parent.width
+            text: editorRoot.rangeText
+            font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1))
+            color: root.textSub
+            elide: Text.ElideRight
         }
     }
 
@@ -618,7 +996,7 @@ Rectangle {
                     width: parent.width
                     height: Math.round(24 * (theme ? theme.uiScale : 1))
                     Text {
-                        text: "起飞目标..."
+                        text: "起飞目标高度"
                         font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Bold
                         color: root.textMain
@@ -712,6 +1090,90 @@ Rectangle {
                     }
                     Text {
                         text: "范围 0–500 m"
+                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
+                        color: root.textSub
+                    }
+                }
+            }
+        }
+
+        PanelCard {
+            visible: root.vehicleConnected && !!(activeVehicle && activeVehicle.flying)
+            contentItem: Column {
+                width: parent.width
+                spacing: 8
+
+                Row {
+                    width: parent.width
+                    height: Math.round(28 * (theme ? theme.uiScale : 1))
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "飞行动作"
+                        font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
+                        font.weight: Font.Bold
+                        color: root.textMain
+                    }
+
+                    Text {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: root.actionsExpanded ? "收起" : "展开"
+                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                        color: root.brandBlue
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.actionsExpanded = !root.actionsExpanded
+                    }
+                }
+
+                Column {
+                    width: parent.width
+                    spacing: 14
+                    visible: root.actionsExpanded
+                    height: visible ? implicitHeight : 0
+
+                    ActionValueEditor {
+                        id: actionAltEditor
+                        width: parent.width
+                        title: "改变高度"
+                        subtitle: "目标相对高度"
+                        unit: "m"
+                        rangeText: "范围 0–1000 m"
+                        valueText: "50"
+                        confirmed: root.actionAltConfirmed
+                        enabledState: root.additionalActionEnabled("altitude")
+                        onEdited: root.actionAltConfirmed = false
+                        onMinus: root.adjustActionAltitude(-1)
+                        onPlus: root.adjustActionAltitude(1)
+                        onUseDefault: root.useDefaultActionAltitude()
+                        onConfirm: root.confirmActionAltitude()
+                    }
+
+                    ActionValueEditor {
+                        id: actionSpeedEditor
+                        width: parent.width
+                        title: "改变最大地速"
+                        subtitle: "最大地速"
+                        unit: "m/s"
+                        rangeText: "范围 0.1–100.0 m/s"
+                        valueText: "5.0"
+                        confirmed: root.actionSpeedConfirmed
+                        enabledState: root.additionalActionEnabled("speed")
+                        onEdited: root.actionSpeedConfirmed = false
+                        onMinus: root.adjustActionSpeed(-0.5)
+                        onPlus: root.adjustActionSpeed(0.5)
+                        onUseDefault: root.useDefaultActionSpeed()
+                        onConfirm: root.confirmActionSpeed()
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: "飞行中可用；未解锁或未起飞时会自动禁用。"
+                        wrapMode: Text.WordWrap
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
@@ -842,7 +1304,7 @@ Rectangle {
             text: "安全设置"
             font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
             font.weight: Font.Bold
-            color: root.textSub
+            color: root.textMain
             leftPadding: 2
         }
 
@@ -863,18 +1325,85 @@ Rectangle {
             delegate: PanelCard {
                 visible: root.vehicleConnected && root.parametersReady
                 contentItem: Column {
+                    id: safetyCardContent
                     width: parent.width
-                    spacing: 4
-                    Text {
-                        text: root.safetyLabel(index)
-                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
-                        font.weight: Font.Bold
-                        color: root.textMain
+                    spacing: 8
+
+                    RowLayout {
+                        width: parent.width
+                        height: Math.round(42 * (theme ? theme.uiScale : 1))
+                        spacing: 8
+
+                        Column {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
+
+                            Text {
+                                width: parent.width
+                                text: root.safetyLabel(index)
+                                font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                                font.weight: Font.Bold
+                                color: root.textMain
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                width: parent.width
+                                text: root.safetyParamName(index)
+                                font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1))
+                                color: root.brandBlue
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        Text {
+                            id: valueSummary
+                            Layout.preferredWidth: Math.round(54 * (theme ? theme.uiScale : 1))
+                            Layout.alignment: Qt.AlignVCenter
+                            text: root.safetyCollapsedValue(index)
+                            horizontalAlignment: Text.AlignRight
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                            font.weight: Font.DemiBold
+                            color: theme && theme.darkMode ? "#dbeafe" : "#475569"
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            id: expandText
+                            Layout.preferredWidth: Math.round(28 * (theme ? theme.uiScale : 1))
+                            Layout.alignment: Qt.AlignVCenter
+                            text: root.safetyExpandedAt(index) ? "收起" : "展开"
+                            horizontalAlignment: Text.AlignRight
+                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.toggleSafetyExpanded(index)
+                        }
                     }
-                    Text {
-                        text: root.safetyValue(index)
-                        font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
-                        color: root.textSub
+
+                    ActionValueEditor {
+                        id: safetyEditor
+                        width: parent.width
+                        visible: root.safetyExpandedAt(index)
+                        height: visible ? implicitHeight : 0
+                        title: ""
+                        subtitle: ""
+                        unit: root.safetyUnit(index)
+                        rangeText: root.safetyRangeText(index)
+                        valueText: root.safetyValueText(index)
+                        confirmed: root.safetyConfirmedAt(index)
+                        enabledState: !!root.safetyFact(index)
+                        showHeader: false
+                        onEdited: root.setSafetyConfirmed(index, false)
+                        onMinus: root.adjustSafetyValue(index, safetyEditor, -root.safetyStep(index))
+                        onPlus: root.adjustSafetyValue(index, safetyEditor, root.safetyStep(index))
+                        onUseDefault: root.useDefaultSafetyValue(index, safetyEditor)
+                        onConfirm: root.confirmSafetyValue(index, safetyEditor)
                     }
                 }
             }

@@ -43,6 +43,15 @@ Item {
     readonly property real sidePanelOpacity: state && state.sidePanelOpacity !== undefined ? Math.max(0.15, Math.min(1.0, state.sidePanelOpacity)) : 0.92
     readonly property color sidePanelSurface: theme ? Qt.rgba(theme.surface.r, theme.surface.g, theme.surface.b, root.sidePanelOpacity) : Qt.rgba(1, 1, 1, root.sidePanelOpacity)
     readonly property color sidePanelSurface2: theme ? Qt.rgba(theme.surface2.r, theme.surface2.g, theme.surface2.b, root.sidePanelOpacity) : Qt.rgba(0.97, 0.98, 0.99, root.sidePanelOpacity)
+    readonly property color panelTitleText: theme && theme.darkMode ? "#f8fafc" : "#0f172a"
+    readonly property color panelBodyText: theme && theme.darkMode ? "#dbeafe" : "#334155"
+    readonly property color panelMutedText: theme && theme.darkMode ? "#94a3b8" : "#64748b"
+    readonly property color panelHintText: theme && theme.darkMode ? "#c7d2fe" : "#475569"
+    readonly property color panelHeaderText: theme && theme.darkMode ? "#bfdbfe" : "#3b4a60"
+    readonly property real panelTitleFont: Math.max(13, Math.round((theme ? theme.fontLg : 15) * root.compactScale))
+    readonly property real panelSectionFont: Math.max(11, Math.round((theme ? theme.fontMd : 12) * root.compactScale))
+    readonly property real panelBodyFont: Math.max(10, Math.round((theme ? theme.fontSm : 11) * root.compactScale))
+    readonly property real panelMetaFont: Math.max(9, Math.round((theme ? theme.fontXs : 10) * root.compactScale))
     readonly property bool mobileLayout: (theme && theme.mobile) || root.width < 1100 || root.height < 650
     readonly property real compactScale: mobileLayout ? 0.92 : 1.0
     readonly property real panelHeaderH: Math.round((theme ? theme.sectionH : 44) * compactScale)
@@ -765,9 +774,9 @@ Item {
                     anchors.leftMargin: root.panelSideMargin
                     anchors.verticalCenter: parent.verticalCenter
                     text: "任务规划"
-                    font.pixelSize: Math.round((theme ? theme.fontLg : 15) * root.compactScale)
-                    font.weight: Font.DemiBold
-                    color: theme ? theme.text : "#1a1d23"
+                    font.pixelSize: root.panelTitleFont
+                    font.weight: Font.Bold
+                    color: root.panelTitleText
                 }
             }
 
@@ -1042,17 +1051,19 @@ Item {
                         spacing: 10
                         visible: root.rightTab === 1
 
-                        SectionTitle { text: "地理围栏"; theme: root.theme }
+                        PanelSectionTitle { text: "地理围栏" }
 
                         Text {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: "地理围栏允许你在飞行区域周围设置虚拟围栏。"
-                            font.pixelSize: theme ? theme.fontXs : 10
-                            color: theme ? theme.text3 : "#9aa3b2"
+                            font.pixelSize: root.panelBodyFont
+                            font.weight: Font.Medium
+                            color: root.panelHintText
+                            lineHeight: 1.18
                         }
 
-                        SectionTitle { text: "插入地理围栏"; theme: root.theme }
+                        PanelSectionTitle { text: "插入地理围栏" }
 
                         GridLayout {
                             width: parent.width
@@ -1074,34 +1085,28 @@ Item {
                             }
                         }
 
-                        SectionTitle { text: "多边形围栏"; theme: root.theme }
+                        PanelSectionTitle { text: "多边形围栏" }
 
                         RowLayout {
                             width: parent.width
                             spacing: 8
                             visible: root._geoFenceController && root._geoFenceController.polygons.count > 0
 
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 38
                                 text: "包含"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 38
                                 text: "编辑"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
                             Item { Layout.fillWidth: true }
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 54
                                 text: "删除"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
                         }
 
@@ -1132,8 +1137,9 @@ Item {
                                 Text {
                                     Layout.fillWidth: true
                                     text: "多边形 " + (index + 1)
-                                    font.pixelSize: theme ? theme.fontSm : 11
-                                    color: theme ? theme.text : "#1a1d23"
+                                    font.pixelSize: root.panelBodyFont
+                                    font.weight: Font.DemiBold
+                                    color: root.panelTitleText
                                     elide: Text.ElideRight
                                 }
 
@@ -1155,44 +1161,36 @@ Item {
                             width: parent.width
                             text: root._geoFenceController && root._geoFenceController.polygons.count === 0 ? "暂无多边形围栏" : ""
                             visible: root._geoFenceController && root._geoFenceController.polygons.count === 0
-                            font.pixelSize: theme ? theme.fontSm : 11
-                            color: theme ? theme.text3 : "#9aa3b2"
+                            font.pixelSize: root.panelBodyFont
+                            color: root.panelMutedText
                         }
 
-                        SectionTitle { text: "圆形围栏"; theme: root.theme }
+                        PanelSectionTitle { text: "圆形围栏" }
 
                         RowLayout {
                             width: parent.width
                             spacing: 8
                             visible: root._geoFenceController && root._geoFenceController.circles.count > 0
 
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 38
                                 text: "包含"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 38
                                 text: "编辑"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
-                            Text {
+                            ColumnHeaderText {
                                 Layout.fillWidth: true
                                 text: "半径"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
-                            Text {
+                            ColumnHeaderText {
                                 Layout.preferredWidth: 54
                                 text: "删除"
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: theme ? theme.fontXs : 10
-                                color: theme ? theme.text3 : "#8b98aa"
                             }
                         }
 
@@ -1244,11 +1242,11 @@ Item {
                             width: parent.width
                             text: root._geoFenceController && root._geoFenceController.circles.count === 0 ? "暂无圆形围栏" : ""
                             visible: root._geoFenceController && root._geoFenceController.circles.count === 0
-                            font.pixelSize: theme ? theme.fontSm : 11
-                            color: theme ? theme.text3 : "#9aa3b2"
+                            font.pixelSize: root.panelBodyFont
+                            color: root.panelMutedText
                         }
 
-                        SectionTitle { text: "越界返回点"; theme: root.theme }
+                        PanelSectionTitle { text: "越界返回点" }
 
                         RectBtn {
                             width: parent.width
@@ -1612,6 +1610,23 @@ Item {
     }
 
     // ================= 组件 =================
+
+    component PanelSectionTitle: Text {
+        width: parent ? parent.width : implicitWidth
+        topPadding: Math.round(2 * root.pageScale)
+        text: ""
+        font.pixelSize: root.panelSectionFont
+        font.weight: Font.Bold
+        color: root.panelTitleText
+        elide: Text.ElideRight
+    }
+
+    component ColumnHeaderText: Text {
+        font.pixelSize: root.panelMetaFont
+        font.weight: Font.DemiBold
+        color: root.panelHeaderText
+        elide: Text.ElideRight
+    }
 
     component RectBtn: Rectangle {
         property string label: ""

@@ -21,13 +21,12 @@ QGC_LOGGING_CATEGORY(FactPanelControllerLog, "qgc.factsystem.factcontrols.factpa
 
 FactPanelController::FactPanelController(QObject *parent)
     : QObject(parent)
-    , _vehicle(MultiVehicleManager::instance()->activeVehicle())
 {
     // qCDebug(FactPanelControllerLog) << Q_FUNC_INFO << this;
 
-    if (!_vehicle) {
-        _vehicle = MultiVehicleManager::instance()->offlineEditingVehicle();
-    }
+    MultiVehicleManager *const multiVehicleManager = MultiVehicleManager::instance();
+    _setVehicle(multiVehicleManager->activeVehicle());
+    (void) connect(multiVehicleManager, &MultiVehicleManager::activeVehicleChanged, this, &FactPanelController::_setVehicle);
 
     _missingParametersTimer.setInterval(500);
     _missingParametersTimer.setSingleShot(true);
@@ -37,6 +36,18 @@ FactPanelController::FactPanelController(QObject *parent)
 FactPanelController::~FactPanelController()
 {
     // qCDebug(FactPanelControllerLog) << Q_FUNC_INFO << this;
+}
+
+void FactPanelController::_setVehicle(Vehicle *vehicle)
+{
+    if (!vehicle) {
+        vehicle = MultiVehicleManager::instance()->offlineEditingVehicle();
+    }
+
+    if (vehicle != _vehicle) {
+        _vehicle = vehicle;
+        emit vehicleChanged(_vehicle);
+    }
 }
 
 void FactPanelController::_reportMissingParameter(int componentId, const QString &name) const

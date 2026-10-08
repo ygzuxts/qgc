@@ -25,6 +25,7 @@ Rectangle {
     signal settingsRequested()
 
     signal flightModeButtonClicked()
+    signal flightModePanelCloseRequested()
 
     readonly property real infoBarOpacity: root.state && root.state.infoBarOpacity !== undefined ? root.state.infoBarOpacity : 0.82
     readonly property color panelBg: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
@@ -245,7 +246,7 @@ Rectangle {
                         Text {
                             id: statusArrowText
                             anchors.verticalCenter: parent.verticalCenter
-                            text: root.flightModePanelVisible ? "▲" : "▼"
+                            text: root.flightModePanelVisible ? "▼" : "▲"
                             font.pixelSize: theme ? theme.fontXs : 9
                             color: root.statusColor()
                         }
@@ -270,7 +271,7 @@ Rectangle {
                     Text {
                         id: arrowText
                         anchors.verticalCenter: parent.verticalCenter
-                        text: root.flightModePanelVisible ? "▲" : "▼"
+                        text: root.flightModePanelVisible ? "▼" : "▲"
                         font.pixelSize: theme ? theme.fontSm : 11
                         color: root.brandBlue
                     }
@@ -1024,7 +1025,7 @@ Rectangle {
         z: 39
         onClicked: {
             root.interfaceDisplayExpanded = false
-            root.flightModePanelVisible = false
+            root.flightModePanelCloseRequested()
             root.themeSelectExpanded = false
             root.uiSelectExpanded = false
         }
@@ -1307,7 +1308,7 @@ Rectangle {
         z: 39
         onClicked: {
             root.interfaceDisplayExpanded = false
-            root.flightModePanelVisible = false
+            root.flightModePanelCloseRequested()
         }
     }
 
@@ -1427,7 +1428,7 @@ Rectangle {
                                     if (root.state && root.state.setFlightMode) {
                                         root.state.setFlightMode(modelData)
                                     }
-                                    root.flightModePanelVisible = false
+                                    root.flightModePanelCloseRequested()
                                 }
                             }
                         }
