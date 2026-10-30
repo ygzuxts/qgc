@@ -79,6 +79,7 @@ Rectangle {
             spacing:        ScreenTools.defaultFontPixelHeight
 
             QGCLabel {
+
                 width:			parent.width
                 wrapMode:		Text.WordWrap
                 color:			setupComplete ? qgcPal.text : qgcPal.warningText

@@ -328,13 +328,13 @@ void PlanMasterController::sendToVehicle(void)
     }
 }
 
-void PlanMasterController::loadFromFile(const QString& filename)
+bool PlanMasterController::loadFromFile(const QString& filename)
 {
     QString errorString;
     QString errorMessage = tr("Error loading Plan file (%1). %2").arg(filename).arg("%1");
 
     if (filename.isEmpty()) {
-        return;
+        return false;
     }
 
     QFileInfo fileInfo(filename);
@@ -343,7 +343,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         errorString = file.errorString() + QStringLiteral(" ") + filename;
         qgcApp()->showAppMessage(errorMessage.arg(errorString));
-        return;
+        return false;
     }
 
     bool success = false;
@@ -365,7 +365,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
 
         if (!JsonHelper::isJsonFile(bytes, jsonDoc, errorString)) {
             qgcApp()->showAppMessage(errorMessage.arg(errorString));
-            return;
+            return false;
         }
 
         QJsonObject json = jsonDoc.object();
@@ -375,7 +375,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
         int version;
         if (!JsonHelper::validateExternalQGCJsonFile(json, kPlanFileType, kPlanFileVersion, kPlanFileVersion, version, errorString)) {
             qgcApp()->showAppMessage(errorMessage.arg(errorString));
-            return;
+            return false;
         }
 
         QList<JsonHelper::KeyValidateInfo> rgKeyInfo = {
@@ -385,7 +385,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
         };
         if (!JsonHelper::validateKeys(json, rgKeyInfo, errorString)) {
             qgcApp()->showAppMessage(errorMessage.arg(errorString));
-            return;
+            return false;
         }
 
         if (!_missionController.load(json[kJsonMissionObjectKey].toObject(), errorString) ||
@@ -400,7 +400,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
     }
 
     if(success){
-        _currentPlanFile = QString::asprintf("%s/%s.%s", fileInfo.path().toLocal8Bit().data(), fileInfo.completeBaseName().toLocal8Bit().data(), AppSettings::planFileExtension);
+        _currentPlanFile = QStringLiteral("%1/%2.%3").arg(fileInfo.path(), fileInfo.completeBaseName(), AppSettings::planFileExtension);
     } else {
         _currentPlanFile.clear();
     }
@@ -409,6 +409,7 @@ void PlanMasterController::loadFromFile(const QString& filename)
     if (!offline()) {
         setDirty(true);
     }
+    return success;
 }
 
 QJsonDocument PlanMasterController::saveToJson()

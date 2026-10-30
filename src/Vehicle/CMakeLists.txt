@@ -20,6 +20,9 @@ target_sources(${CMAKE_PROJECT_NAME}
         TrajectoryPoints.h
         Vehicle.cc
         Vehicle.h
+        VehicleMessageTranslator.cc
+        VehicleMessageTranslator.h
+        VehicleMessageCatalog.h
         VehicleLinkManager.cc
         VehicleLinkManager.h
         VehicleObjectAvoidance.cc

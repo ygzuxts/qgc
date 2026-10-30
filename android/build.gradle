@@ -96,20 +96,20 @@ android {
         resConfig "en"
         minSdkVersion qtMinSdkVersion
         targetSdkVersion qtTargetSdkVersion
-        versionCode 5008000
-        versionName "5.0.8"
+        // androiddeployqt supplies versionCode/versionName in AndroidManifest.xml
+        // from the CMake target. Keep one version source for native and APK builds.
         ndk.abiFilters = qtTargetAbiList.split(",")
 
         // println "applicationId: ${applicationId}"
         println "minSdkVersion: ${minSdkVersion}"
         println "targetSdkVersion: ${targetSdkVersion}"
         println "ndk.abiFilters: ${ndk.abiFilters}"
-        println "versionCode: ${versionCode}"
-        println "versionName: ${versionName}"
+        println "App version supplied by the generated AndroidManifest.xml"
     }
 
     println "timestamp: " + getTimestampStr()
-    println "androidPackageName: ${namespace}"
+    // androiddeployqt text-scans this file; avoid repeating the namespace token in diagnostics.
+    println "applicationId: ${defaultConfig.applicationId}"
     println "androidCompileSdkVersion: ${compileSdkVersion}"
     println "androidBuildToolsVersion: ${buildToolsVersion}"
     println "androidNdkVersion: ${ndkVersion}"

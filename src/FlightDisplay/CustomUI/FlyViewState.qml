@@ -5,6 +5,7 @@ import QtQml
 import QGroundControl
 
 QtObject {
+ id: stateRoot
  // QGC活动飞行器（由 FlyViewCustomLayer 注入）
  property var activeVehicle: null
  property var missionController: null
@@ -35,15 +36,14 @@ QtObject {
  property bool healthAndArmingChecksSupported: !!(activeVehicle && activeVehicle.healthAndArmingCheckReport && activeVehicle.healthAndArmingCheckReport.supported)
  readonly property bool flightModeSetAvailable: activeVehicle ? activeVehicle.flightModeSetAvailable : false
  readonly property var flightModes: activeVehicle ? activeVehicle.flightModes : []
- property bool pendingMissionAvailable: false
- readonly property bool missionAvailable: missionController ? missionController.missionItemCount > 1 : false
- readonly property bool missionControlAvailable: missionAvailable || pendingMissionAvailable
+ readonly property bool missionAvailable: !!(missionController && missionController.containsItems && missionController.missionItemCount > 0)
+ readonly property bool missionControlAvailable: missionAvailable
  property bool canTakeoff: vehicleConnected && activeVehicle && !activeVehicle.flying && (!!activeVehicle.takeoffVehicleSupported || (guidedController && guidedController.showTakeoff))
  property bool canLand: vehicleConnected && activeVehicle && (!!activeVehicle.guidedModeSupported || activeVehicle.armed || activeVehicle.flying || (guidedController && guidedController.showLand))
- property bool canStartMission: vehicleConnected && activeVehicle && missionControlAvailable
+ property bool canStartMission: vehicleConnected && activeVehicle && missionControlAvailable && !missionRunning && !missionPaused
  readonly property bool canHoldPosition: vehicleConnected && activeVehicle && (!!activeVehicle.pauseVehicleSupported || activeVehicle.armed || activeVehicle.flying || (guidedController && guidedController.showPause))
  readonly property bool canReturnToLaunch: vehicleConnected && activeVehicle && (!!activeVehicle.guidedModeSupported || activeVehicle.armed || activeVehicle.flying || (guidedController && guidedController.showRTL))
- readonly property bool canResumeMission: vehicleConnected && activeVehicle && missionControlAvailable
+ readonly property bool canResumeMission: vehicleConnected && activeVehicle && missionControlAvailable && armed && missionPaused && !missionRunning
  readonly property bool canEmergencyStop: vehicleAvailable && armed
  readonly property bool canForceArm: guidedController ? guidedController.showForceArm : (vehicleAvailable && !armed)
 
@@ -104,25 +104,20 @@ QtObject {
   return activeVehicle.allSensorsHealthy && activeVehicle.autopilotPlugin && activeVehicle.autopilotPlugin.setupComplete ? "Ready" : "Not Ready"
  }
  readonly property string mainStatusTone: {
-  if (!activeVehicle || communicationLost) {
-   return communicationLost ? "red" : "gray"
-  }
-  if (activeVehicle.armed) {
-   if (healthAndArmingChecksSupported && !activeVehicle.healthAndArmingCheckReport.canArm) {
+  // Match the displayed state; pre-arm checks do not describe an armed vehicle.
+  switch (mainStatusText) {
+   case "Ready":
+    return "amber"
+   case "Armed":
+   case "Flying":
+   case "Landing":
+    return "green"
+   case "Not Ready":
+   case "Comms Lost":
     return "red"
-   }
-   return healthAndArmingChecksSupported && activeVehicle.healthAndArmingCheckReport.hasWarningsOrErrors ? "amber" : "green"
+   default:
+    return "gray"
   }
-  if (healthAndArmingChecksSupported) {
-   if (!activeVehicle.healthAndArmingCheckReport.canArm) {
-    return "red"
-   }
-   return activeVehicle.healthAndArmingCheckReport.hasWarningsOrErrors ? "amber" : "green"
-  }
-  if (activeVehicle.readyToFlyAvailable) {
-   return activeVehicle.readyToFly ? "green" : "amber"
-  }
-  return activeVehicle.allSensorsHealthy && activeVehicle.autopilotPlugin && activeVehicle.autopilotPlugin.setupComplete ? "green" : "amber"
  }
  property string gpsStatus: "未连接"
  property int gpsSatellites: -1
@@ -155,8 +150,33 @@ QtObject {
  // ──任务状态 ──
  readonly property int totalWP: missionController ? missionController.missionItemCount : 0
  readonly property int currentWP: missionController ? Math.max(0, missionController.currentMissionIndex) : 0
- readonly property bool missionRunning: activeVehicle ? (activeVehicle.armed && activeVehicle.flightMode === activeVehicle.missionFlightMode) : false
+ readonly property bool missionRunning: !!(vehicleConnected && missionAvailable && activeVehicle.armed && activeVehicle.flightMode === activeVehicle.missionFlightMode)
  property bool missionPaused: false
+ property bool missionSessionActive: false
+
+ function _syncMissionSession() {
+  if (!vehicleConnected || !missionAvailable || !armed) {
+   missionSessionActive = false
+   missionPaused = false
+  } else if (missionRunning) {
+   missionSessionActive = true
+   missionPaused = false
+  } else if (activeVehicle.flightMode === activeVehicle.rtlFlightMode || landing) {
+   missionSessionActive = false
+   missionPaused = false
+  } else {
+   missionPaused = missionSessionActive
+  }
+ }
+ onMissionRunningChanged: _syncMissionSession()
+ onMissionAvailableChanged: _syncMissionSession()
+ onVehicleConnectedChanged: _syncMissionSession()
+ onArmedChanged: _syncMissionSession()
+ onLandingChanged: _syncMissionSession()
+ property var missionVehicleConnections: Connections {
+  target: stateRoot.activeVehicle
+  function onFlightModeChanged() { stateRoot._syncMissionSession() }
+ }
 
  // ── 悬停状态 ──
  property bool hovering: false
@@ -249,7 +269,7 @@ QtObject {
   if (!activeVehicle)
    return
   hovering = true
-  missionPaused = true
+  missionPaused = missionSessionActive
   var mode = activeVehicle.pauseFlightMode ? String(activeVehicle.pauseFlightMode) : ""
   console.log("[CustomState] holdPosition", "current:", activeVehicle.flightMode, "target:", mode, "pauseSupported:", activeVehicle.pauseVehicleSupported)
   if (mode !== "") {
@@ -265,10 +285,9 @@ QtObject {
   }
  }
  function startMission() {
-  if (!activeVehicle)
+  if (!canStartMission)
    return
   missionPaused = false
-  pendingMissionAvailable = true
   activeVehicle.startMission()
  }
  function pauseMission() {
@@ -301,10 +320,9 @@ QtObject {
   }
  }
  function continueMission() {
-  if (!activeVehicle)
+  if (!canResumeMission)
    return
   missionPaused = false
-  pendingMissionAvailable = true
   var missionMode = activeVehicle.missionFlightMode ? String(activeVehicle.missionFlightMode) : ""
   console.log("[CustomState] continueMission", "current:", activeVehicle.flightMode, "missionMode:", missionMode, "armed:", activeVehicle.armed, "flying:", activeVehicle.flying, "guided:", !!guidedController)
 
@@ -377,6 +395,8 @@ QtObject {
   activeVehicle.startMission()
  }
  function abortMission() {
+  if (!missionRunning && !canResumeMission) return
+  missionSessionActive = false
   missionPaused = false
   returnToLaunch()
  }
@@ -665,6 +685,7 @@ QtObject {
  }
 
  onActiveVehicleChanged: {
+  missionSessionActive = false
   hovering = false
   missionPaused = false
   _refreshTelemetry()

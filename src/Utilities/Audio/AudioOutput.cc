@@ -73,8 +73,16 @@ void AudioOutput::init(Fact *mutedFact)
         return;
     }
 
-    // Autoselect engine by priority
-    if (!_engine->setEngine(QString())) {
+    QString engineName;
+#ifdef Q_OS_WIN
+    // WinRT plays synthesized PCM through QAudioSink. Starting that sink can
+    // block the GUI thread in Windows audio-service RPCs for several seconds.
+    // SAPI handles playback itself and avoids that synchronous Qt audio path.
+    if (QTextToSpeech::availableEngines().contains(QStringLiteral("sapi"))) {
+        engineName = QStringLiteral("sapi");
+    }
+#endif
+    if (!_engine->setEngine(engineName)) {
         qCWarning(AudioOutputLog) << "Failed to set the TTS engine.";
         return;
     }

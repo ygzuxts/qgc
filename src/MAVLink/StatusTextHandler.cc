@@ -137,9 +137,10 @@ void StatusTextHandler::resetErrorLevelMessages()
     }
 }
 
-void StatusTextHandler::handleHTMLEscapedTextMessage(MAV_COMPONENT compId, MAV_SEVERITY severity, const QString &text, const QString &description)
+void StatusTextHandler::handleHTMLEscapedTextMessage(MAV_COMPONENT compId, MAV_SEVERITY severity, const QString &text, const QString &description,
+                                                   const QString &displayText)
 {
-    QString htmlText(text);
+    QString htmlText(displayText.isNull() ? text : displayText);
 
     (void) htmlText.replace("\n", "<br/>");
 

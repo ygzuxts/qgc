@@ -28,13 +28,14 @@ Item {
 
     QGCFlickable {
         anchors.fill:   parent
-        contentWidth:   mainLayout.width
+        contentWidth:   mainLayout.x + mainLayout.width
         contentHeight:  mainLayout.height
+        flickableDirection: Flickable.HorizontalAndVerticalFlick
 
         ColumnLayout {
             id:         mainLayout
             x:          Math.max(0, root.width / 2 - width / 2)
-            width:      Math.max(implicitWidth, ScreenTools.defaultFontPixelWidth * 50)
+            width:      ScreenTools.isMobile ? Math.max(root.width, implicitWidth) : Math.max(implicitWidth, ScreenTools.defaultFontPixelWidth * 50)
             spacing:    ScreenTools.defaultFontPixelHeight
         }
     }

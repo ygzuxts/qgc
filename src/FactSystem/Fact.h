@@ -38,7 +38,7 @@ class Fact : public QObject
     Q_PROPERTY(QVariantList enumValues              READ enumValues                                             NOTIFY enumsChanged)
     Q_PROPERTY(QString      category                READ category                                               CONSTANT)
     Q_PROPERTY(QString      group                   READ group                                                  CONSTANT)
-    Q_PROPERTY(QString      longDescription         READ longDescription                                        CONSTANT)
+    Q_PROPERTY(QString      longDescription         READ longDescription                                        NOTIFY descriptionsChanged)
     Q_PROPERTY(QVariant     max                     READ cookedMax                                              CONSTANT)
     Q_PROPERTY(QString      maxString               READ cookedMaxString                                        CONSTANT)
     Q_PROPERTY(bool         maxIsDefaultForType     READ maxIsDefaultForType                                    CONSTANT)
@@ -48,7 +48,7 @@ class Fact : public QObject
     Q_PROPERTY(QString      name                    READ name                                                   CONSTANT)
     Q_PROPERTY(bool         vehicleRebootRequired   READ vehicleRebootRequired                                  CONSTANT)
     Q_PROPERTY(bool         qgcRebootRequired       READ qgcRebootRequired                                      CONSTANT)
-    Q_PROPERTY(QString      shortDescription        READ shortDescription                                       CONSTANT)
+    Q_PROPERTY(QString      shortDescription        READ shortDescription                                       NOTIFY descriptionsChanged)
     Q_PROPERTY(QString      units                   READ cookedUnits                                            CONSTANT)
     Q_PROPERTY(QVariant     value                   READ cookedValue                WRITE setCookedValue        NOTIFY valueChanged)
     Q_PROPERTY(QVariant     rawValue                READ rawValue                   WRITE setRawValue           NOTIFY rawValueChanged)
@@ -167,6 +167,7 @@ public:
     void setEnumInfo(const QStringList &strings, const QVariantList &values);
 
 signals:
+    void descriptionsChanged();
     void bitmaskStringsChanged();
     void bitmaskValuesChanged();
     void enumsChanged();

@@ -58,6 +58,7 @@
 !macroend
 
 Name "${APPNAME}"
+RequestExecutionLevel admin
 Var StartMenuFolder
 
 InstallDir "$PROGRAMFILES64\${APPNAME}"
@@ -78,6 +79,27 @@ SetCompressor /SOLID /FINAL lzma
 
 !insertmacro MUI_LANGUAGE "English"
 
+; Install prerequisites before removing the previous application.
+Section "Visual C++ Runtime"
+  InitPluginsDir
+  SetOutPath "$PLUGINSDIR"
+  File "${DESTDIR}\bin\vc_redist.x64.exe"
+  ClearErrors
+  ExecWait '"$PLUGINSDIR\vc_redist.x64.exe" /install /quiet /norestart' $0
+  ${If} ${Errors}
+    SetErrorLevel 1
+    Abort "Could not launch the Visual C++ runtime installer."
+  ${EndIf}
+  ${If} $0 == 3010
+    SetRebootFlag true
+  ${ElseIf} $0 != 0
+  ${AndIf} $0 != 1638
+  ${AndIf} $0 != -2147023258 ; HRESULT_FROM_WIN32(ERROR_PRODUCT_VERSION)
+    SetErrorLevel 1
+    Abort "Visual C++ runtime installation failed (exit code $0)."
+  ${EndIf}
+SectionEnd
+
 Section
   !insertmacro TryUninstallPreviousVersions "${APPNAME}" "${APPNAME}"
   !if "${APPNAME}" == "FutureWings"
@@ -86,11 +108,11 @@ Section
 
   SetRegView 64
   SetOutPath $INSTDIR
-  File /r /x ${EXENAME}.pdb /x ${EXENAME}.lib /x ${EXENAME}.exp ${DESTDIR}\*.*
+  File /r /x *.pdb /x *.lib /x *.exp "${DESTDIR}\*.*"
 
   ; Driver location is http://firmware.ardupilot.org/Tools/MissionPlanner/driver.msi
   ; Whenever this driver is updated in the repo QGCCURRENTDRIVERVERSION must be bumped by 1
-  File ${DRIVER_MSI}
+  File "${DRIVER_MSI}"
 
   WriteUninstaller $INSTDIR\${EXENAME}-Uninstall.exe
   WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
@@ -128,7 +150,18 @@ driversNotInstalled:
 
 installDrivers:
   DetailPrint "Installing UAV Drivers..."
-  ExecWait '"msiexec" /i "driver.msi"'
+  ClearErrors
+  ExecWait '"$SYSDIR\msiexec.exe" /i "$INSTDIR\driver.msi" /qn /norestart /L*v "$TEMP\${EXENAME}-driver-install.log"' $0
+  ${If} ${Errors}
+    SetErrorLevel 1
+    Abort "Could not launch the UAV driver installer."
+  ${EndIf}
+  ${If} $0 == 3010
+    SetRebootFlag true
+  ${ElseIf} $0 != 0
+    SetErrorLevel 1
+    Abort "UAV driver installation failed (exit code $0). See $TEMP\${EXENAME}-driver-install.log."
+  ${EndIf}
   ; Set current driver version value
   WriteRegDWORD HKCU "${QGCDRIVERVERSIONKEY}" "version" ${QGCCURRENTDRIVERVERSION}
   goto done

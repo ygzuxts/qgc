@@ -81,7 +81,7 @@ Rectangle {
         if (file.length === 0) {
             return ""
         }
-        return fileController.fullyQualifiedFilename(_saveDir(), file, ["*.plan"])
+        return fileController.fullyQualifiedFilename(_saveDir().replace(/\/+$/, ""), file, ["*.plan"])
     }
 
     function _displayName(fileName) {
@@ -116,8 +116,7 @@ Rectangle {
             _refreshSavedPlans()
             return false
         }
-        masterController.loadFromFile(path)
-        return true
+        return masterController.loadFromFile(path)
     }
 
     function _executeSelectedTask() {
@@ -126,9 +125,6 @@ Rectangle {
         }
         if (masterController && masterController.sendToVehicle) {
             masterController.sendToVehicle()
-        }
-        if (state) {
-            state.pendingMissionAvailable = true
         }
         root.takeoffPageRequested()
     }
@@ -204,11 +200,15 @@ Rectangle {
     }
 
     function openMissionBuilder() {
+        var planFile = ""
         if (selectedVisibleIndex >= 0) {
-            _loadSelectedTask()
+            if (!_loadSelectedTask()) {
+                return
+            }
+            planFile = _taskPath(selectedVisibleIndex)
         }
         if (openCustomPlanShell) {
-            openCustomPlanShell()
+            openCustomPlanShell(planFile)
         } else {
             openPlanView()
         }
@@ -222,7 +222,7 @@ Rectangle {
             missionController.removeAll()
         }
         if (openCustomPlanShell) {
-            openCustomPlanShell()
+            openCustomPlanShell("")
         } else {
             openPlanView()
         }

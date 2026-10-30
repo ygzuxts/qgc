@@ -138,7 +138,25 @@ ApplicationWindow {
     }
 
     function showVehicleConfig() {
+        if (!mainWindow.allowViewSwitch()) {
+            return
+        }
+        flyView.closeCustomSettings()
         showTool(qsTr("Vehicle Configuration"), "qrc:/qml/QGroundControl/VehicleSetup/SetupView.qml", "/qmlimages/Gears.svg")
+    }
+
+    function closeTool() {
+        if (toolDrawer.visible) {
+            if (!mainWindow.allowViewSwitch()) {
+                return false
+            }
+            toolDrawer.visible = false
+        }
+        return true
+    }
+
+    function vehicleConfigurationOpen() {
+        return toolDrawer.visible && toolDrawerLoader.item && toolDrawerLoader.item.customNavigation === true
     }
 
     function showVehicleConfigParametersPage() {
@@ -465,6 +483,8 @@ ApplicationWindow {
     Rectangle {
         id:             toolDrawer
         anchors.fill:   parent
+        anchors.topMargin: flyView.visible && toolDrawerLoader.item && toolDrawerLoader.item.customNavigation === true
+                           ? flyView.informationBarHeight : 0
         visible:        false
         color:          qgcPal.window
 
@@ -486,10 +506,11 @@ ApplicationWindow {
 
         Rectangle {
             id:             toolDrawerToolbar
+            visible:        !(toolDrawerLoader.item && toolDrawerLoader.item.customNavigation === true)
             anchors.left:   parent.left
             anchors.right:  parent.right
             anchors.top:    parent.top
-            height:         ScreenTools.toolbarHeight
+            height:         visible ? ScreenTools.toolbarHeight : 0
             color:          qgcPal.toolbarBackground
 
             RowLayout {
@@ -541,6 +562,12 @@ ApplicationWindow {
     //-- Critical Vehicle Message Popup
 
     function showCriticalVehicleMessage(message) {
+        // Explicit SITL test marker; ordinary vehicle errors keep their existing UI.
+        var dialogTestPrefix = "[QGC_TEST_DIALOG] "
+        if (message.indexOf(dialogTestPrefix) === 0) {
+            showMessageDialog(qsTr("Test Message"), message.substring(dialogTestPrefix.length))
+            return
+        }
         closeIndicatorDrawer()
         if (criticalVehicleMessagePopup.visible || QGroundControl.videoManager.fullScreen) {
             // We received additional warning message while an older warning message was still displayed.

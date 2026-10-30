@@ -23,6 +23,52 @@ Rectangle {
     color:  qgcPal.window
     z:      QGroundControl.zOrderTopMost
 
+    readonly property string configurationFontFamily: Qt.application.font.family
+    readonly property bool customNavigation: true
+    readonly property bool _dark: qgcPal.globalTheme === QGCPalette.Dark
+    readonly property color _navColor: _dark ? "#030509" : "#f8fafc"
+    readonly property color _lineColor: _dark ? "#253044" : "#d7e2f0"
+    readonly property color _accent: qgcPal.brandingPurple
+    readonly property real _navWidth: (ScreenTools.isMobile || width < 1000) ? Math.max(112, Math.min(170, width * 0.18)) : Math.max(220, Math.min(270, width * 0.22))
+    readonly property real _pageScale: Math.max(ScreenTools.isMobile ? 1.02 : 0.78,
+                                              Math.min(1.30, Math.min(mainWindow.width / 1280, mainWindow.height / 720)))
+    readonly property bool _compactLayout: ScreenTools.isMobile || width < 1000
+    readonly property real _contentMargin: ScreenTools.isMobile ? 8 : 24
+    readonly property real _contentPadding: ScreenTools.isMobile ? 4 : 16
+    property string _panelTitle: qsTr("Summary")
+    signal popout()
+
+    component NavigationButton: ConfigButton {
+        id: navButton
+        implicitHeight: Math.max(44, ScreenTools.defaultFontPixelHeight * 2.4)
+        textColor: checked ? "#ffffff" : qgcPal.text
+        background: Rectangle {
+            radius: 6
+            color: navButton.checked ? setupView._accent
+                 : navButton.hovered ? Qt.rgba(setupView._accent.r, setupView._accent.g, setupView._accent.b, 0.10)
+                 : "transparent"
+        }
+        contentItem: RowLayout {
+            spacing: 10
+            Text {
+                font.family: setupView.configurationFontFamily
+                text: "•"
+                color: !navButton.setupComplete ? "#dc2626" : navButton.checked ? "#ffffff" : "#a8bddc"
+                font.pixelSize: Math.max(14, Math.round(18 * setupView._pageScale))
+                font.weight: Font.Bold
+            }
+            QGCLabel {
+                Layout.fillWidth: true
+                font.family: setupView.configurationFontFamily
+                text: navButton.text
+                color: navButton.textColor
+                font.weight: navButton.checked ? Font.Bold : Font.Medium
+                font.pixelSize: Math.max(12, Math.round((setupView._compactLayout ? 13 : 15) * setupView._pageScale))
+                elide: Text.ElideRight
+            }
+        }
+    }
+
     // This need to block click event leakage to underlying map.
     DeadMouseArea {
         anchors.fill: parent
@@ -49,6 +95,7 @@ Rectangle {
     }
 
     function _showSummaryPanel() {
+        _panelTitle = Qt.binding(function() { return summaryButton.text })
         if (_fullParameterVehicleAvailable) {
             if (QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin.vehicleComponents.length === 0) {
                 panelLoader.setSourceComponent(noComponentsVehicleSummaryComponent)
@@ -66,6 +113,7 @@ Rectangle {
     function showPanel(button, qmlSource) {
         if (mainWindow.allowViewSwitch()) {
             button.checked = true
+            _panelTitle = Qt.binding(function() { return button.text })
             panelLoader.setSource(qmlSource)
         }
     }
@@ -74,6 +122,7 @@ Rectangle {
     {
         if (mainWindow.allowViewSwitch()) {
             var autopilotPlugin = QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin
+            _panelTitle = vehicleComponent.name
             var prereq = autopilotPlugin.prerequisiteSetup(vehicleComponent)
             if (prereq !== "") {
                 _messagePanelText = qsTr("%1 setup must be completed prior to %2 setup.").arg(prereq).arg(vehicleComponent.name)
@@ -94,6 +143,7 @@ Rectangle {
     function showParametersPanel() {
         if (mainWindow.allowViewSwitch()) {
             parametersButton.checked = true
+            _panelTitle = Qt.binding(function() { return parametersButton.text })
             panelLoader.setSource("qrc:/qml/QGroundControl/VehicleSetup/SetupParameterEditor.qml")
         }
     }
@@ -167,6 +217,7 @@ Rectangle {
             color: qgcPal.windowShade
 
             QGCLabel {
+
                 anchors.margins:        _defaultTextWidth * 2
                 anchors.fill:           parent
                 verticalAlignment:      Text.AlignVCenter
@@ -197,13 +248,67 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        id: navigationPanel
+        width: setupView._navWidth
+        height: parent.height
+        color: setupView._navColor
+        Rectangle {
+            anchors.right: parent.right
+            width: 1
+            height: parent.height
+            color: setupView._lineColor
+        }
+    }
+
+    QGCButton {
+        id: backButton
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 14
+        width: setupView._navWidth - 28
+        height: 44
+        text: qsTr("Back")
+        font.pixelSize: Math.max(12, Math.round(15 * setupView._pageScale))
+        textColor: setupView._accent
+        contentItem: Text {
+            font.family: setupView.configurationFontFamily
+            text: backButton.text
+            color: setupView._accent
+            font.pixelSize: backButton.font.pixelSize
+            font.weight: Font.Normal
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: if (mainWindow.allowViewSwitch()) setupView.popout()
+        background: Rectangle {
+            radius: 8
+            color: backButton.hovered ? Qt.rgba(setupView._accent.r, setupView._accent.g, setupView._accent.b, 0.1) : qgcPal.window
+            border.color: setupView._lineColor
+        }
+    }
+
+    QGCLabel {
+
+        font.family: setupView.configurationFontFamily
+        id: navigationTitle
+        anchors.top: backButton.bottom
+        anchors.topMargin: setupView._contentPadding
+        anchors.left: backButton.left
+        width: backButton.width
+        text: qsTr("Vehicle Configuration")
+        font.weight: Font.Bold
+        font.pixelSize: Math.max(16, Math.round((setupView._compactLayout ? 18 : 22) * setupView._pageScale))
+        wrapMode: Text.WordWrap
+    }
+
     QGCFlickable {
         id:                 buttonScroll
-        width:              buttonColumn.width
-        anchors.topMargin:  _defaultTextHeight / 2
-        anchors.top:        parent.top
+        width:              setupView._navWidth - 28
+        anchors.topMargin:  14
+        anchors.top:        navigationTitle.bottom
         anchors.bottom:     parent.bottom
-        anchors.leftMargin: _horizontalMargin
+        anchors.leftMargin: 14
         anchors.left:       parent.left
         contentHeight:      buttonColumn.height
         flickableDirection: Flickable.VerticalFlick
@@ -211,9 +316,10 @@ Rectangle {
 
         ColumnLayout {
             id:         buttonColumn
-            spacing:    ScreenTools.defaultFontPixelHeight / 4
+            width:      buttonScroll.width
+            spacing:    8
 
-            ConfigButton {
+            NavigationButton {
                 id:                 summaryButton
                 icon.source:        "/qmlimages/VehicleSummaryIcon.png"
                 checked:            true
@@ -223,14 +329,14 @@ Rectangle {
                 onClicked: showSummaryPanel()
             }
 
-            ConfigButton {
+            NavigationButton {
                 visible:            QGroundControl.multiVehicleManager.activeVehicle ? QGroundControl.multiVehicleManager.activeVehicle.flowImageIndex > 0 : false
                 text:               qsTr("Optical Flow")
                 Layout.fillWidth:   true
                 onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/OpticalFlowSensor.qml")
             }
 
-            ConfigButton {
+            NavigationButton {
                 id:                 joystickButton
                 icon.source:      "/qmlimages/Joystick.png"
                 setupComplete:      _activeJoystick ? _activeJoystick.calibrated || _buttonsOnly : false
@@ -248,7 +354,7 @@ Rectangle {
                 id:     componentRepeater
                 model:  _fullParameterVehicleAvailable ? QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin.vehicleComponents : 0
 
-                ConfigButton {
+                NavigationButton {
                     icon.source:      modelData.iconResource
                     setupComplete:      modelData.setupComplete
                     text:               modelData.name
@@ -260,7 +366,7 @@ Rectangle {
                 }
             }
 
-            ConfigButton {
+            NavigationButton {
                 id:                 parametersButton
                 visible:            QGroundControl.multiVehicleManager.parameterReadyVehicleAvailable &&
                                     !QGroundControl.multiVehicleManager.activeVehicle.usingHighLatencyLink &&
@@ -271,7 +377,7 @@ Rectangle {
                 onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/SetupParameterEditor.qml")
             }
 
-            ConfigButton {
+            NavigationButton {
                 id:                 firmwareButton
                 icon.source:      "/qmlimages/FirmwareUpgradeIcon.png"
                 visible:            !ScreenTools.isMobile && _corePlugin.options.showFirmwareUpgrade
@@ -285,26 +391,42 @@ Rectangle {
 
     Rectangle {
         id:                     divider
-        anchors.topMargin:      _verticalMargin
-        anchors.bottomMargin:   _verticalMargin
-        anchors.leftMargin:     _horizontalMargin
-        anchors.left:           buttonScroll.right
+        anchors.left:           navigationPanel.right
         anchors.top:            parent.top
         anchors.bottom:         parent.bottom
         width:                  1
-        color:                  qgcPal.windowShade
+        color:                  setupView._lineColor
+    }
+
+    QGCLabel {
+
+        id: panelTitle
+        anchors.left: divider.right
+        anchors.top: parent.top
+        anchors.margins: setupView._contentMargin
+        text: setupView._panelTitle
+        font.weight: Font.Bold
+        font.pixelSize: Math.max(20, Math.round(24 * setupView._pageScale))
+    }
+
+    Rectangle {
+        id: contentCard
+        anchors.left: divider.right
+        anchors.right: parent.right
+        anchors.top: panelTitle.bottom
+        anchors.bottom: parent.bottom
+        anchors.margins: setupView._contentMargin
+        anchors.topMargin: setupView._contentPadding
+        radius: 10
+        color: qgcPal.window
+        border.color: setupView._lineColor
     }
 
     Loader {
         id:                     panelLoader
-        anchors.topMargin:      _verticalMargin
-        anchors.bottomMargin:   _verticalMargin
-        anchors.leftMargin:     _horizontalMargin
-        anchors.rightMargin:    _horizontalMargin
-        anchors.left:           divider.right
-        anchors.right:          parent.right
-        anchors.top:            parent.top
-        anchors.bottom:         parent.bottom
+        anchors.fill:           contentCard
+        anchors.margins:        setupView._contentPadding
+        clip:                   true
 
         function setSource(source, vehicleComponent) {
             panelLoader.source = ""

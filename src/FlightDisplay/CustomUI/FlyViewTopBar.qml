@@ -51,6 +51,7 @@ Rectangle {
     readonly property bool communicationLost: !!(root.activeVehicle && root.activeVehicle.vehicleLinkManager && root.activeVehicle.vehicleLinkManager.communicationLost)
     readonly property bool armed: root.state && root.state.armed
     readonly property string armText: vehicleConnected ? (armed ? "已解锁" : "未解锁") : "未连接"
+    readonly property color armColor: vehicleConnected ? (armed ? "#16a34a" : "#dc2626") : "#9aa3b2"
     readonly property string modeText: vehicleConnected && root.state && root.state.flightMode ? root.state.flightMode : "--"
     readonly property color telemetryTextColor: root.theme && root.theme.darkMode ? "#ffffff" : "#111827"
     readonly property string batteryTopText: root.state && root.state.batteryPercentText ? root.state.batteryPercentText : "--"
@@ -192,6 +193,44 @@ Rectangle {
             }
         }
 
+        Button {
+            id: vehicleConfigButton
+            anchors.right: rightButtons.left
+            anchors.rightMargin: theme ? theme.spacingSm : 8
+            anchors.verticalCenter: parent.verticalCenter
+            width: logoButton.width
+            height: logoButton.height
+            hoverEnabled: true
+            Accessible.name: qsTr("Vehicle Configuration")
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Vehicle Configuration")
+
+            background: Rectangle {
+                radius: root.theme ? root.theme.radiusLg + 2 : 10
+                color: vehicleConfigButton.down ? root.brandPress
+                     : vehicleConfigButton.hovered ? root.brandHover
+                     : root.panelBg
+                border.width: 1
+                border.color: vehicleConfigButton.hovered || vehicleConfigButton.down
+                              ? root.brandBorder : root.panelOuterBorder
+            }
+
+            contentItem: QGCColoredImage {
+                source: "/qmlimages/Gears.svg"
+                color: vehicleConfigButton.down ? "#ffffff" : root.panelText
+                fillMode: Image.PreserveAspectFit
+                sourceSize.width: Math.round(vehicleConfigButton.width * 0.6)
+                sourceSize.height: sourceSize.width
+            }
+            padding: Math.round(width * 0.2)
+
+            onClicked: {
+                root.interfaceDisplayExpanded = false
+                root.flightModePanelCloseRequested()
+                mainWindow.showVehicleConfig()
+            }
+        }
+
         Row {
             id: leftStatusRow
             anchors.left: logoButton.right
@@ -305,7 +344,7 @@ Rectangle {
                         height: width
                         radius: width / 2
                         anchors.verticalCenter: parent.verticalCenter
-                        color: vehicleConnected ? (armed ? "#dc2626" : "#16a34a") : "#9aa3b2"
+                        color: root.armColor
                     }
 
                     Text {
@@ -313,7 +352,7 @@ Rectangle {
                         text: armText
                         font.pixelSize: theme ? theme.fontSm : 11
                         font.weight: Font.Medium
-                        color: vehicleConnected ? (armed ? "#dc2626" : "#16a34a") : "#9aa3b2"
+                        color: root.armColor
                     }
                 }
             }

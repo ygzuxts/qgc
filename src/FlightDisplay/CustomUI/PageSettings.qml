@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import QGroundControl
 import QGroundControl.AppSettings
 import QGroundControl.Palette
+import QGroundControl.ScreenTools
 
 Rectangle {
     id: root
@@ -29,8 +30,8 @@ Rectangle {
     readonly property color hoverColor: brandHoverColor
     readonly property color blueColor: brandColor
     readonly property real pageScale: theme ? theme.uiScale : 1
-    readonly property bool compactLayout: root.width < 1000
-    readonly property real navWidth: compactLayout ? Math.max(132, Math.min(190, root.width * 0.20)) : Math.max(220, Math.min(270, root.width * 0.22))
+    readonly property bool compactLayout: ScreenTools.isMobile || root.width < 1000
+    readonly property real navWidth: compactLayout ? Math.max(112, Math.min(170, root.width * 0.18)) : Math.max(220, Math.min(270, root.width * 0.22))
 
     color: bgColor
 
@@ -70,44 +71,56 @@ Rectangle {
         }
     }
 
+    function _sourceName(name) {
+        var names = ["General", "Fly View", "Plan View", "Video", "Telemetry", "NTRIP",
+                     "ADSB Server", "Comm Links", "Maps", "PX4 Log Transfer", "Remote ID",
+                     "Console", "Help", "Mock Link", "Debug", "Palette Test"]
+        for (var i = 0; i < names.length; ++i) {
+            if (name === names[i] || name === qsTranslate("SettingsPagesModel", names[i])) {
+                return names[i]
+            }
+        }
+        return String(name)
+    }
+
     function _titleFor(name) {
-        switch (String(name)) {
-        case "General": return "通用"
-        case "Fly View": return "飞行界面"
-        case "Plan View": return "任务规划"
-        case "Video": return "视频"
-        case "Telemetry": return "遥测"
-        case "ADSB Server": return "ADSB 服务"
-        case "Comm Links": return "通信链路"
-        case "Maps": return "地图"
-        case "PX4 Log Transfer": return "日志传输"
-        case "Remote ID": return "远程识别"
-        case "Console": return "控制台"
-        case "Help": return "帮助"
-        case "Mock Link": return "模拟链路"
-        case "Debug": return "调试"
-        case "Palette Test": return "调色板测试"
+        switch (_sourceName(name)) {
+        case "General": return qsTr("General")
+        case "Fly View": return qsTr("Fly View")
+        case "Plan View": return qsTr("Plan View")
+        case "Video": return qsTr("Video")
+        case "Telemetry": return qsTr("Telemetry")
+        case "ADSB Server": return qsTr("ADSB Server")
+        case "Comm Links": return qsTr("Comm Links")
+        case "Maps": return qsTr("Maps")
+        case "PX4 Log Transfer": return qsTr("PX4 Log Transfer")
+        case "Remote ID": return qsTr("Remote ID")
+        case "Console": return qsTr("Console")
+        case "Help": return qsTr("Help")
+        case "Mock Link": return qsTr("Mock Link")
+        case "Debug": return qsTr("Debug")
+        case "Palette Test": return qsTr("Palette Test")
         default: return String(name)
         }
     }
 
     function _descFor(name) {
-        switch (String(name)) {
-        case "General": return "语言、界面和常用路径"
-        case "Fly View": return "飞行界面显示、工具栏和地图跟随设置"
-        case "Plan View": return "规划、上传和任务文件设置"
-        case "Video": return "视频源、显示和录制设置"
-        case "Telemetry": return "MAVLink 和遥测保存设置"
-        case "ADSB Server": return "ADSB SBS 服务器连接设置"
-        case "Comm Links": return "串口、UDP、TCP 通信连接"
-        case "Maps": return "地图源、地图类型和缓存设置"
-        case "PX4 Log Transfer": return "飞控日志下载和管理"
-        case "Remote ID": return "远程识别信息设置"
-        case "Console": return "应用消息和运行输出"
-        case "Help": return "版本、文档和支持信息"
-        case "Mock Link": return "调试用模拟链路"
-        case "Debug": return "调试工具和诊断"
-        case "Palette Test": return "调色板测试页面"
+        switch (_sourceName(name)) {
+        case "General": return qsTr("Language, interface and common paths")
+        case "Fly View": return qsTr("Flight display, toolbar and map tracking")
+        case "Plan View": return qsTr("Mission planning, uploads and files")
+        case "Video": return qsTr("Video source, display and recording")
+        case "Telemetry": return qsTr("MAVLink and telemetry logging")
+        case "ADSB Server": return qsTr("ADSB SBS server connection")
+        case "Comm Links": return qsTr("Serial, UDP and TCP connections")
+        case "Maps": return qsTr("Map providers, types and cache")
+        case "PX4 Log Transfer": return qsTr("Flight controller log download and management")
+        case "Remote ID": return qsTr("Remote identification settings")
+        case "Console": return qsTr("Application messages and output")
+        case "Help": return qsTr("Version, documentation and support")
+        case "Mock Link": return qsTr("Simulated links for debugging")
+        case "Debug": return qsTr("Debugging tools and diagnostics")
+        case "Palette Test": return qsTr("Palette test page")
         default: return ""
         }
     }
@@ -206,7 +219,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "返回"
+                        text: qsTr("Back")
                         font.pixelSize: Math.max(12, Math.round(15 * root.pageScale))
                         color: root.pageDark ? "#E6E6F0" : root.brandColor
                     }
@@ -221,7 +234,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "系统设置"
+                    text: qsTr("System Settings")
                     font.pixelSize: Math.max(16, Math.round((root.compactLayout ? 18 : 22) * root.pageScale))
                     font.weight: Font.Bold
                     color: root.textColor
@@ -259,19 +272,21 @@ Rectangle {
             height: parent.height
             color: root.bgColor
 
-            Column {
+            ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Math.round((root.compactLayout ? 12 : 24) * root.pageScale)
                 spacing: Math.round((root.compactLayout ? 10 : 16) * root.pageScale)
 
                 Column {
-                    width: parent.width
+                    Layout.fillWidth: true
                     spacing: 6
 
                     Text {
+                        width: parent.width
+                        wrapMode: Text.WordWrap
                         text: {
                             var item = settingsPagesModel.get(root.selectedIndex)
-                            return item ? root._titleFor(item.name) : "通用"
+                            return item ? root._titleFor(item.name) : qsTr("General")
                         }
                         font.pixelSize: Math.max(20, Math.round(24 * root.pageScale))
                         font.weight: Font.Bold
@@ -279,6 +294,8 @@ Rectangle {
                     }
 
                     Text {
+                        width: parent.width
+                        wrapMode: Text.WordWrap
                         text: {
                             var item = settingsPagesModel.get(root.selectedIndex)
                             return item ? root._descFor(item.name) : ""
@@ -289,31 +306,22 @@ Rectangle {
                 }
 
                 Rectangle {
-                    width: parent.width
-                    height: parent.height - Math.round((root.compactLayout ? 48 : 58) * root.pageScale)
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.minimumHeight: 0
                     radius: Math.round(10 * root.pageScale)
                     color: root.cardColor
                     border.width: 1
                     border.color: root.lineColor
                     clip: true
 
-                    Flickable {
-                        id: settingsContentFlick
+                    // Original settings pages own their scrolling. Give them the
+                    // actual viewport instead of nesting a second Flickable.
+                    Loader {
+                        id: originalSettingsLoader
                         anchors.fill: parent
-                        anchors.margins: Math.round((root.compactLayout ? 8 : 16) * root.pageScale)
-                        contentWidth: Math.max(width, 680 * root.pageScale, originalSettingsLoader.item ? originalSettingsLoader.item.implicitWidth : 0)
-                        contentHeight: Math.max(height, originalSettingsLoader.item ? originalSettingsLoader.item.implicitHeight : 0)
-                        clip: true
-                        flickableDirection: Flickable.HorizontalAndVerticalFlick
-                        ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
-                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
-
-                        Loader {
-                            id: originalSettingsLoader
-                            width: settingsContentFlick.contentWidth
-                            height: Math.max(settingsContentFlick.height, item ? item.implicitHeight : settingsContentFlick.height)
-                            source: root.selectedUrl
-                        }
+                        anchors.margins: Math.round((root.compactLayout ? 4 : 16) * root.pageScale)
+                        source: root.selectedUrl
                     }
                 }
             }

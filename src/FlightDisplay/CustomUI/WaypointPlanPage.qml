@@ -27,6 +27,7 @@ Item {
     property var state: null
     property var theme: null
     property var missionController: null
+    property string initialPlanFile: ""
     property real hudInstrumentSize: 0
     property real hudTelemetryWidth: 0
     property real hudHeight: 0
@@ -104,7 +105,8 @@ Item {
     readonly property bool landEnabled:         hasTakeoff && !!missionController && missionController.isInsertLandValid
     readonly property bool roiEnabled:          hasTakeoff && (missionController ? (missionController.flyThroughCommandsAllowed || (hasLand && !_vehicleIsMultiRotor())) : !hasLand)
     readonly property bool landLocateEnabled:   hasLand
-    readonly property bool fenceEnabled:        !!_geoFenceController && _geoFenceController.supported
+    // Local planning does not require the connected vehicle to support fence uploads.
+    readonly property bool fenceEnabled:        !!_geoFenceController && !_geoFenceController.syncInProgress
     readonly property bool fenceMode:           rightTab === 1
     readonly property bool isDirty:             pendingChanges
 
@@ -215,15 +217,21 @@ Item {
         if (!_masterController || !_missionItems) {
             return
         }
-        if (_missionItems.count <= 1) {
+        if (_missionItems.count <= 1 && !(_geoFenceController && _geoFenceController.containsItems)) {
             messageDialog.text = "当前没有可保存的任务"
             messageDialog.open()
             return
         }
-        if (!lastSavedFile || lastSavedFile.length === 0) {
-            lastSavedFile = _savePath() + "任务_" + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
+        var saveFile = lastSavedFile
+        if (!saveFile || saveFile.length === 0) {
+            saveFile = _savePath() + "任务_" + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
         }
-        _masterController.saveToFile(lastSavedFile)
+        _masterController.saveToFile(saveFile)
+        // The controller clears currentPlanFile when opening the save file fails.
+        if (_masterController.currentPlanFile !== saveFile) {
+            return
+        }
+        lastSavedFile = saveFile
         pendingChanges = false
         if (saveAndClose) {
             _clearFenceInteractive()
@@ -263,6 +271,7 @@ Item {
         var topLeft = planMap.toCoordinate(Qt.point(planMap.width * 0.25, planMap.height * 0.30), false)
         var bottomRight = planMap.toCoordinate(Qt.point(planMap.width * 0.75, planMap.height * 0.70), false)
         _geoFenceController.addInclusionPolygon(topLeft, bottomRight)
+        root.pendingChanges = true
     }
 
     function _addCircleFence() {
@@ -272,6 +281,7 @@ Item {
         var topLeft = planMap.toCoordinate(Qt.point(planMap.width * 0.25, planMap.height * 0.30), false)
         var bottomRight = planMap.toCoordinate(Qt.point(planMap.width * 0.75, planMap.height * 0.70), false)
         _geoFenceController.addInclusionCircle(topLeft, bottomRight)
+        root.pendingChanges = true
     }
 
     function _locateLand() {
@@ -506,9 +516,9 @@ Item {
 
     Component.onCompleted: {
         pendingChanges = false
+        lastSavedFile = initialPlanFile
         rightTab = 0
         if (_visibleItemCount === 0) {
-            lastSavedFile = ""
             currentTool = toolTakeoff
         }
         landSeqNum = _findLandSeq()
@@ -531,6 +541,15 @@ Item {
         function onDirtyChanged(dirty) {
             if (dirty) {
                 pendingChanges = true
+            }
+        }
+    }
+
+    Connections {
+        target: root._geoFenceController
+        function onDirtyChanged(dirty) {
+            if (dirty) {
+                root.pendingChanges = true
             }
         }
     }
@@ -1061,6 +1080,15 @@ Item {
                             font.weight: Font.Medium
                             color: root.panelHintText
                             lineHeight: 1.18
+                        }
+
+                        Text {
+                            width: parent.width
+                            visible: !!root._geoFenceController && !root._geoFenceController.supported
+                            text: qsTr("The connected vehicle does not report fence upload support. Fences can still be edited and saved locally.")
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: root.panelBodyFont
+                            color: root.panelHintText
                         }
 
                         PanelSectionTitle { text: "插入地理围栏" }

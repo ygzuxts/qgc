@@ -1036,7 +1036,7 @@
       <extracomment>.QGC.MetaData.Facts[videoSource].shortDesc, </extracomment>
       <location filename="../src/Settings/Video.SettingsGroup.json"/>
       <source>Video source</source>
-      <translation type="unfinished">Video source</translation>
+      <translation>视频源</translation>
     </message>
     <message>
       <extracomment>.QGC.MetaData.Facts[videoSource].longDesc, </extracomment>
@@ -1133,7 +1133,7 @@
       <translatorcomment>Only use english comma &apos;,&apos; to separate strings</translatorcomment>
       <location filename="../src/Settings/Video.SettingsGroup.json"/>
       <source>Fit Width,Fit Height,Fill,No Crop</source>
-      <translation type="unfinished">Fit Width,Fit Height,Fill,No Crop</translation>
+      <translation>适应宽度,适应高度,填充,不裁剪</translation>
     </message>
     <message>
       <extracomment>.QGC.MetaData.Facts[showRecControl].shortDesc, </extracomment>
@@ -1255,7 +1255,7 @@
       <translatorcomment>Only use english comma &apos;,&apos; to separate strings</translatorcomment>
       <location filename="../src/Settings/Video.SettingsGroup.json"/>
       <source>Default,Force software decoder,Force NVIDIA decoder,Force VA-API decoder,Force DirectX3D 11 decoder,Force VideoToolbox decoder,Force Intel decoder,Force Vulkan decoder</source>
-      <translation type="unfinished">Default,Force software decoder,Force NVIDIA decoder,Force VA-API decoder,Force DirectX3D 11 decoder,Force VideoToolbox decoder,Force Intel decoder,Force Vulkan decoder</translation>
+      <translation>默认,强制软件解码,强制 NVIDIA 解码,强制 VA-API 解码,强制 DirectX3D 11 解码,强制 VideoToolbox 解码,强制 Intel 解码,强制 Vulkan 解码</translation>
     </message>
   </context>
   <context>
@@ -1552,25 +1552,25 @@
       <extracomment>.QGC.MetaData.Facts[adsbServerConnectEnabled].shortDesc, </extracomment>
       <location filename="../src/Settings/ADSBVehicleManager.SettingsGroup.json"/>
       <source>Connect to ADSB SBS server</source>
-      <translation type="unfinished">Connect to ADSB SBS server</translation>
+      <translation>连接 ADSB SBS 服务器</translation>
     </message>
     <message>
       <extracomment>.QGC.MetaData.Facts[adsbServerConnectEnabled].longDesc, </extracomment>
       <location filename="../src/Settings/ADSBVehicleManager.SettingsGroup.json"/>
       <source>Connect to ADSB SBS-1 server using specified address/port</source>
-      <translation type="unfinished">Connect to ADSB SBS-1 server using specified address/port</translation>
+      <translation>使用指定地址和端口连接 ADSB SBS-1 服务器</translation>
     </message>
     <message>
       <extracomment>.QGC.MetaData.Facts[adsbServerHostAddress].shortDesc, </extracomment>
       <location filename="../src/Settings/ADSBVehicleManager.SettingsGroup.json"/>
       <source>Host address</source>
-      <translation type="unfinished">Host address</translation>
+      <translation>主机地址</translation>
     </message>
     <message>
       <extracomment>.QGC.MetaData.Facts[adsbServerPort].shortDesc, </extracomment>
       <location filename="../src/Settings/ADSBVehicleManager.SettingsGroup.json"/>
       <source>Server port</source>
-      <translation type="unfinished">Server port</translation>
+      <translation>服务器端口</translation>
     </message>
   </context>
   <context>
@@ -5020,5 +5020,19 @@
       <source>Enable,Disable</source>
       <translation>启用/禁用</translation>
     </message>
+  </context>
+  <context>
+    <name>NTRIP.SettingsGroup.json</name>
+    <message><source>Connect</source><translation>连接</translation></message>
+    <message><source>Host</source><translation>主机地址</translation></message>
+    <message><source>Port</source><translation>端口</translation></message>
+    <message><source>Username</source><translation>用户名</translation></message>
+    <message><source>Password</source><translation>密码</translation></message>
+    <message><source>Mountpoint</source><translation>挂载点</translation></message>
+    <message><source>RTCM whitelist</source><translation>RTCM 白名单</translation></message>
+    <message><source>Use TLS</source><translation>使用 TLS 加密</translation></message>
+    <message><source>UDP forward</source><translation>UDP 转发</translation></message>
+    <message><source>UDP address</source><translation>UDP 地址</translation></message>
+    <message><source>UDP port</source><translation>UDP 端口</translation></message>
   </context>
 </TS>

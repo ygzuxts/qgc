@@ -8,12 +8,34 @@
  ****************************************************************************/
 
 #include "UnitsSettings.h"
+#include "QGCApplication.h"
 
 #include <QtQml/QQmlEngine>
 
 DECLARE_SETTINGGROUP(Units, "Units")
 {
     qmlRegisterUncreatableType<UnitsSettings>("QGroundControl.SettingsManager", 1, 0, "UnitsSettings", "Reference only");
+    connect(qgcApp(), &QGCApplication::languageChanged, this, [this]() {
+        // Unit metadata is built in C++, so refresh it separately from JSON settings.
+        const auto refresh = [](SettingsFact* fact, const char* description, const QStringList& sources) {
+            if (!fact) {
+                return;
+            }
+            QStringList strings;
+            for (const auto& source : sources) {
+                strings.append(UnitsSettings::tr(source.toUtf8().constData()));
+            }
+            fact->metaData()->setShortDescription(UnitsSettings::tr(description));
+            fact->setEnumInfo(strings, fact->enumValues());
+            emit fact->descriptionsChanged();
+        };
+        refresh(_horizontalDistanceUnitsFact, "Horizontal Distance", {"Feet", "Meters"});
+        refresh(_verticalDistanceUnitsFact, "Vertical Distance", {"Feet", "Meters"});
+        refresh(_areaUnitsFact, "Area", {"SquareFeet", "SquareMeters", "SquareKilometers", "Hectares", "Acres", "SquareMiles"});
+        refresh(_speedUnitsFact, "Speed", {"Feet/second", "Meters/second", "Miles/hour", "Kilometers/hour", "Knots"});
+        refresh(_temperatureUnitsFact, "Temperature", {"Celsius", "Fahrenheit"});
+        refresh(_weightUnitsFact, "Weight", {"Grams", "Kilograms", "Ounces", "Pounds"});
+    });
 }
 
 DECLARE_SETTINGSFACT_NO_FUNC(UnitsSettings, horizontalDistanceUnits)
@@ -119,7 +141,7 @@ DECLARE_SETTINGSFACT_NO_FUNC(UnitsSettings, speedUnits)
         // Distance/Area/Speed units settings can't be loaded from json since it creates an infinite loop of meta data loading.
         QStringList     enumStrings;
         QVariantList    enumValues;
-        enumStrings << "Feet/second" << "Meters/second" << "Miles/hour" << "Kilometers/hour" << UnitsSettings::tr("Knots");
+        enumStrings << UnitsSettings::tr("Feet/second") << UnitsSettings::tr("Meters/second") << UnitsSettings::tr("Miles/hour") << UnitsSettings::tr("Kilometers/hour") << UnitsSettings::tr("Knots");
         enumValues <<
             QVariant::fromValue(static_cast<uint32_t>(SpeedUnitsFeetPerSecond)) <<
             QVariant::fromValue(static_cast<uint32_t>(SpeedUnitsMetersPerSecond)) <<

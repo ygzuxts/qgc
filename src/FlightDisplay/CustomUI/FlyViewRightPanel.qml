@@ -14,6 +14,15 @@ Rectangle {
     readonly property color _baseBackgroundColor: theme ? theme.surface : "#ffffff"
     color: Qt.rgba(_baseBackgroundColor.r, _baseBackgroundColor.g, _baseBackgroundColor.b, backgroundOpacity)
 
+    // Keep presses on empty space and disabled controls away from the map.
+    // Declared before the content so interactive children remain on top.
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+        propagateComposedEvents: false
+        onWheel: function(wheel) { wheel.accepted = true }
+    }
+
     WheelHandler {
         target: null
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad

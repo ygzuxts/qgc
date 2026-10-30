@@ -17,6 +17,7 @@
  */
 
 #include "QGCApplication.h"
+#include "VehicleMessageTranslator.h"
 
 #include <QtCore/QEvent>
 #include <QtCore/QFile>
@@ -230,8 +231,10 @@ void QGCApplication::setLanguage()
     removeTranslator(JsonHelper::translator());
     removeTranslator(&_qgcTranslatorSourceCode);
     removeTranslator(&_qgcTranslatorQtLibs);
+    // JSON metadata uses this translator directly, even when it is not installed.
+    (void) JsonHelper::translator()->load(QString());
+    QLocale::setDefault(_locale);
     if (_locale.name() != "en_US") {
-        QLocale::setDefault(_locale);
         if (_qgcTranslatorQtLibs.load("qt_" + _locale.name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
             installTranslator(&_qgcTranslatorQtLibs);
         } else {
@@ -468,7 +471,7 @@ void QGCApplication::showCriticalVehicleMessage(const QString &message)
     QObject *const rootQmlObject = _rootQmlObject();
     if (rootQmlObject && _showErrorsInToolbar) {
         QVariant varReturn;
-        QVariant varMessage = QVariant::fromValue(message);
+        QVariant varMessage = QVariant::fromValue(VehicleMessageTranslator::translate(message));
         QMetaObject::invokeMethod(rootQmlObject, "showCriticalVehicleMessage", Q_RETURN_ARG(QVariant, varReturn), Q_ARG(QVariant, varMessage));
     } else if (runningUnitTests() || !_showErrorsInToolbar) {
         // Unit tests can run without UI

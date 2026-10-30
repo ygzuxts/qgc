@@ -8,6 +8,10 @@
  ****************************************************************************/
 
 #include "Vehicle.h"
+
+const MAV_AUTOPILOT Vehicle::MAV_AUTOPILOT_TRACK = static_cast<MAV_AUTOPILOT>(-1);
+const MAV_TYPE Vehicle::MAV_TYPE_TRACK = static_cast<MAV_TYPE>(-1);
+#include "VehicleMessageTranslator.h"
 #include "Actuators.h"
 #include "ADSBVehicleManager.h"
 #include "AudioOutput.h"
@@ -4387,7 +4391,9 @@ void Vehicle::_textMessageReceived(MAV_COMPONENT componentid, MAV_SEVERITY sever
     }
 
     emit textMessageReceived(id(), componentid, severity, text, description);
-    m_statusTextHandler->handleHTMLEscapedTextMessage(componentid, severity, text.toHtmlEscaped(), description);
+    VehicleMessageTranslator::collectUntranslated(text, id(), componentid, severity);
+    m_statusTextHandler->handleHTMLEscapedTextMessage(componentid, severity, text.toHtmlEscaped(), description,
+        VehicleMessageTranslator::translate(text).toHtmlEscaped());
 }
 
 void Vehicle::_errorMessageReceived(QString message)

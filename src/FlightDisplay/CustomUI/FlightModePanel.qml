@@ -8,6 +8,14 @@ Rectangle {
 
     property var state: null
     property var theme: null
+    readonly property bool darkMode: theme ? theme.darkMode : false
+    readonly property color panelColor: darkMode ? "#151b24" : "#ffffff"
+    readonly property color primaryText: theme ? theme.text : "#1a1d23"
+    readonly property color secondaryText: theme ? theme.text2 : "#5a6272"
+    readonly property color itemColor: darkMode ? "#202936" : "#f5f6f8"
+    readonly property color accentColor: theme ? theme.blue : "#2563eb"
+    readonly property color selectedColor: darkMode ? Qt.tint(panelColor, theme ? theme.blueL : "#382563eb") : (theme ? theme.blueL : "#e8effc")
+    readonly property color hoverColor: darkMode ? "#2b3747" : "#edf1f7"
     property bool opened: visible
     property var vehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var modeList: vehicle && vehicle.flightModes ? vehicle.flightModes : []
@@ -46,9 +54,9 @@ Rectangle {
     width: 218
     height: Math.min(maxPanelHeight, implicitHeight)
     radius: 8
-    color: "#ffffff"
+    color: panelColor
     border.width: 1
-    border.color: "#8fb3f5"
+    border.color: darkMode ? "#3b485c" : "#8fb3f5"
 
     function modeDisplayName(modeName) {
         var normalizedModeName = modeName ? String(modeName).trim() : "--"
@@ -142,28 +150,28 @@ Rectangle {
             text: "飞行模式"
             font.pixelSize: 18
             font.weight: Font.Bold
-            color: "#111111"
+            color: panelRoot.primaryText
         }
 
         Text {
             id: statusText
-            text: panelRoot.statusDisplayName(state ? state.mainStatusText : "Disconnected") + " · 当前 " + panelRoot.modeDisplayName(panelRoot._currentMode())
+            text: panelRoot.statusDisplayName(panelRoot.state ? panelRoot.state.mainStatusText : "Disconnected") + " · 当前 " + panelRoot.modeDisplayName(panelRoot._currentMode())
             font.pixelSize: 12
-            color: "#24415f"
+            color: panelRoot.secondaryText
         }
 
         Text {
             id: modeCountText
-            text: "modes: " + (vehicle && panelRoot.sortedModeList ? panelRoot.sortedModeList.length : 0)
+            text: "可用模式：" + (vehicle && panelRoot.sortedModeList ? panelRoot.sortedModeList.length : 0)
             font.pixelSize: 12
-            color: "#24415f"
+            color: panelRoot.secondaryText
         }
 
         Rectangle {
             id: divider
             width: parent.width
             height: 1
-            color: "#d8e2ef"
+            color: panelRoot.darkMode ? "#344154" : "#d8e2ef"
         }
 
         Flickable {
@@ -191,12 +199,23 @@ Rectangle {
                         width: parent.width
                         height: 42
                         property string modeName: panelRoot.sortedModeList[index] ? panelRoot.sortedModeList[index] : ""
+                        readonly property bool currentMode: panelRoot._currentMode() === modeName
                         radius: 7
-                        color: _modeMouse.containsMouse || (panelRoot._currentMode() === modeName)
-                               ? (panelRoot._currentMode() === modeName ? (theme ? theme.blueL : "#E6E6F0") : (theme ? theme.blueL : "#E6E6F0"))
-                               : (theme && theme.darkMode ? "#111111" : "#f5f6f8")
-                        border.width: panelRoot._currentMode() === modeName ? 1 : 0
-                        border.color: theme ? theme.blueBorder : "#8080B3"
+                        color: currentMode ? panelRoot.selectedColor
+                                           : (_modeMouse.containsMouse ? panelRoot.hoverColor : panelRoot.itemColor)
+                        border.width: currentMode ? 1 : 0
+                        border.color: panelRoot.accentColor
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 3
+                            height: 18
+                            radius: 1.5
+                            visible: parent.currentMode
+                            color: panelRoot.accentColor
+                        }
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
@@ -207,7 +226,7 @@ Rectangle {
                             text: panelRoot.modeDisplayName(modeName)
                             font.pixelSize: 13
                             font.weight: panelRoot._currentMode() === modeName ? Font.Bold : Font.Normal
-                            color: "#172033"
+                            color: panelRoot.primaryText
                             elide: Text.ElideRight
                         }
 
@@ -233,13 +252,13 @@ Rectangle {
             height: 44
             radius: 8
             visible: panelRoot.opened && (vehicle === null || !panelRoot._hasModes())
-            color: "#f5f6f8"
+            color: panelRoot.itemColor
 
             Text {
                 anchors.centerIn: parent
                 text: vehicle === null ? "未连接，暂无可用模式" : "无可用模式"
                 font.pixelSize: 12
-                color: "#24415f"
+                color: panelRoot.secondaryText
             }
         }
     }

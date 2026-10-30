@@ -49,7 +49,9 @@ Item {
     // 0: 起飞/起降页，1: 任务列表页。打开地面站默认进入任务列表页。
     property int currentTab: 1
     property bool customPlanShellVisible: false
+    property string customPlanFilePath: ""
     property bool settingsPageVisible: false
+    readonly property real informationBarHeight: topBar.height
     property real leftW: Math.max(minLeftW, Math.min(maxLeftW, theme.leftPanelW))
     property real rightW: Math.max(minRightW, Math.min(maxRightW, theme.rightPanelW))
     property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobile ? 0.44 : 0.52)))
@@ -62,6 +64,7 @@ Item {
     property bool showBottomActionBar: _panelSettings.showBottomActionBar
     property bool showViewSwitchBar: _flyViewSettings.showViewSwitchBar.rawValue
     readonly property var uiTheme: theme
+    readonly property var uiState: state
     readonly property bool taskListPageActive: currentTab === 1 && !customPlanShellVisible
     readonly property bool takeoffPageActive: currentTab === 0 && !customPlanShellVisible
     readonly property bool bottomBarVisible: false
@@ -71,12 +74,12 @@ Item {
     readonly property real maxLeftW: width * (ScreenTools.isMobile ? 0.34 : 0.208)
     readonly property real minRightW: width * (ScreenTools.isMobile ? 0.18 : 0.115)
     readonly property real maxRightW: width * (ScreenTools.isMobile ? 0.34 : 0.219)
-    readonly property real qgcAndroidInstrumentSize: ScreenTools.defaultFontPixelHeight * 6.4
-    readonly property real minHudH: Math.round(Math.max(height * (ScreenTools.isMobile ? 0.38 : 0.45), ScreenTools.isMobile ? qgcAndroidInstrumentSize * 2 + theme.spacingXl * 2 + Math.round(10 * theme.uiScale) : 0))
+    readonly property real qgcAndroidInstrumentSize: Math.min(ScreenTools.defaultFontPixelHeight * 6.38, height * 0.253, width * 0.132)
+    readonly property real minHudH: Math.round(ScreenTools.isMobile ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
     readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobile ? 0.50 : 0.58), ScreenTools.isMobile ? minHudH : 0))
     readonly property real bottomBarH: theme.bottomBarH
-    readonly property real sharedHudInstrumentSize: ScreenTools.isMobile
-                                                    ? Math.max(qgcAndroidInstrumentSize * 0.92, Math.min(qgcAndroidInstrumentSize, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
+    // Mobile instruments use the actual map viewport dimensions in FlyViewHUD.
+    readonly property real sharedHudInstrumentSize: ScreenTools.isMobile ? 0
                                                     : Math.max(96, Math.min(172, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
     readonly property real sharedHudTelemetryWidth: Math.max(220, Math.min(Math.round(430 * theme.uiScale), width - theme.spacingXl - sharedHudInstrumentSize - Math.max(8, Math.round(18 * theme.uiScale)) - theme.spacingXl))
 
@@ -85,7 +88,8 @@ Item {
         _panelSettings.showLeftPanel = true
     }
 
-    function openWaypointPlanPage() {
+    function openWaypointPlanPage(planFilePath) {
+        _root.customPlanFilePath = typeof planFilePath === "string" ? planFilePath : ""
         _root.currentTab = 1
         _root.customPlanShellVisible = true
     }
@@ -166,12 +170,22 @@ Item {
         onFlightModeButtonClicked: _root.flightModePanelVisible = !_root.flightModePanelVisible
         onFlightModePanelCloseRequested: _root.flightModePanelVisible = false
         onSettingsRequested: {
+            if (!mainWindow.closeTool()) {
+                return
+            }
             _root.flightModePanelVisible = false
             _root.settingsPageVisible = true
         }
         onPageSwitchRequested: {
-            if (_root.settingsPageVisible) {
+            if (_root.settingsPageVisible || mainWindow.vehicleConfigurationOpen()) {
+                if (!mainWindow.closeTool()) {
+                    return
+                }
                 _root.settingsPageVisible = false
+                _root.customPlanShellVisible = false
+                _root.flightModePanelVisible = false
+                _root.currentTab = 0
+                _panelSettings.showRightPanel = true
                 return
             }
             if (_root.customPlanShellVisible && customPlanShellLoader.item && customPlanShellLoader.item.requestReturn) {
@@ -198,7 +212,7 @@ Item {
         theme: theme
         clip: true
         backgroundOpacity: _root.sidePanelOpacity
-        openCustomPlanShell: function() { _root.openWaypointPlanPage() }
+        openCustomPlanShell: function(planFilePath) { _root.openWaypointPlanPage(planFilePath) }
         onTakeoffPageRequested: {
             _root.currentTab = 0
             _panelSettings.showRightPanel = true
@@ -397,7 +411,10 @@ Item {
         currentTab: _root.currentTab
         visible: _root.customFlyViewEnabled && _root.takeoffPageActive && _root.showRightPanel
         backgroundOpacity: _root.sidePanelOpacity
-        openCustomPlanShell: function() { _root.customPlanShellVisible = true }
+        openCustomPlanShell: function() {
+            _root.customPlanFilePath = ""
+            _root.customPlanShellVisible = true
+        }
     }
 
     Rectangle {
@@ -459,8 +476,9 @@ Item {
 
         sourceComponent: Component {
             WaypointPlanPage {
-                state: state
-                theme: theme
+                state: _root.uiState
+                theme: _root.uiTheme
+                initialPlanFile: _root.customPlanFilePath
                 missionController: _root.missionController
                 hudInstrumentSize: _root.sharedHudInstrumentSize
                 hudTelemetryWidth: _root.sharedHudTelemetryWidth

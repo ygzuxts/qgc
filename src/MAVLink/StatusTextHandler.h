@@ -57,7 +57,8 @@ public:
     ~StatusTextHandler();
 
     void mavlinkMessageReceived(const mavlink_message_t &message);
-    void handleHTMLEscapedTextMessage(MAV_COMPONENT componentid, MAV_SEVERITY severity, const QString &text, const QString &description);
+    void handleHTMLEscapedTextMessage(MAV_COMPONENT componentid, MAV_SEVERITY severity, const QString &text, const QString &description,
+                                     const QString &displayText = QString());
 
     void clearMessages();
     void resetAllMessages();

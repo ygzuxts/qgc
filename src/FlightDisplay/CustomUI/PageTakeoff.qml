@@ -19,8 +19,8 @@ Rectangle {
     readonly property bool vehicleConnected: !!(state && state.vehicleConnected)
     readonly property bool vehicleAvailable: !!(state && state.vehicleAvailable)
     readonly property bool parametersReady: !!(activeVehicle && activeVehicle.parameterManager && activeVehicle.parameterManager.parametersReady)
-    readonly property bool hasMission: !!(state && (state.missionControlAvailable || state.missionAvailable || state.totalWP > 1))
-    readonly property bool showMissionControl: hasMission && vehicleAvailable
+    readonly property bool hasMission: !!(root.state && root.state.missionAvailable)
+    readonly property bool showMissionControl: hasMission && vehicleConnected
     readonly property var takeoffSafetyFact: _resolveFirstFact(["MIS_TAKEOFF_ALT", "PILOT_TKOFF_ALT", "Q_RTL_ALT"])
     readonly property string takeoffSafetyParamName: _resolveFirstParamName(["MIS_TAKEOFF_ALT", "PILOT_TKOFF_ALT", "Q_RTL_ALT"])
     readonly property var rtlAltFact: _resolveFirstFact(["RTL_RETURN_ALT", "RTL_ALT", "r.RTL_ALTITUDE"])
@@ -176,6 +176,10 @@ Rectangle {
     }
 
     function confirmStartMission() {
+        if (!root.missionStartEnabled()) {
+            startMissionCheckPopup.close()
+            return
+        }
         console.log("[CustomTakeoff] confirm start mission", "connected:", root.vehicleConnected, "hasMission:", root.hasMission)
         startMissionCheckPopup.close()
         if (!state) {
@@ -188,19 +192,14 @@ Rectangle {
         if (!state || !root.vehicleConnected || !root.hasMission) {
             return false
         }
-        if (state.missionRunning || state.missionPaused) {
-            return true
-        }
-        if (guided && (guided.showPause || guided.showContinueMission)) {
-            return true
-        }
-        return !!(activeVehicle && activeVehicle.armed && activeVehicle.flying && !(guided && guided.showStartMission))
+        return !!(root.state.missionRunning || root.state.canResumeMission)
     }
 
     function missionStartEnabled() {
         if (!state || !root.vehicleConnected || !root.hasMission) {
             return false
         }
+        if (!root.state.canStartMission) return false
         if (guided && guided.showStartMission !== undefined) {
             return guided.showStartMission
         }
@@ -211,10 +210,11 @@ Rectangle {
         if (!state || !root.vehicleConnected || !root.hasMission) {
             return false
         }
-        return !!(state.missionPaused || (guided && guided.showContinueMission))
+        return root.state.canResumeMission
     }
 
     function continueMissionNow() {
+        if (!root.missionContinueEnabled()) return
         console.log("[CustomTakeoff] continue mission clicked",
                     "guided:", !!guided,
                     "showContinue:", guided ? guided.showContinueMission : false,
@@ -227,7 +227,6 @@ Rectangle {
             activeVehicle.flightMode = activeVehicle.missionFlightMode
             if (state) {
                 state.missionPaused = false
-                state.pendingMissionAvailable = true
             }
             return
         }
@@ -242,7 +241,7 @@ Rectangle {
         if (!state || !root.vehicleConnected || !root.hasMission) {
             return false
         }
-        return !!(state.missionRunning || (guided && guided.showPause) || (activeVehicle && activeVehicle.armed && activeVehicle.flying && !state.missionPaused))
+        return !!(root.state.missionRunning && root.state.canHoldPosition)
     }
 
     function missionAbortEnabled() {
@@ -250,6 +249,7 @@ Rectangle {
     }
 
     function pauseMissionNow() {
+        if (!root.missionPauseEnabled()) return
         if (!activeVehicle) {
             console.warn("[CustomTakeoff] pause ignored: no active vehicle")
             return
@@ -270,6 +270,8 @@ Rectangle {
     }
 
     function abortMissionNow() {
+        if (!root.missionAbortEnabled()) return
+        root.state.missionSessionActive = false
         if (!activeVehicle) {
             console.warn("[CustomTakeoff] abort ignored: no active vehicle")
             return
@@ -935,7 +937,7 @@ Rectangle {
                     }
                     Text {
                         anchors.right: parent.right
-                        text: root.missionIsActive() ? (state && state.missionPaused ? "已暂停" : "执行中") : "待执行"
+                        text: root.missionIsActive() ? (root.state && root.state.missionPaused ? "已暂停" : "执行中") : "待执行"
                         font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                         color: root.missionIsActive() ? "#16a34a" : root.textSub
                     }

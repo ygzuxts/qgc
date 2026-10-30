@@ -35,6 +35,7 @@ Item {
 
     property var  _flyViewSettings: QGroundControl.settingsManager.flyViewSettings
     property bool _useCustomFlyView: _flyViewSettings.useCustomFlyView.rawValue
+    readonly property real informationBarHeight: _useCustomFlyView && customOverlay.visible ? customOverlay.informationBarHeight : 0
 
     // These should only be used by MainRootWindow
     property var planController:    _planController
@@ -78,6 +79,10 @@ Item {
 
     function setUseCustomFlyView(enabled) {
         _flyViewSettings.useCustomFlyView.rawValue = enabled
+    }
+
+    function closeCustomSettings() {
+        customOverlay.settingsPageVisible = false
     }
 
     QGCToolInsets {
