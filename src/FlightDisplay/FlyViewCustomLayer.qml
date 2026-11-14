@@ -51,7 +51,7 @@ Item {
     property string customPlanFilePath: ""
     property string openToolPage: ""
     readonly property real informationBarHeight: topBar.height
-    property real rightW: Math.max(minRightW, Math.min(maxRightW, width * 0.22))
+    property real rightW: Math.max(minRightW, Math.min(maxRightW, 340))
     property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobileLayout ? 0.44 : 0.52)))
     property bool showRightPanel: _panelSettings.showRightPanel
     property real sidePanelOpacity: _panelSettings.sidePanelOpacity
@@ -69,7 +69,7 @@ Item {
     readonly property real qgcAndroidInstrumentSize: Math.min(ScreenTools.defaultFontPixelHeight * 6.38, height * 0.253, width * 0.132)
     readonly property real minHudH: Math.round(ScreenTools.isMobileLayout ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
     readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobileLayout ? 0.50 : 0.58), ScreenTools.isMobileLayout ? minHudH : 0))
-    readonly property real bottomBarH: theme.bottomBarH
+    readonly property real bottomBarH: 34
     // Mobile instruments use the actual map viewport dimensions in FlyViewHUD.
     readonly property real sharedHudInstrumentSize: ScreenTools.isMobileLayout ? 0
                                                     : Math.max(96, Math.min(172, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
@@ -104,13 +104,13 @@ Item {
         leftEdgeCenterInset:    parentToolInsets.leftEdgeCenterInset
         leftEdgeBottomInset:    parentToolInsets.leftEdgeBottomInset
         rightEdgeTopInset:      parentToolInsets.rightEdgeTopInset
-        rightEdgeCenterInset:   parentToolInsets.rightEdgeCenterInset
+        rightEdgeCenterInset:   Math.max(parentToolInsets.rightEdgeCenterInset, _root.effectiveRightW)
         rightEdgeBottomInset:   parentToolInsets.rightEdgeBottomInset
         topEdgeLeftInset:       parentToolInsets.topEdgeLeftInset
         topEdgeCenterInset:     parentToolInsets.topEdgeCenterInset
         topEdgeRightInset:      parentToolInsets.topEdgeRightInset
         bottomEdgeLeftInset:    parentToolInsets.bottomEdgeLeftInset
-        bottomEdgeCenterInset:  parentToolInsets.bottomEdgeCenterInset
+        bottomEdgeCenterInset:  Math.max(parentToolInsets.bottomEdgeCenterInset, _root.bottomBarVisible ? _root.bottomBarH + 6 : 0)
         bottomEdgeRightInset:   parentToolInsets.bottomEdgeRightInset
     }
 
@@ -172,7 +172,7 @@ Item {
             _root.flightModePanelVisible = false
             _root.openToolPage = "analyze"
         }
-        onSettingsRequested: _root.selectWorkspaceTab(3)
+        onSettingsRequested: _root.selectWorkspaceTab(4)
         onPageSwitchRequested: _root.selectWorkspaceTab(0)
     }
 
@@ -197,6 +197,54 @@ Item {
             }
         }
 
+        Column {
+            anchors.left: parent.left
+            anchors.leftMargin: 7
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 5
+            visible: _root.workspaceVisible && !!_root.mapControl
+
+            Repeater {
+                model: [
+                    [qsTr("Center on Vehicle"), "MapCenter.svg"],
+                    [qsTr("Zoom In"), "ZoomPlus.svg"],
+                    [qsTr("Zoom Out"), "ZoomMinus.svg"],
+                    [qsTr("Reset Map Bearing"), "PaperPlane.svg"]
+                ]
+
+                Button {
+                    id: mapButton
+                    required property int index
+                    required property var modelData
+                    width: 40
+                    height: width
+                    enabled: index !== 0 || !!(_root.activeVehicle && _root.activeVehicle.coordinate.isValid)
+                    Accessible.name: modelData[0]
+                    ToolTip.text: modelData[0]
+                    ToolTip.visible: hovered
+
+                    background: Rectangle {
+                        radius: 6
+                        color: mapButton.down || mapButton.hovered ? "#b0102840" : "#b0000000"
+                        border.color: "#80000000"
+                    }
+                    contentItem: QGCColoredImage {
+                        source: "qrc:/qmlimages/" + mapButton.modelData[1]
+                        color: "#ffffff"
+                        fillMode: Image.PreserveAspectFit
+                        opacity: mapButton.enabled ? 1 : 0.45
+                    }
+                    onClicked: {
+                        switch (index) {
+                        case 0: _root.mapControl.center = _root.activeVehicle.coordinate; break
+                        case 1: _root.mapControl.zoomLevel += 1; break
+                        case 2: _root.mapControl.zoomLevel -= 1; break
+                        case 3: _root.mapControl.bearing = 0; break
+                        }
+                    }
+                }
+            }
+        }
     }
 
     FlightModePanel {
@@ -224,6 +272,7 @@ Item {
         backgroundOpacity: _root.sidePanelOpacity
         openCustomPlanShell: _root.openWaypointPlanPage
         onTabRequested: index => _root.selectWorkspaceTab(index)
+        onWaypointEditorRequested: _root.openWaypointPlanPage("")
         onAdvancedSettingsRequested: {
             if (mainWindow.allowViewSwitch()) {
                 _root.openToolPage = "settings"
@@ -270,17 +319,37 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: _root.effectiveRightW
+        anchors.rightMargin: _root.effectiveRightW + 10
+        anchors.leftMargin: 8
+        anchors.bottomMargin: 6
         height: _root.bottomBarH
         state: _root.uiState
         theme: theme
         visible: _root.bottomBarVisible
         onFailoverRequested: failoverDialog.visible = true
+        onTakeoffSetupRequested: _root.selectWorkspaceTab(1)
+        onPreflightRequested: {
+            if (!mainWindow.allowViewSwitch()) {
+                return
+            }
+            if (QGroundControl.corePlugin.options.preFlightChecklistUrl.toString().length) {
+                checklistLoader.active = true
+                checklistLoader.item.open()
+            } else {
+                _root.selectWorkspaceTab(1)
+            }
+        }
         onMissionCheckRequested: {
             if (_root.selectWorkspaceTab(1)) {
                 rightPanel.openMissionCheck()
             }
         }
+    }
+
+    Loader {
+        id: checklistLoader
+        active: false
+        sourceComponent: FlyViewPreFlightChecklistPopup {}
     }
 
     Loader {

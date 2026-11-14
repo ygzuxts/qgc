@@ -12,12 +12,16 @@ Rectangle {
 
     signal failoverRequested()
     signal missionCheckRequested()
+    signal preflightRequested()
+    signal takeoffSetupRequested()
 
     function actionLabel(index) {
         switch (index) {
         case 0: return qsTr("Hold Position")
         case 1: return qsTr("Resume Mission")
         case 2: return qsTr("Execute Mission")
+        case 3: return qsTr("Takeoff Setup")
+        case 4: return qsTr("Check")
         default: return qsTr("Return and Land (hold)")
         }
     }
@@ -30,6 +34,8 @@ Rectangle {
         case 0: return root.state.canHoldPosition
         case 1: return root.state.canResumeMission
         case 2: return root.state.canStartMission
+        case 3: return true
+        case 4: return true
         default: return root.state.canReturnToLaunch
         }
     }
@@ -48,59 +54,41 @@ Rectangle {
         case 2:
             root.missionCheckRequested()
             break
+        case 3:
+            root.takeoffSetupRequested()
+            break
+        case 4:
+            root.preflightRequested()
+            break
         default:
             root.state.executeRTL()
             break
         }
     }
 
-    function summaryLabel(index) {
-        switch (index) {
-        case 0: return qsTr("Link")
-        case 1: return qsTr("Mission")
-        default: return qsTr("Mode")
-        }
-    }
-
-    function summaryValue(index) {
-        switch (index) {
-        case 0: return root.state && root.state.vehicleConnected ? qsTr("Connected") : qsTr("Disconnected")
-        case 1: return root.state && root.state.vehicleConnected ? (root.state.currentWP + "/" + root.state.totalWP) : "--/--"
-        default: return root.state ? root.state.flightMode : qsTr("Disconnected")
-        }
-    }
-
-    function summaryHighlight(index) {
-        return index === 0 && root.state && root.state.vehicleConnected
-    }
-
     height: theme ? theme.bottomBarH : 52
-    color:  theme ? theme.surface : "#ffffff"
-
-    Rectangle {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 1
-        color: root.theme ? root.theme.border : "#e4e8ed"
-    }
+    color: "#5593b7cb"
+    radius: 8
 
     RowLayout {
         anchors.fill: parent
-        anchors.margins: theme ? theme.spacingSm : 8
+        anchors.margins: 3
         spacing: theme ? theme.spacingSm : 6
 
         // 操作按钮
         Repeater {
-            model: 4
+            model: 6
             delegate: Rectangle {
                 id: actionButton
-                Layout.fillWidth: true; height: theme ? theme.controlHMd : 36
-                radius: root.theme ? root.theme.radius : 6
-                opacity: root.actionEnabled(index) ? 1 : 0.45
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.minimumWidth: 0
+                Layout.preferredWidth: 1
+                radius: 8
+                opacity: root.actionEnabled(index) ? 1 : 0.65
                 color: actionMouse.pressed || actionMouse.containsMouse
-                       ? (root.theme ? root.theme.blue : "#000066")
-                       : (root.theme ? root.theme.blueL : "#f3f7ff")
+                       ? "#dc20517e"
+                       : index === 4 ? "#dfae1515" : "#ba254c69"
                 border.width: 0
 
                 Text {
@@ -110,10 +98,8 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
                     text: root.actionLabel(index)
-                    font.pixelSize: theme ? theme.fontMd : 13; font.weight: Font.Medium
-                    color: actionMouse.pressed || actionMouse.containsMouse
-                         ? "#ffffff"
-                         : (root.theme ? root.theme.text : "#111827")
+                    font.pixelSize: 12; font.weight: Font.Medium
+                    color: "#ffffff"
                 }
                 MouseArea {
                     id: actionMouse
@@ -123,72 +109,13 @@ Rectangle {
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     // Match the existing takeoff page's deliberate return command.
                     onClicked: {
-                        if (index !== 3) {
+                        if (index !== 5) {
                             root.triggerAction(index)
                         }
                     }
                     onPressAndHold: {
-                        if (index === 3 && root.actionEnabled(index)) {
+                        if (index === 5 && root.actionEnabled(index)) {
                             root.triggerAction(index)
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle { width: 1; height: theme ? theme.controlHMd - theme.spacingXs : 30; color: root.theme ? root.theme.border : "#e4e8ed" }
-
-        // 确认切换
-        Rectangle {
-            Layout.preferredWidth: theme ? theme.baseWidth * 11 : 110; height: theme ? theme.controlHMd : 36
-            radius: root.theme ? root.theme.radius : 6
-            color: root.theme ? root.theme.amberL : "#fef3c7"
-            border.color: "#fde68a"
-            border.width: 1
-            visible: false
-
-            Text {
-                anchors.centerIn: parent
-                text: qsTr("⚠ Confirm Failover")
-                font.pixelSize: theme ? theme.fontMd : 12; font.weight: Font.DemiBold
-                color: root.theme ? root.theme.amber : "#d97706"
-            }
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.failoverRequested()
-            }
-        }
-
-        Rectangle { width: 1; height: theme ? theme.controlHMd - theme.spacingXs : 30; color: root.theme ? root.theme.border : "#e4e8ed" }
-
-        // 飞行状态摘要
-        Row {
-            visible: root.width >= 640
-            spacing: theme ? theme.spacingXs : 4
-            Repeater {
-                model: 3
-                delegate: Rectangle {
-                    width: theme ? theme.baseWidth * 6.8 : 68; height: theme ? theme.controlHMd : 36
-                    radius: root.theme ? root.theme.radius : 6
-                    color:  root.summaryHighlight(index) ? (root.theme ? root.theme.blueL : "#E6E6F0") : (root.theme ? root.theme.surface2 : "#f7f8fa")
-                    border.color: root.summaryHighlight(index) ? (root.theme ? root.theme.blueBorder : "#8080B3") : (root.theme ? root.theme.border : "#e4e8ed")
-                    border.width: 1
-
-                    Column {
-                        anchors.centerIn: parent; spacing: theme ? theme.spacingXs : 3
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: root.summaryLabel(index)
-                            font.pixelSize: theme ? theme.fontXs : 9
-                            color: root.theme ? root.theme.text3 : "#9aa3b2"
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: root.summaryValue(index)
-                            font.pixelSize: theme ? theme.fontXs : 9; font.weight: Font.DemiBold
-                            color: root.summaryHighlight(index) ? (root.theme ? root.theme.blue : "#000066") : (root.theme ? root.theme.text : "#1a1d23")
                         }
                     }
                 }

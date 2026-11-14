@@ -18831,6 +18831,8 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
   </context>
   <context>
     <name>FlyViewBottomBar</name>
+    <message><source>Check</source><translation>检查</translation></message>
+    <message><source>Takeoff Setup</source><translation>起飞设置</translation></message>
     <message><source>Connected</source><translation>已连接</translation></message>
     <message><source>Execute Mission</source><translation>执行任务</translation></message>
     <message><source>Hold Position</source><translation>原地悬停</translation></message>
@@ -18861,6 +18863,16 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
   </context>
   <context>
     <name>FlyViewRightPanel</name>
+    <message><source>Mission Information Preview</source><translation>任务信息预览</translation></message>
+    <message><source>Flight Status and Instruments</source><translation>飞行状态及仪表</translation></message>
+    <message><source>Waypoints</source><translation>航点</translation></message>
+    <message><source>Open Waypoint Editor</source><translation>打开航点编辑器</translation></message>
+    <message><source>Link</source><translation>链路</translation></message>
+    <message><source>Safety Settings</source><translation>安全设置</translation></message>
+    <message><source>Parameters not ready</source><translation>参数未就绪</translation></message>
+    <message><source>Sensors and Calibration</source><translation>传感器及校准</translation></message>
+    <message><source>Video</source><translation>视频</translation></message>
+    <message><source>Video Settings</source><translation>视频设置</translation></message>
     <message><source>Flight</source><translation>飞行</translation></message>
     <message><source>Takeoff</source><translation>起降</translation></message>
     <message><source>Mission</source><translation>任务</translation></message>

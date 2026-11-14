@@ -49,7 +49,9 @@ Rectangle {
 
     // 背景透明度由外层 FlyViewRightPanel 统一控制，避免文字/按钮跟着透明。
     color: "transparent"
-    implicitHeight: content.implicitHeight + 22
+    property bool safetyOnly: false
+
+    implicitHeight: safetyOnly ? 0 : content.implicitHeight + 22
 
     Component.onCompleted: {
         takeoffTargetExpanded = false
@@ -892,6 +894,7 @@ Rectangle {
 
     ColumnLayout {
         id: content
+        visible: !root.safetyOnly
         width: parent.width
         spacing: 10
         anchors.top: parent.top

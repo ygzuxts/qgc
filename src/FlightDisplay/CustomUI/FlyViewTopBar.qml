@@ -124,14 +124,14 @@ Rectangle {
         }
     }
 
-    height: theme ? Math.max(theme.topBarH, Math.round(44 * theme.uiScale)) : 58
+    height: 28
     color: theme ? Qt.rgba(theme.surface.r, theme.surface.g, theme.surface.b, 0.0) : "transparent"
 
     Rectangle {
         anchors.fill: parent
         readonly property real bgAlpha: Math.max(0.15, Math.min(1.0, root.infoBarOpacity))
-        readonly property color surfaceColor: root.theme ? root.theme.surface : "#f5f8fc"
-        color: Qt.rgba(surfaceColor.r, surfaceColor.g, surfaceColor.b, bgAlpha)
+        readonly property color surfaceColor: "#102e4d"
+        color: Qt.rgba(surfaceColor.r, surfaceColor.g, surfaceColor.b, 1)
         opacity: 1
     }
 
@@ -174,7 +174,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: theme ? theme.spacingSm : 8
             anchors.verticalCenter: parent.verticalCenter
-            width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 54
+            width: theme ? 24 : 54
             height: width
             radius: theme ? theme.radiusLg + 2 : 10
             color: aircraftMouse.pressed
@@ -275,7 +275,7 @@ Rectangle {
             Rectangle {
                 id: flightStatusModePill
                 width: Math.min(root.width * 0.36, Math.max(theme ? theme.baseWidth * 20.5 : 218, contentRow.implicitWidth + Math.round(22 * (theme ? theme.uiScale : 1))))
-                height: theme ? theme.controlHMd : 32
+                height: 24
                 radius: height / 2
                 color: flightModeMouse.pressed
                        ? root.brandPress
@@ -363,7 +363,7 @@ Rectangle {
                 id: vtolSwitchButton
                 visible: !!(root.activeVehicle && root.activeVehicle.vtol && root.activeVehicle.flying)
                 width: Math.max(64, vtolSwitchLabel.implicitWidth + 20)
-                height: theme ? theme.controlHMd : 32
+                height: 24
                 radius: height / 2
                 color: root.panelBg
                 border.width: 1
@@ -474,7 +474,7 @@ Rectangle {
             Rectangle {
                 id: vehicleMessagesButton
                 width: height
-                height: theme ? theme.controlHMd : 32
+                height: 24
                 radius: height / 2
                 color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
@@ -505,7 +505,7 @@ Rectangle {
             Rectangle {
                 id: armStatePill
                 width: Math.max(theme ? theme.baseWidth * 8.2 : 96, armStateRow.implicitWidth + Math.round(18 * (theme ? theme.uiScale : 1)))
-                height: theme ? theme.controlHMd : 32
+                height: 24
                 radius: height / 2
                 color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
@@ -553,7 +553,7 @@ Rectangle {
                 id: disconnectPill
                 visible: root.activeVehicle && root.communicationLost
                 width: Math.round(84 * (theme ? theme.uiScale : 1))
-                height: theme ? theme.controlHMd : 32
+                height: 24
                 radius: height / 2
                 color: disconnectMouse.pressed
                        ? Qt.rgba(220 / 255, 38 / 255, 38 / 255, 0.16)
@@ -584,7 +584,7 @@ Rectangle {
             anchors.left: leftStatusRow.right
             anchors.leftMargin: theme ? theme.spacingXl * 1.4 : 24
             anchors.verticalCenter: parent.verticalCenter
-            height: ScreenTools.toolbarHeight - ScreenTools.defaultFontPixelHeight * 1.32
+            height: 24
             spacing: ScreenTools.defaultFontPixelWidth * 1.75
             visible: root.vehicleConnected
 
@@ -641,7 +641,7 @@ Rectangle {
 
             Rectangle {
                 id: moreButton
-                width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 52
+                width: theme ? 24 : 52
                 height: width
                 radius: theme ? theme.radiusLg + 2 : 10
                 readonly property color idleColor: root.theme && root.theme.darkMode
@@ -679,7 +679,7 @@ Rectangle {
             }
 
             Rectangle {
-                width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 52
+                width: theme ? 24 : 52
                 height: width
                 radius: theme ? theme.radiusLg + 2 : 10
                 color: pageMouse.pressed
@@ -694,8 +694,8 @@ Rectangle {
 
                 Image {
                     anchors.centerIn: parent
-                    width: theme ? theme.iconMd + 6 : 28
-                    height: theme ? theme.iconMd + 6 : 28
+                    width: 18
+                    height: 18
                     source: "qrc:/brand/topbar-logo.png"
                     fillMode: Image.PreserveAspectFit
                     mipmap: true

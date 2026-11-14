@@ -7,6 +7,8 @@ import QtQuick
 Item {
     id: root
 
+    property var theme: null
+
     width:  320
     height: Math.round(240 * (theme ? theme.uiScale : 1))
 
@@ -32,18 +34,18 @@ Item {
     readonly property real _visiblePitch: Math.max(-85, Math.min(90, root._normalize180(root._displayPitch)))
     readonly property real _visibleRoll: root._normalize180(root._displayRoll)
     readonly property real _pitchPixPerDeg: height / 34
-    readonly property color _skyColor:    "#4a9fc8"
-    readonly property color _skyColorTop: "#275f89"
-    readonly property color _skyColorMid: "#4f99c8"
-    readonly property color _groundColor: "#7c5b16"
-    readonly property color _groundColorMid: "#946c1b"
+    readonly property color _skyColor:    "#15c3ed"
+    readonly property color _skyColorTop: "#15c3ed"
+    readonly property color _skyColorMid: "#15c3ed"
+    readonly property color _groundColor: "#ad9b32"
+    readonly property color _groundColorMid: "#ad9b32"
     readonly property color _lineColor:   Qt.rgba(1,1,1,.35)
     readonly property color _textColor:   Qt.rgba(1,1,1,.7)
     readonly property color _panelBg:     Qt.rgba(0,0,0,.45)
     readonly property int   _tapeW:       44
     readonly property int _headingTickCount: 25
     readonly property int _valueTickRadius: 12
-    readonly property color _accentColor: "#f59e0b"
+    readonly property color _accentColor: "#0074bd"
 
     function _normalizeHeading(deg) {
         var normalized = Math.round(deg) % 360
