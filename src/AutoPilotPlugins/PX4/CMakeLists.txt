@@ -44,6 +44,7 @@ qt_add_qml_module(AutoPilotPluginsPX4Module
     RESOURCE_PREFIX /qml
     QML_FILES
         ActuatorComponent.qml
+        ActuatorTranslation.js
         ActuatorFact.qml
         ActuatorSlider.qml
         AirframeComponent.qml

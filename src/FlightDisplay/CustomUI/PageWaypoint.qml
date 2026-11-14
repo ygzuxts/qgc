@@ -65,7 +65,7 @@ Rectangle {
 
     function itemAction(item) {
         if (!item) {
-            return "无"
+            return qsTr("None")
         }
         return item.commandDescription && item.commandDescription.length > 0 ? item.commandDescription : item.commandName
     }
@@ -222,12 +222,12 @@ Rectangle {
 
     function statLabel(index) {
         switch (index) {
-        case 0: return "航段距离"
-        case 1: return "预计时间"
-        case 2: return "最高高度"
-        case 3: return "最低高度"
-        case 4: return "平均速度"
-        default: return "航点数量"
+        case 0: return qsTr("Leg Distance")
+        case 1: return qsTr("Estimated Time")
+        case 2: return qsTr("Maximum Altitude")
+        case 3: return qsTr("Minimum Altitude")
+        case 4: return qsTr("Average Speed")
+        default: return qsTr("Waypoint Count")
         }
     }
 
@@ -342,7 +342,7 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 0
 
-        SectionTitle { text: "航点列表"; theme: root.theme }
+        SectionTitle { text: qsTr("Waypoint List"); theme: root.theme }
 
         Column {
             width: parent.width
@@ -351,7 +351,7 @@ Rectangle {
 
             Text {
                 width: parent.width - ((theme ? theme.spacingXl : 12) * 2)
-                text: "共 " + visibleItemCount + " 个任务项"
+                text: qsTr("Total: ") + visibleItemCount + qsTr(" mission items")
                 font.pixelSize: theme ? theme.fontMd : 12
                 color: theme ? theme.text2 : "#4b5563"
             }
@@ -363,35 +363,35 @@ Rectangle {
                 rowSpacing: theme ? theme.spacingSm : 8
 
                 ActionButton {
-                    label: "新增"
+                    label: qsTr("Add")
                     buttonEnabled: !!missionController
                     Layout.fillWidth: true
                     onClicked: addWaypoint(false)
                 }
 
                 ActionButton {
-                    label: "复制"
+                    label: qsTr("Duplicate")
                     buttonEnabled: hasSelection
                     Layout.fillWidth: true
                     onClicked: addWaypoint(true)
                 }
 
                 ActionButton {
-                    label: "删除"
+                    label: qsTr("Delete")
                     buttonEnabled: hasSelection
                     Layout.fillWidth: true
                     onClicked: removeWaypoint()
                 }
 
                 ActionButton {
-                    label: "起飞点"
+                    label: qsTr("Takeoff Point")
                     buttonEnabled: missionController ? missionController.isInsertTakeoffValid : false
                     Layout.fillWidth: true
                     onClicked: addTakeoff()
                 }
 
                 ActionButton {
-                    label: "降落点"
+                    label: qsTr("Landing Point")
                     buttonEnabled: missionController ? missionController.isInsertLandValid : false
                     Layout.fillWidth: true
                     onClicked: addLand()
@@ -480,7 +480,7 @@ Rectangle {
         }
 
         Rectangle { width: parent.width; height: 1; color: theme ? theme.border : "#e4e8ed" }
-        SectionTitle { text: "航点详情"; theme: root.theme }
+        SectionTitle { text: qsTr("Waypoint Details"); theme: root.theme }
 
         Column {
             width: parent.width
@@ -521,7 +521,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: visibleItemCount > 0 ? "选择一个任务项查看详情" : "当前没有任务项"
+                    text: visibleItemCount > 0 ? qsTr("Select a mission item to view details") : qsTr("No mission items")
                     font.pixelSize: theme ? theme.fontMd : 12
                     color: theme ? theme.text3 : "#94a3b8"
                 }
@@ -542,7 +542,7 @@ Rectangle {
                     spacing: theme ? theme.spacingSm : 6
 
                     Text {
-                        text: "航线参数"
+                        text: qsTr("Route Parameters")
                         font.pixelSize: theme ? theme.fontMd : 13
                         font.weight: Font.Medium
                         color: theme ? theme.text : "#111827"

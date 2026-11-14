@@ -31,6 +31,7 @@ Item {
     //-- The point and pixel font size values are computed at runtime
 
     property real defaultFontPointSize:     10
+    property real _basePointSize:          10
     property real platformFontPointSize:    10
 
     readonly property real smallFontPointRatio:      0.75
@@ -85,19 +86,20 @@ Item {
     // These properties allow us to create simulated mobile sizing for a desktop build.
     // This makes testing the UI for smaller mobile sizing much easier.
     // The 731x411 size is the size of the Herelink screen which is our target lower bound
-    property real screenWidth:  ScreenToolsController.fakeMobile ? 731 : Screen.width
-    property real screenHeight: ScreenToolsController.fakeMobile ? 411 : Screen.height
+    property real screenWidth:  isAndroid ? 1280 : (ScreenToolsController.fakeMobile ? 731 : Screen.width)
+    property real screenHeight: isAndroid ? 720 : (ScreenToolsController.fakeMobile ? 411 : Screen.height)
 
     property bool isAndroid:                        ScreenToolsController.isAndroid
     property bool isiOS:                            ScreenToolsController.isiOS
     property bool isMobile:                         ScreenToolsController.isMobile
+    readonly property bool isMobileLayout:          isMobile && !isAndroid
     property bool isFakeMobile:                     ScreenToolsController.fakeMobile
     property bool isWindows:                        ScreenToolsController.isWindows
     property bool isDebug:                          ScreenToolsController.isDebug
     property bool isMac:                            ScreenToolsController.isMacOS
     property bool isLinux:                          ScreenToolsController.isLinux
-    property bool isTinyScreen:                     (Screen.width / realPixelDensity) < 120 // 120mm
-    property bool isShortScreen:                    ((Screen.height / realPixelDensity) < 120) || (ScreenToolsController.isMobile && ((Screen.height / Screen.width) < 0.6))
+    property bool isTinyScreen:                     !isAndroid && (Screen.width / realPixelDensity) < 120 // 120mm
+    property bool isShortScreen:                    !isAndroid && (((Screen.height / realPixelDensity) < 120) || (ScreenToolsController.isMobile && ((Screen.height / Screen.width) < 0.6)))
     property bool isHugeScreen:                     (Screen.width / realPixelDensity) >= (23.5 * 25.4) // 27" monitor
     property bool isSerialAvailable:                ScreenToolsController.isSerialAvailable
 
@@ -105,19 +107,19 @@ Item {
     property real minTouchPixels:                   0   ///< Minimum touch size in pixels (calculatedd from minTouchMillimeters and realPixelDensity)
 
     // The implicit heights/widths for our custom control set
-    property real implicitButtonWidth:              Math.round(defaultFontPixelWidth *  (isMobile ? 7.0 : 5.0))
-    property real implicitButtonHeight:             Math.round(defaultFontPixelHeight * (isMobile ? 2.0 : 1.6))
-    property real implicitCheckBoxHeight:           Math.round(defaultFontPixelHeight * (isMobile ? 1.2 : 1.0))
+    property real implicitButtonWidth:              Math.round(defaultFontPixelWidth *  (isMobileLayout ? 7.0 : 5.0))
+    property real implicitButtonHeight:             Math.round(defaultFontPixelHeight * (isMobileLayout ? 2.0 : 1.6))
+    property real implicitCheckBoxHeight:           Math.round(defaultFontPixelHeight * (isMobileLayout ? 1.2 : 1.0))
     property real implicitRadioButtonHeight:        implicitCheckBoxHeight
     property real implicitTextFieldWidth:           defaultFontPixelWidth * 13
-    property real implicitTextFieldHeight:          Math.round(defaultFontPixelHeight * (isMobile ? 2.0 : 1.6))
-    property real implicitComboBoxHeight:           Math.round(defaultFontPixelHeight * (isMobile ? 2.0 : 1.6))
-    property real implicitComboBoxWidth:            Math.round(defaultFontPixelWidth *  (isMobile ? 7.0 : 5.0))
+    property real implicitTextFieldHeight:          Math.round(defaultFontPixelHeight * (isMobileLayout ? 2.0 : 1.6))
+    property real implicitComboBoxHeight:           Math.round(defaultFontPixelHeight * (isMobileLayout ? 2.0 : 1.6))
+    property real implicitComboBoxWidth:            Math.round(defaultFontPixelWidth *  (isMobileLayout ? 7.0 : 5.0))
     property real comboBoxPadding:                  defaultFontPixelWidth
-    property real implicitSliderHeight:             isMobile ? Math.max(defaultFontPixelHeight, minTouchPixels) : defaultFontPixelHeight
+    property real implicitSliderHeight:             isMobileLayout ? Math.max(defaultFontPixelHeight, minTouchPixels) : defaultFontPixelHeight
     property real buttonBorderRadius:               defaultFontPixelWidth / 2
     // It's not possible to centralize an even number of pixels, checkBoxIndicatorSize should be an odd number to allow centralization
-    property real checkBoxIndicatorSize:            2 * Math.floor(defaultFontPixelHeight * (isMobile ? 1.5 : 1.0) / 2) + 1
+    property real checkBoxIndicatorSize:            2 * Math.floor(defaultFontPixelHeight * (isMobileLayout ? 1.5 : 1.0) / 2) + 1
     property real radioButtonIndicatorSize:         checkBoxIndicatorSize
 
     readonly property string normalFontFamily:      ScreenToolsController.normalFontFamily
@@ -133,7 +135,7 @@ Item {
     }
 
     onRealPixelDensityChanged: {
-        _setBasePointSize(defaultFontPointSize)
+        _setBasePointSize(_basePointSize)
     }
 
     function printScreenStats() {
@@ -152,8 +154,11 @@ Item {
 
     /// \private
     function _setBasePointSize(pointSize) {
-        _textMeasure.font.pointSize = pointSize
-        defaultFontPointSize    = pointSize
+        _basePointSize = pointSize
+        // The Android canvas uses desktop pixels before the window fit transform.
+        var fontPointSize = isAndroid ? pointSize * 96 / (Screen.logicalPixelDensity * 25.4) : pointSize
+        _textMeasure.font.pointSize = fontPointSize
+        defaultFontPointSize    = fontPointSize
         defaultFontPixelHeight  = Math.round(_textMeasure.fontHeight/2.0)*2
         defaultFontPixelWidth   = Math.round(_textMeasure.fontWidth/2.0)*2
         defaultFontDescent      = ScreenToolsController.defaultFontDescent(defaultFontPointSize)
@@ -182,7 +187,7 @@ Item {
         property real   fontHeight:   contentHeight
         Component.onCompleted: {
             //-- First, compute platform, default size
-            if(ScreenToolsController.isMobile) {
+            if(_screenTools.isMobileLayout) {
                 //-- Check iOS really tiny screens (iPhone 4s/5/5s)
                 if(ScreenToolsController.isiOS) {
                     if(ScreenToolsController.isiOS && Screen.width < 570) {

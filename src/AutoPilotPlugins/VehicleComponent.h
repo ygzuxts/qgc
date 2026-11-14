@@ -29,7 +29,7 @@ class VehicleComponent : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString  name                                                READ name                   CONSTANT)
+    Q_PROPERTY(QString  name                                                READ name                   NOTIFY nameChanged)
     Q_PROPERTY(QString  description                                         READ description            CONSTANT)
     Q_PROPERTY(bool     requiresSetup                                       READ requiresSetup          CONSTANT)
     Q_PROPERTY(bool     setupComplete                                       READ setupComplete          STORED false NOTIFY setupCompleteChanged)
@@ -71,6 +71,7 @@ public:
     AutoPilotPlugin::KnownVehicleComponent KnownVehicleComponent() const { return _KnownVehicleComponent; }
 
 signals:
+    void nameChanged();
     void setupCompleteChanged();
     void setupSourceChanged();
 

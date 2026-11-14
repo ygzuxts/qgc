@@ -21,7 +21,7 @@ SafetyComponent::SafetyComponent(Vehicle* vehicle, AutoPilotPlugin* autopilot, Q
 
 QString SafetyComponent::name(void) const
 {
-    return _name;
+    return tr("Safety");
 }
 
 QString SafetyComponent::description(void) const

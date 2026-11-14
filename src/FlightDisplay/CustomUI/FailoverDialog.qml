@@ -81,14 +81,14 @@ Rectangle {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "⚠  冗余切换请求"
+                text: qsTr("⚠  Failover Request")
                 font.pixelSize: 16; font.weight: Font.Bold
                 color: root.theme ? root.theme.text : "#1a1d23"
             }
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "主控板 FCB #0" + root.fromBoardId + " 心跳超时\n检测到可用热备板卡，请确认是否切换。"
+                text: qsTr("Primary FCB #0") + root.fromBoardId + qsTr(" heartbeat timed out.\\nA standby controller is available. Confirm failover.")
                 font.pixelSize: 13
                 color: root.theme ? root.theme.text2 : "#5a6272"
                 horizontalAlignment: Text.AlignHCenter
@@ -99,14 +99,14 @@ Rectangle {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "候选主板：FCB #0" + root.toBoardId + " · 健康状态正常"
+                text: qsTr("Candidate controller: FCB #0") + root.toBoardId + qsTr(" · Health normal")
                 font.pixelSize: 12; font.weight: Font.Medium
                 color: root.theme ? root.theme.blue : "#000066"
             }
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "自动取消倒计时：" + root._countdown + " 秒"
+                text: qsTr("Auto-cancel in: ") + root._countdown + qsTr(" s")
                 font.pixelSize: 11
                 color: root.theme ? root.theme.text3 : "#9aa3b2"
             }
@@ -120,7 +120,7 @@ Rectangle {
                     color: root.theme ? root.theme.green : "#16a34a"
                     Text {
                         anchors.centerIn: parent
-                        text: "确认切换"
+                        text: qsTr("Confirm Failover")
                         font.pixelSize: 13; font.weight: Font.DemiBold
                         color: "#ffffff"
                     }
@@ -141,7 +141,7 @@ Rectangle {
                     border.width: 1
                     Text {
                         anchors.centerIn: parent
-                        text: "暂不切换"
+                        text: qsTr("Not Now")
                         font.pixelSize: 13; font.weight: Font.Medium
                         color: root.theme ? root.theme.text2 : "#5a6272"
                     }

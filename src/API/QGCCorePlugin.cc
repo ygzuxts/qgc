@@ -15,6 +15,10 @@
 #ifdef QGC_GST_STREAMING
 #include "GStreamer.h"
 #endif
+#ifdef QGC_FFMPEG_STREAMING
+#include "FFmpegReceiver.h"
+#include "FFmpegVideoItem.h"
+#endif
 #include "HorizontalFactValueGrid.h"
 #include "InstrumentValueData.h"
 #include "JoystickManager.h"
@@ -157,6 +161,27 @@ QString QGCCorePlugin::showAdvancedUIMessage() const
 
 void QGCCorePlugin::factValueGridCreateDefaultSettings(FactValueGrid* factValueGrid)
 {
+    if (factValueGrid->settingsGroup() == QStringLiteral("CustomFlyViewTelemetry")) {
+        // Display-only Facts, persisted separately from the stock telemetry bar.
+        const QStringList factNames = {
+            QStringLiteral("GroundSpeed"), QStringLiteral("AirSpeed"),
+            QStringLiteral("Roll"), QStringLiteral("Pitch"),
+            QStringLiteral("AltitudeRelative"), QStringLiteral("ClimbRate")
+        };
+        for (int columnIndex = 0; columnIndex < 3; ++columnIndex) {
+            (void) factValueGrid->appendColumn();
+        }
+        factValueGrid->appendRow();
+        for (int index = 0; index < factNames.size(); ++index) {
+            auto* column = factValueGrid->columns()->value<QmlObjectListModel*>(index / 2);
+            auto* value = column->value<InstrumentValueData*>(index % 2);
+            value->setFact(QStringLiteral("Vehicle"), factNames[index]);
+            value->setText(value->fact() ? value->fact()->shortDescription() : factNames[index]);
+            value->setShowUnits(true);
+        }
+        return;
+    }
+
     if (factValueGrid->specificVehicleForCard()) {
         bool includeFWValues = factValueGrid->vehicleClass() == QGCMAVLink::VehicleClassFixedWing || factValueGrid->vehicleClass() == QGCMAVLink::VehicleClassVTOL || factValueGrid->vehicleClass() == QGCMAVLink::VehicleClassAirship;
 
@@ -280,7 +305,9 @@ void QGCCorePlugin::createRootWindow(QQmlApplicationEngine *qmlEngine)
 
 VideoReceiver *QGCCorePlugin::createVideoReceiver(QObject *parent)
 {
-#ifdef QGC_GST_STREAMING
+#ifdef QGC_FFMPEG_STREAMING
+    return new FFmpegReceiver(parent);
+#elif defined(QGC_GST_STREAMING)
     return GStreamer::createVideoReceiver(parent);
 #elif defined(QGC_QT_STREAMING)
     return QtMultimediaReceiver::createVideoReceiver(parent);
@@ -291,7 +318,10 @@ VideoReceiver *QGCCorePlugin::createVideoReceiver(QObject *parent)
 
 void *QGCCorePlugin::createVideoSink(QQuickItem *widget, QObject *parent)
 {
-#ifdef QGC_GST_STREAMING
+#ifdef QGC_FFMPEG_STREAMING
+    Q_UNUSED(parent);
+    return widget ? widget->findChild<FFmpegVideoItem *>(QStringLiteral("ffmpegVideoSink")) : nullptr;
+#elif defined(QGC_GST_STREAMING)
     return GStreamer::createVideoSink(widget, parent);
 #elif defined(QGC_QT_STREAMING)
     return QtMultimediaReceiver::createVideoSink(widget, parent);
@@ -302,7 +332,9 @@ void *QGCCorePlugin::createVideoSink(QQuickItem *widget, QObject *parent)
 }
 void QGCCorePlugin::releaseVideoSink(void *sink)
 {
-#ifdef QGC_GST_STREAMING
+#ifdef QGC_FFMPEG_STREAMING
+    Q_UNUSED(sink);
+#elif defined(QGC_GST_STREAMING)
     GStreamer::releaseVideoSink(sink);
 #elif defined(QGC_QT_STREAMING)
     QtMultimediaReceiver::releaseVideoSink(sink);

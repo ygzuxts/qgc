@@ -44,7 +44,7 @@ FlightMap {
     property var    _geoFenceController:        planMasterController.geoFenceController
     property var    _rallyPointController:      planMasterController.rallyPointController
     property var    _activeVehicleCoordinate:   _activeVehicle ? _activeVehicle.coordinate : QtPositioning.coordinate()
-    property real   _toolButtonTopMargin:       parent.height - mainWindow.height + (ScreenTools.defaultFontPixelHeight / 2)
+    property real   _toolButtonTopMargin:       parent.height - mainWindow.uiHeight + (ScreenTools.defaultFontPixelHeight / 2)
     property real   _toolsMargin:               ScreenTools.defaultFontPixelWidth * 0.75
     property var    _flyViewSettings:           QGroundControl.settingsManager.flyViewSettings
     property bool   _keepMapCenteredOnVehicle:  _flyViewSettings.keepMapCenteredOnVehicle.rawValue

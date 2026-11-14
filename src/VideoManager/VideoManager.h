@@ -31,6 +31,7 @@ class VideoManager : public QObject
     // QML_UNCREATABLE("")
     Q_MOC_INCLUDE("Vehicle.h")
     Q_PROPERTY(bool     gstreamerEnabled        READ gstreamerEnabled                           CONSTANT)
+    Q_PROPERTY(bool     ffmpegEnabled           READ ffmpegEnabled                              CONSTANT)
     Q_PROPERTY(bool     qtmultimediaEnabled     READ qtmultimediaEnabled                        CONSTANT)
     Q_PROPERTY(bool     uvcEnabled              READ uvcEnabled                                 CONSTANT)
     Q_PROPERTY(bool     autoStreamConfigured    READ autoStreamConfigured                       NOTIFY autoStreamConfiguredChanged)
@@ -83,6 +84,7 @@ public:
     QString uvcVideoSourceID() const { return _uvcVideoSourceID; }
     void setfullScreen(bool on);
     static bool gstreamerEnabled();
+    static bool ffmpegEnabled();
     static bool qtmultimediaEnabled();
     static bool uvcEnabled();
 

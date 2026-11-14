@@ -7,9 +7,12 @@ import QGroundControl
 import QGroundControl.Controls
 import QGroundControl.MultiVehicleManager
 import QGroundControl.Palette
+import QGroundControl.ScreenTools
 
 Rectangle {
     id: root
+
+    QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     property var state: null
     property var theme: null
@@ -23,6 +26,7 @@ Rectangle {
     readonly property real flightModePanelY: root.height + 2
     signal pageSwitchRequested()
     signal settingsRequested()
+    signal analyzeToolsRequested()
 
     signal flightModeButtonClicked()
     signal flightModePanelCloseRequested()
@@ -50,25 +54,21 @@ Rectangle {
     readonly property bool vehicleConnected: root.state && root.state.vehicleConnected
     readonly property bool communicationLost: !!(root.activeVehicle && root.activeVehicle.vehicleLinkManager && root.activeVehicle.vehicleLinkManager.communicationLost)
     readonly property bool armed: root.state && root.state.armed
-    readonly property string armText: vehicleConnected ? (armed ? "已解锁" : "未解锁") : "未连接"
+    readonly property string armText: vehicleConnected ? (armed ? qsTr("Armed") : qsTr("Disarmed")) : qsTr("Disconnected")
     readonly property color armColor: vehicleConnected ? (armed ? "#16a34a" : "#dc2626") : "#9aa3b2"
     readonly property string modeText: vehicleConnected && root.state && root.state.flightMode ? root.state.flightMode : "--"
-    readonly property color telemetryTextColor: root.theme && root.theme.darkMode ? "#ffffff" : "#111827"
-    readonly property string batteryTopText: root.state && root.state.batteryPercentText ? root.state.batteryPercentText : "--"
-    readonly property string gpsSatTopText: root.state && root.state.gpsSatellites >= 0 ? root.state.gpsSatellitesText : "--"
-    readonly property string gpsHdopTopText: root.state && root.state.gpsHdopText && root.state.gpsHdopText !== "--" ? root.state.gpsHdopText : "--"
     readonly property var flightModeList: root.state && root.state.flightModes ? root.state.flightModes : []
 
     function statusText() {
-        if (!root.state || !root.state.vehicleConnected) return "未连接"
+        if (!root.state || !root.state.vehicleConnected) return qsTr("Disconnected")
         switch (root.state.mainStatusText) {
-        case "Ready": return "可起飞"
-        case "Not Ready": return "未就绪"
-        case "Flying": return "飞行中"
-        case "Landing": return "降落中"
-        case "Armed": return "已解锁"
-        case "Comms Lost": return "通信丢失"
-        default: return root.state.mainStatusText ? root.state.mainStatusText : "未连接"
+        case "Ready": return qsTr("Ready to Fly")
+        case "Not Ready": return qsTr("Not Ready")
+        case "Flying": return qsTr("Flying")
+        case "Landing": return qsTr("Landing")
+        case "Armed": return qsTr("Armed")
+        case "Comms Lost": return qsTr("Communication Lost")
+        default: return root.state.mainStatusText ? root.state.mainStatusText : qsTr("Disconnected")
         }
     }
 
@@ -85,20 +85,34 @@ Rectangle {
     function modeDisplayName(modeName) {
         var normalizedModeName = modeName ? String(modeName).trim() : "--"
         switch (normalizedModeName) {
-        case "Manual": return "手动Manual"
-        case "Stabilized": return "自稳Stabilized"
-        case "Acro": return "特技Acro"
-        case "Rattitude": return "半自稳Rattitude"
-        case "Altitude": return "高度"
-        case "Offboard": return "板外Offboard"
-        case "Position": return "定点Position"
-        case "Hold": return "等待"
-        case "Mission": return "任务"
-        case "Return": return "返航Return"
-        case "Land": return "着陆Land"
-        case "Precision Landing": return "精准降落"
-        case "Takeoff": return "起飞Takeoff"
-        case "VTOL Takeoff": return "垂直起飞"
+        case "手动":
+        case "Manual": return qsTr("Manual")
+        case "自稳":
+        case "Stabilized": return qsTr("Stabilized")
+        case "特技":
+        case "Acro": return qsTr("Acro")
+        case "半自稳":
+        case "Rattitude": return qsTr("Rattitude")
+        case "定高":
+        case "Altitude": return qsTr("Altitude Hold")
+        case "外部控制":
+        case "Offboard": return qsTr("Offboard")
+        case "定点":
+        case "Position": return qsTr("Position")
+        case "悬停":
+        case "Hold": return qsTr("Hold")
+        case "任务":
+        case "Mission": return qsTr("Mission")
+        case "返航":
+        case "Return": return qsTr("Return")
+        case "降落":
+        case "Land": return qsTr("Land")
+        case "精准降落":
+        case "Precision Land":
+        case "Precision Landing": return qsTr("Precision Land")
+        case "起飞":
+        case "Takeoff": return qsTr("Takeoff")
+        case "VTOL Takeoff": return qsTr("VTOL Takeoff")
         default: return modeName && modeName !== "--" ? modeName : "--"
         }
     }
@@ -126,6 +140,25 @@ Rectangle {
         anchors.right: parent.right
         height: Math.round(1 * (theme ? theme.uiScale : 1))
         color: root.theme ? root.theme.border : "#e4e8ed"
+    }
+
+    Rectangle {
+        id: connectionProgressTrack
+
+        readonly property real progress: root.activeVehicle ? root.activeVehicle.loadProgress : 0
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: Math.max(2, Math.round(root.height * 0.05))
+        visible: root.vehicleConnected && root.activeVehicle && !root.activeVehicle.initialConnectComplete
+        color: root.theme && root.theme.darkMode ? root.panelFieldBg : "#edf4ff"
+
+        Rectangle {
+            width: parent.width * Math.max(0, Math.min(1, connectionProgressTrack.progress))
+            height: parent.height
+            color: root.theme && root.theme.darkMode ? root.panelOuterBorder : root.brandBlue
+        }
     }
 
     Item {
@@ -326,6 +359,149 @@ Rectangle {
             }
 
             Rectangle {
+                id: vtolSwitchButton
+                visible: !!(root.activeVehicle && root.activeVehicle.vtol && root.activeVehicle.flying)
+                width: Math.max(64, vtolSwitchLabel.implicitWidth + 20)
+                height: theme ? theme.controlHMd : 32
+                radius: height / 2
+                color: root.panelBg
+                border.width: 1
+                border.color: root.brandBorder
+
+                Text {
+                    id: vtolSwitchLabel
+                    anchors.centerIn: parent
+                    text: root.activeVehicle && root.activeVehicle.vtolInFwdFlight
+                          ? qsTr("Fixed Wing") : qsTr("Multi-Rotor")
+                    color: root.brandBlue
+                    font.pixelSize: theme ? theme.fontSm : 11
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.flightModePanelCloseRequested()
+                        vtolSwitchPopup.open()
+                    }
+                }
+                onVisibleChanged: if (!visible) vtolSwitchPopup.close()
+
+                Popup {
+                    id: vtolSwitchPopup
+                    y: vtolSwitchButton.height + 8
+                    width: Math.round(260 * (root.theme ? root.theme.uiScale : 1))
+                    padding: 10
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+                    property var targetVehicle: null
+                    property bool targetForward: false
+                    onOpened: {
+                        targetVehicle = root.activeVehicle
+                        targetForward = !targetVehicle.vtolInFwdFlight
+                    }
+                    onClosed: transitionHold.reset()
+                    background: Rectangle {
+                        color: root.panelBg
+                        radius: 8
+                        border.color: root.brandBorder
+                    }
+                    contentItem: Rectangle {
+                        id: transitionHold
+                        implicitHeight: Math.round(48 * (root.theme ? root.theme.uiScale : 1))
+                        property real progress: 0
+                        enabled: !!(vtolSwitchPopup.targetVehicle
+                                     && vtolSwitchPopup.targetVehicle === root.activeVehicle
+                                     && root.vehicleConnected && !root.communicationLost
+                                     && root.activeVehicle.vtol
+                                     && root.activeVehicle.flying
+                                     && root.activeVehicle.vtolInFwdFlight !== vtolSwitchPopup.targetForward)
+                        function reset() {
+                            transitionTimer.stop()
+                            progress = 0
+                        }
+                        onEnabledChanged: if (!enabled) reset()
+                        radius: 6
+                        clip: true
+                        color: transitionMouse.pressed ? root.brandHover : root.panelBg
+                        opacity: enabled ? 1 : 0.45
+                        border.width: 1
+                        border.color: root.brandBorder
+                        Rectangle {
+                            width: parent.width * transitionHold.progress
+                            height: parent.height
+                            color: root.brandBlue
+                            opacity: 0.2
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: vtolSwitchPopup.targetForward
+                                  ? qsTr("Hold to transition to Fixed Wing")
+                                  : qsTr("Hold to transition to Multi-Rotor")
+                            font.pixelSize: Math.round(13 * (root.theme ? root.theme.uiScale : 1))
+                            font.weight: Font.Medium
+                            color: root.brandBlue
+                        }
+                        Timer {
+                            id: transitionTimer
+                            interval: 16
+                            repeat: true
+                            onTriggered: {
+                                transitionHold.progress = Math.min(1, transitionHold.progress + interval / 750)
+                                if (transitionHold.progress >= 1) {
+                                    stop()
+                                    if (transitionHold.enabled)
+                                        vtolSwitchPopup.targetVehicle.vtolInFwdFlight = vtolSwitchPopup.targetForward
+                                    vtolSwitchPopup.close()
+                                }
+                            }
+                        }
+                        MouseArea {
+                            id: transitionMouse
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onPressed: {
+                                transitionHold.progress = 0
+                                transitionTimer.restart()
+                            }
+                            onReleased: transitionHold.reset()
+                            onCanceled: transitionHold.reset()
+                            onExited: transitionHold.reset()
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: vehicleMessagesButton
+                width: height
+                height: theme ? theme.controlHMd : 32
+                radius: height / 2
+                color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
+                border.width: Math.round(1 * (theme ? theme.uiScale : 1))
+                border.color: root.theme && root.theme.darkMode ? "#333333" : "#d7dde8"
+
+                MainStatusIndicator {
+                    id: vehicleMessagesIndicator
+                    anchors.centerIn: parent
+                    height: parent.height
+                    messageIconOnly: true
+                }
+
+                MouseArea {
+                    id: vehicleMessagesMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.flightModePanelCloseRequested()
+                        vehicleMessagesIndicator.dropMainStatusIndicator()
+                    }
+                }
+
+                ToolTip.visible: vehicleMessagesMouse.containsMouse
+                ToolTip.text: qsTr("Vehicle messages and overall status")
+            }
+
+            Rectangle {
                 id: armStatePill
                 width: Math.max(theme ? theme.baseWidth * 8.2 : 96, armStateRow.implicitWidth + Math.round(18 * (theme ? theme.uiScale : 1)))
                 height: theme ? theme.controlHMd : 32
@@ -349,12 +525,27 @@ Rectangle {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: armText
+                        text: root.activeVehicle ? root.armText : qsTr("Connect")
                         font.pixelSize: theme ? theme.fontSm : 11
                         font.weight: Font.Medium
                         color: root.armColor
                     }
                 }
+
+                MouseArea {
+                    id: connectMouse
+                    anchors.fill: parent
+                    enabled: !root.activeVehicle
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.flightModePanelCloseRequested()
+                        vehicleMessagesIndicator.dropMainStatusIndicator()
+                    }
+                }
+
+                ToolTip.visible: connectMouse.enabled && connectMouse.containsMouse
+                ToolTip.text: qsTr("Select Link to Connect")
             }
 
             Rectangle {
@@ -371,7 +562,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "断开连接"
+                    text: qsTr("Disconnect")
                     font.pixelSize: theme ? theme.fontSm : 11
                     font.weight: Font.Medium
                     color: "#dc2626"
@@ -392,62 +583,27 @@ Rectangle {
             anchors.left: leftStatusRow.right
             anchors.leftMargin: theme ? theme.spacingXl * 1.4 : 24
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 34
+            height: ScreenTools.toolbarHeight - ScreenTools.defaultFontPixelHeight * 1.32
+            spacing: ScreenTools.defaultFontPixelWidth * 1.75
             visible: root.vehicleConnected
 
-            Row {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 9
-
-                QGCColoredImage {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.round(36 * (theme ? theme.uiScale : 1))
-                    height: Math.round(42 * (theme ? theme.uiScale : 1))
-                    source: "/qmlimages/BatteryGreen.svg"
-                    color: "#00c853"
-                    fillMode: Image.PreserveAspectFit
-                }
-
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.batteryTopText
-                    font.pixelSize: Math.round(17 * (theme ? theme.uiScale : 1))
-                    font.weight: Font.Medium
-                    color: root.telemetryTextColor
-                }
-            }
-
-            Row {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 9
-
-                QGCColoredImage {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.round(44 * (theme ? theme.uiScale : 1))
-                    height: Math.round(44 * (theme ? theme.uiScale : 1))
-                    source: "/qmlimages/Gps.svg"
-                    color: root.telemetryTextColor
-                    fillMode: Image.PreserveAspectFit
-                }
-
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 0
-
-                    Text {
-                        text: root.gpsSatTopText
-                        font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
-                        font.weight: Font.Medium
-                        color: root.telemetryTextColor
+            Repeater {
+                model: {
+                    const sources = root.activeVehicle ? root.activeVehicle.toolIndicators : []
+                    const indicators = []
+                    for (let i = 0; i < sources.length; ++i) {
+                        if (/\/(VehicleGPSIndicator|BatteryIndicator|APMBatteryIndicator|PX4BatteryIndicator)\.qml$/.test(String(sources[i]))) {
+                            indicators.push(sources[i])
+                        }
                     }
+                    return indicators
+                }
 
-                    Text {
-                        text: root.gpsHdopTopText
-                        font.pixelSize: Math.round(14 * (theme ? theme.uiScale : 1))
-                        font.weight: Font.Medium
-                        color: root.telemetryTextColor
-                        lineHeight: 0.9
-                    }
+                Loader {
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    source: modelData
+                    visible: item && item.showIndicator
                 }
             }
         }
@@ -459,26 +615,57 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             spacing: theme ? theme.spacingMd : 12
 
+            Button {
+                id: analyzeToolsButton
+                width: moreButton.width
+                height: moreButton.height
+                icon.source: "/qmlimages/Analyze.svg"
+                icon.color: down ? "#ffffff" : root.panelText
+                icon.width: theme ? theme.iconMd : 22
+                icon.height: icon.width
+                Accessible.name: qsTr("分析工具")
+                ToolTip.visible: hovered
+                ToolTip.text: Accessible.name
+                onClicked: root.analyzeToolsRequested()
+
+                background: Rectangle {
+                    radius: moreButton.radius
+                    color: analyzeToolsButton.down ? root.brandPress
+                         : analyzeToolsButton.hovered ? root.brandHover : moreButton.idleColor
+                    border.width: moreButton.border.width
+                    border.color: analyzeToolsButton.hovered || analyzeToolsButton.down
+                                  ? root.brandBorder : moreButton.idleBorderColor
+                }
+            }
+
             Rectangle {
+                id: moreButton
                 width: theme ? Math.max(theme.controlHMd + theme.spacingSm, Math.round(42 * theme.uiScale)) : 52
                 height: width
                 radius: theme ? theme.radiusLg + 2 : 10
+                readonly property color idleColor: root.theme && root.theme.darkMode
+                                                   ? Qt.rgba(31 / 255, 41 / 255, 55 / 255, 0.78) : "#ffffff"
+                readonly property color idleBorderColor: root.theme && root.theme.darkMode
+                                                         ? Qt.rgba(148 / 255, 163 / 255, 184 / 255, 0.42) : "#d7e2f0"
+                Accessible.name: qsTranslate("PageSettings", "System Settings")
+                ToolTip.visible: moreMouse.containsMouse
+                ToolTip.text: Accessible.name
                 color: moreMouse.pressed
                        ? root.brandPress
                        : moreMouse.containsMouse
-                         ? root.brandBlue
-                         : (root.theme && root.theme.darkMode ? Qt.rgba(31 / 255, 41 / 255, 55 / 255, 0.78) : "#ffffff")
+                         ? root.brandHover
+                         : idleColor
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: moreMouse.containsMouse || moreMouse.pressed
                               ? root.brandBorder
-                              : (root.theme && root.theme.darkMode ? Qt.rgba(148 / 255, 163 / 255, 184 / 255, 0.42) : "#d7e2f0")
+                              : idleBorderColor
 
                 Text {
                     anchors.centerIn: parent
                     text: "..."
                     font.pixelSize: theme ? theme.fontLg + 2 : 18
                     font.weight: Font.Bold
-                    color: root.theme && root.theme.darkMode ? "#ffffff" : (moreMouse.containsMouse ? "#ffffff" : "#111827")
+                    color: moreMouse.pressed ? "#ffffff" : root.panelText
                 }
 
                 MouseArea {
@@ -579,7 +766,7 @@ Rectangle {
                         anchors.left: parent.left
                         anchors.leftMargin: Math.round((root.compactPopupLayout ? 14 : 20) * root.popupUnit)
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "界面显示"
+                        text: qsTr("Display")
                         font.pixelSize: Math.round((root.compactPopupLayout ? 15 : 18) * root.popupUnit)
                         font.weight: Font.Bold
                         color: root.panelText
@@ -624,7 +811,7 @@ Rectangle {
 
                         Text {
                             y: 0
-                            text: "主题模式"
+                            text: qsTr("Theme")
                             font.pixelSize: Math.round(12 * root.popupUnit)
                             color: root.panelText2
                         }
@@ -643,7 +830,7 @@ Rectangle {
                                 anchors.left: parent.left
                                 anchors.leftMargin: Math.round(10 * root.popupUnit)
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: root.theme && root.theme.darkMode ? "深色主题" : "浅色主题"
+                                text: root.theme && root.theme.darkMode ? qsTr("Dark Theme") : qsTr("Light Theme")
                                 font.pixelSize: Math.round(12 * root.popupUnit)
                                 color: root.panelText
                             }
@@ -692,7 +879,7 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: Math.round(10 * root.popupUnit)
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: "浅色主题"
+                                        text: qsTr("Light Theme")
                                         font.pixelSize: Math.round(12 * root.popupUnit)
                                         font.weight: root.theme && !root.theme.darkMode ? Font.Bold : Font.Normal
                                         color: root.panelText
@@ -720,7 +907,7 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: Math.round(10 * root.popupUnit)
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: "深色主题"
+                                        text: qsTr("Dark Theme")
                                         font.pixelSize: Math.round(12 * root.popupUnit)
                                         font.weight: root.theme && root.theme.darkMode ? Font.Bold : Font.Normal
                                         color: root.panelText
@@ -758,7 +945,7 @@ Rectangle {
 
                         Text {
                             y: 0
-                            text: "界面模式"
+                            text: qsTr("Interface Mode")
                             font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
@@ -777,7 +964,7 @@ Rectangle {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 12
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: root.state && root.state.customFlyViewEnabled === false ? "原版界面" : "自定义界面"
+                                text: root.state && root.state.customFlyViewEnabled === false ? qsTr("Standard Interface") : qsTr("Custom Interface")
                                 font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                 color: root.panelText
                             }
@@ -826,7 +1013,7 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: 12
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: "自定义界面"
+                                        text: qsTr("Custom Interface")
                                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                         font.weight: root.state && root.state.customFlyViewEnabled !== false ? Font.Bold : Font.Normal
                                         color: root.panelText
@@ -851,7 +1038,7 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: 12
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: "原版界面"
+                                        text: qsTr("Standard Interface")
                                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                                         font.weight: root.state && root.state.customFlyViewEnabled === false ? Font.Bold : Font.Normal
                                         color: root.panelText
@@ -886,7 +1073,7 @@ Rectangle {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "底部展开栏"
+                            text: qsTr("Bottom Panel")
                             font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
@@ -929,7 +1116,7 @@ Rectangle {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "侧边栏透明度"
+                            text: qsTr("Sidebar Opacity")
                             font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
@@ -985,7 +1172,7 @@ Rectangle {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "信息栏透明度"
+                            text: qsTr("Info Bar Opacity")
                             font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
@@ -1380,7 +1567,7 @@ Rectangle {
                 anchors.leftMargin: 10
                 anchors.top: parent.top
                 anchors.topMargin: 12
-                text: "飞行模式"
+                text: qsTr("Flight Mode ")
                 font.pixelSize: Math.round(18 * (theme ? theme.uiScale : 1))
                 font.weight: Font.Bold
                 color: "#111111"
@@ -1395,8 +1582,8 @@ Rectangle {
                 anchors.top: flightModeTitle.bottom
                 anchors.topMargin: 8
                 text: root.state && root.state.vehicleConnected
-                        ? ("Disconnected · 当前 " + root.modeDisplayName(modeText) + "\nmodes: " + root.flightModeList.length)
-                        : "Disconnected · 当前 --\nmodes: 0"
+                        ? (qsTr("Disconnected · Current ") + root.modeDisplayName(modeText) + "\nmodes: " + root.flightModeList.length)
+                        : qsTr("Disconnected · Current --\\nModes: 0")
                 font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                 color: "#32507a"
                 wrapMode: Text.WordWrap
@@ -1479,7 +1666,7 @@ Rectangle {
                         visible: root.flightModeList.length === 0
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
-                        text: "未连接，暂无可用模式"
+                        text: qsTr("Disconnected; no modes available")
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: "#24415f"
                     }

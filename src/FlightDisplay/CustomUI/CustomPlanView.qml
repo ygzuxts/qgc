@@ -809,17 +809,17 @@ Item {
                     Component.onCompleted: currentIndex = 0
                     RightTabButton {
                         iconSource: "qrc:/icons/resources/plane.svg"
-                        text:       "航线规划"
+                        text:       qsTr("Route Planning")
                         selected:   layerTabBar.currentIndex === 0
                     }
                     RightTabButton {
                         iconSource: "qrc:/icons/resources/fence.svg"
-                        text:       "电子围栏"
+                        text:       qsTr("Geofence")
                         enabled:    _geoFenceController.supported
                         selected:   layerTabBar.currentIndex === 1
                     }
                     RightTabButton {
-                        text:       "返航点"
+                        text:       qsTr("Home Position")
                         enabled:    _rallyPointController.supported
                         selected:   layerTabBar.currentIndex === 2
                     }
@@ -833,11 +833,11 @@ Item {
                     background: Rectangle { color: "transparent" }
                     RightTabButton {
                         iconSource: "qrc:/icons/resources/plane.svg"
-                        text:       "航线规划"
+                        text:       qsTr("Route Planning")
                         selected:   layerTabBarUTMSP.currentIndex === 0
                     }
                     RightTabButton {
-                        text:       "返航点"
+                        text:       qsTr("Home Position")
                         enabled:    _rallyPointController.supported
                         selected:   layerTabBarUTMSP.currentIndex === 1
                     }

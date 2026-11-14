@@ -53,9 +53,10 @@ QtObject {
  property real speed: NaN
  property real groundSpeed: NaN
  property real airSpeed: NaN
- property real heading: NaN
- property real roll: NaN
- property real pitch: NaN
+ // Match the stock instruments by following attitude Facts as they change.
+ readonly property real heading: vehicleConnected && activeVehicle ? _factRawValue(activeVehicle.heading) : NaN
+ readonly property real roll: vehicleConnected && activeVehicle ? _factRawValue(activeVehicle.roll) : NaN
+ readonly property real pitch: vehicleConnected && activeVehicle ? _factRawValue(activeVehicle.pitch) : NaN
  property real climbRate: NaN
  property real latitude: NaN
  property real longitude: NaN
@@ -76,7 +77,7 @@ QtObject {
   }
   return Math.max(0, Math.min(6, 6 - Math.round(mavlinkLossPercent / 20)))
  }
- property string flightMode: "未连接"
+ property string flightMode: qsTr("Disconnected")
  property string flightModeDisplayText: "--"
 
  readonly property string mainStatusText: {
@@ -119,12 +120,12 @@ QtObject {
     return "gray"
   }
  }
- property string gpsStatus: "未连接"
+ property string gpsStatus: qsTr("Disconnected")
  property int gpsSatellites: -1
  property string gpsSatellitesText: "--"
  property string gpsLockText: "--"
  property string gpsHdopText: "--"
- readonly property string armStateText: !vehicleConnected ? "未连接" : (armed ? "已解锁" : "未解锁")
+ readonly property string armStateText: !vehicleConnected ? qsTr("Disconnected") : (armed ? qsTr("Armed") : qsTr("Disarmed"))
  property string efiHealthText: "--"
  property string efiRpmText: "--"
  property string efiFuelConsumedText: "--"
@@ -190,11 +191,11 @@ QtObject {
 
  // ── 决权流程（UI演示）──
  property var decisionSteps: [
- { n:"1", label:"心跳检测", state:"done" },
- { n:"2", label:"数据一致性校验", state:"done" },
- { n:"3", label:"飞手确认切换", state:"active" },
- { n:"4", label:"主板切换执行", state:"wait" },
- { n:"5", label:"状态同步验证", state:"wait" }
+ { n:"1", label:qsTr("Heartbeat Check"), state:"done" },
+ { n:"2", label:qsTr("Data Consistency Check"), state:"done" },
+ { n:"3", label:qsTr("Pilot Confirms Failover"), state:"active" },
+ { n:"4", label:qsTr("Controller failover"), state:"wait" },
+ { n:"5", label:qsTr("State Synchronization Check"), state:"wait" }
  ]
 
  // ── 操作方法（当前仍为占位）──
@@ -234,7 +235,7 @@ QtObject {
  }
  function _validateTakeoffTarget() {
   if (_takeoffTargetTooLow()) {
-   _showMessage("起飞目标高度过低", "当前相对高度 " + altitude.toFixed(1) + " m 已不低于起飞目标高度 " + takeoffAlt + " m，请提高目标高度，或改用悬停、降落、返航等飞行中动作。")
+   _showMessage(qsTr("Takeoff Altitude Too Low"), qsTr("Current relative altitude ") + altitude.toFixed(1) + qsTr(" m is already at or above the target takeoff altitude of ") + takeoffAlt + qsTr(" m. Increase the target altitude, or use Hold, Land, or Return."))
    return false
   }
   return true
@@ -533,9 +534,6 @@ QtObject {
   speed = NaN
   groundSpeed = NaN
   airSpeed = NaN
-  heading = NaN
-  roll = NaN
-  pitch = NaN
   climbRate = NaN
   latitude = NaN
   longitude = NaN
@@ -550,9 +548,9 @@ QtObject {
   mavlinkSentCount = 0
   mavlinkReceivedCount = 0
   mavlinkLossPercent = NaN
-  flightMode = vehicleAvailable ? "--" : "未连接"
+  flightMode = vehicleAvailable ? "--" : qsTr("Disconnected")
   flightModeDisplayText = "--"
-  gpsStatus = vehicleAvailable ? "GPS N/A" : "未连接"
+  gpsStatus = vehicleAvailable ? "GPS N/A" : qsTr("Disconnected")
   gpsSatellites = -1
   gpsSatellitesText = "--"
   gpsLockText = "--"
@@ -589,9 +587,6 @@ QtObject {
   speed = _factRawValue(activeVehicle.groundSpeed)
   groundSpeed = speed
   airSpeed = _factRawValue(activeVehicle.airSpeed)
-  heading = _factRawValue(activeVehicle.heading)
-  roll = _factRawValue(activeVehicle.roll)
-  pitch = _factRawValue(activeVehicle.pitch)
   climbRate = _factRawValue(activeVehicle.climbRate)
   if (activeVehicle.coordinate && activeVehicle.coordinate.isValid) {
    latitude = Number(activeVehicle.coordinate.latitude)
@@ -654,7 +649,7 @@ QtObject {
    gpsSatellitesText = activeVehicle.gps.count ? activeVehicle.gps.count.valueString : "--"
    gpsLockText = activeVehicle.gps.lock ? activeVehicle.gps.lock.enumStringValue : "--"
    gpsHdopText = activeVehicle.gps.hdop ? activeVehicle.gps.hdop.valueString : "--"
-   gpsStatus = gpsLockText + " · " + gpsSatellitesText + "星"
+   gpsStatus = gpsLockText + " · " + gpsSatellitesText + qsTr(" satellites")
   }
 
   efiHealthText = _factString(efi && efi.health, "--")

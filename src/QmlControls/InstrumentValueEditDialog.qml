@@ -57,32 +57,32 @@ QGCPopupDialog {
                     LabelledComboBox {
                         id:                     factGroupCombo
                         label:                  qsTr("Group")
-                        model:                  instrumentValueData.factGroupNames
+                        model:                  instrumentValueData.factGroupLabels
                         currentIndex:           instrumentValueData.factGroupNames.indexOf(instrumentValueData.factGroupName)
                         onActivated: (index) => {
-                            instrumentValueData.setFact(currentText, "")
+                            instrumentValueData.setFact(instrumentValueData.factGroupNames[index], "")
                             instrumentValueData.icon = ""
                             instrumentValueData.text = instrumentValueData.fact.shortDescription
                         }
                         Connections {
                             target: instrumentValueData
-                            onFactGroupNameChanged: factGroupCombo.currentIndex = factGroupCombo.comboBox.find(instrumentValueData.factGroupName)
+                            onFactGroupNameChanged: factGroupCombo.currentIndex = instrumentValueData.factGroupNames.indexOf(instrumentValueData.factGroupName)
                         }
                     }
 
                     LabelledComboBox {
                         id:                     factNamesCombo
                         label:                  qsTr("Value")
-                        model:                  instrumentValueData.factValueNames
+                        model:                  instrumentValueData.factValueLabels
                         currentIndex:           instrumentValueData.factValueNames.indexOf(instrumentValueData.factName)
                         onActivated: (index) => {
-                            instrumentValueData.setFact(instrumentValueData.factGroupName, currentText)
+                            instrumentValueData.setFact(instrumentValueData.factGroupName, instrumentValueData.factValueNames[index])
                             instrumentValueData.icon = ""
                             instrumentValueData.text = instrumentValueData.fact.shortDescription
                         }
                         Connections {
                             target: instrumentValueData
-                            onFactNameChanged: factNamesCombo.currentIndex = factNamesCombo.comboBox.find(instrumentValueData.factName)
+                            onFactNameChanged: factNamesCombo.currentIndex = instrumentValueData.factValueNames.indexOf(instrumentValueData.factName)
                         }
                     }
                 }
@@ -162,7 +162,7 @@ QGCPopupDialog {
                                 enabled:                textRadio.checked
                                 Layout.minimumWidth:    iconOptionInputs.width
                                 text:                   textRadio.checked 
-                                                            ? instrumentValueData.text
+                                                            ? instrumentValueData.displayText
                                                             : instrumentValueData.fact ? instrumentValueData.fact.shortDescription : qsTr("Label")
                                 onEditingFinished:      instrumentValueData.text = text 
                             }
@@ -171,7 +171,7 @@ QGCPopupDialog {
 
                     LabelledComboBox {
                         label:          qsTr("Size") 
-                        model:          instrumentValueData.factValueGrid.fontSizeNames
+                        model:          instrumentValueData.factValueGrid.fontSizeNames.map(function(name) { return qsTranslate("FactValueGrid", name) })
                         currentIndex:   instrumentValueData.factValueGrid.fontSize
                         onActivated:    (index) => { instrumentValueData.factValueGrid.fontSize = index }
                     }
@@ -203,7 +203,7 @@ QGCPopupDialog {
 
                         QGCComboBox {
                             id:                 rangeTypeCombo
-                            model:              instrumentValueData.rangeTypeNames
+                            model:              instrumentValueData.rangeTypeNames.map(function(name) { return qsTranslate("InstrumentValue", name) })
                             currentIndex:       instrumentValueData.rangeType
                             sizeToContents:     true
                             onActivated: (index) => { instrumentValueData.rangeType = index }

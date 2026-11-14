@@ -71,7 +71,7 @@ RowLayout {
         id:             indicatorDrawer
         y:              ScreenTools.toolbarHeight
         width:          mainLayout.width + (ScreenTools.defaultFontPixelWidth * 2)
-        height:         mainWindow.height - y
+        height:         mainWindow.uiHeight - y
         visible:        false
         modal:          true
         focus:          true

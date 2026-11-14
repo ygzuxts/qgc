@@ -23,7 +23,7 @@ PowerComponent::PowerComponent(Vehicle* vehicle, AutoPilotPlugin* autopilot, QOb
 
 QString PowerComponent::name(void) const
 {
-    return _name;
+    return tr("Power");
 }
 
 QString PowerComponent::description(void) const

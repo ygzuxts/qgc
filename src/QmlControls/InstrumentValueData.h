@@ -35,10 +35,13 @@ public:
     Q_PROPERTY(FactValueGrid*       factValueGrid       MEMBER _factValueGrid                               CONSTANT)
     Q_PROPERTY(QStringList          factGroupNames      READ    factGroupNames                              NOTIFY factGroupNamesChanged)
     Q_PROPERTY(QStringList          factValueNames      READ    factValueNames                              NOTIFY factValueNamesChanged)
+    Q_PROPERTY(QStringList          factGroupLabels     READ    factGroupLabels                             NOTIFY factGroupNamesChanged)
+    Q_PROPERTY(QStringList          factValueLabels     READ    factValueLabels                             NOTIFY factValueNamesChanged)
     Q_PROPERTY(QString              factGroupName       READ    factGroupName                               NOTIFY factGroupNameChanged)
     Q_PROPERTY(QString              factName            READ    factName                                    NOTIFY factNameChanged)
     Q_PROPERTY(Fact*                fact                READ    fact                                        NOTIFY factChanged)
     Q_PROPERTY(QString              text                READ    text                WRITE setText           NOTIFY textChanged)
+    Q_PROPERTY(QString              displayText         READ    displayText                                 NOTIFY textChanged)
     Q_PROPERTY(QString              icon                READ    icon                WRITE setIcon           NOTIFY iconChanged)             ///< If !isEmpty icon will be show instead of label
     Q_PROPERTY(bool                 showUnits           READ    showUnits           WRITE setShowUnits      NOTIFY showUnitsChanged)
     Q_PROPERTY(QStringList          rangeTypeNames      MEMBER _rangeTypeNames                              CONSTANT)
@@ -60,10 +63,13 @@ public:
 
     QStringList     factGroupNames          (void) const;
     QStringList     factValueNames          (void) const;
+    QStringList     factGroupLabels         (void) const;
+    QStringList     factValueLabels         (void) const;
     QString         factGroupName           (void) const { return _factGroupName; }
     QString         factName                (void) const { return _factName; }
     Fact*           fact                    (void) const { return _fact; }
     QString         text                    (void) const { return _text; }
+    QString         displayText             (void) const;
     bool            showUnits               (void) const { return _showUnits; }
     QString         icon                    (void) const { return _icon; }
     RangeType       rangeType               (void) const { return _rangeType; }

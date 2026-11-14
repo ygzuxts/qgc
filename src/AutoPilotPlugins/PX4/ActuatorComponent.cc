@@ -32,7 +32,7 @@ ActuatorComponent::ActuatorComponent(Vehicle* vehicle, AutoPilotPlugin* autopilo
 
 QString ActuatorComponent::name(void) const
 {
-    return _name;
+    return tr("Actuators");
 }
 
 QString ActuatorComponent::description(void) const

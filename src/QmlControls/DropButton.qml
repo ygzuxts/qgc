@@ -12,11 +12,11 @@ Item {
     signal          clicked()
     property alias  buttonImage:        roundButton.buttonImage
     property alias  rotateImage:        roundButton.rotateImage
-    property real   radius:             ScreenTools.isMobile ? ScreenTools.defaultFontPixelHeight * 1.75 : ScreenTools.defaultFontPixelHeight * 1.25
+    property real   radius:             ScreenTools.isMobileLayout ? ScreenTools.defaultFontPixelHeight * 1.75 : ScreenTools.defaultFontPixelHeight * 1.25
     property int    dropDirection:      dropDown
     property alias  dropDownComponent:  dropDownLoader.sourceComponent
     property real   viewportMargins:    0
-    property real   topMargin:          parent.height - mainWindow.height
+    property real   topMargin:          parent.height - mainWindow.uiHeight
     property alias  lightBorders:       roundButton.lightBorders
 
     width:  radius * 2

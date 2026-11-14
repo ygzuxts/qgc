@@ -24,7 +24,7 @@ AirframeComponent::AirframeComponent(Vehicle* vehicle, AutoPilotPlugin* autopilo
 
 QString AirframeComponent::name(void) const
 {
-    return _name;
+    return tr("Airframe");
 }
 
 QString AirframeComponent::description(void) const

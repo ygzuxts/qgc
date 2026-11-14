@@ -10,7 +10,7 @@
 #include "VehicleFactGroup.h"
 #include "Vehicle.h"
 #include "QGC.h"
-
+#include <QDebug>
 #include <QtGui/QQuaternion>
 #include <QtGui/QVector3D>
 
@@ -147,7 +147,8 @@ void VehicleFactGroup::_handleAttitudeQuaternion(Vehicle *vehicle, const mavlink
 
     QQuaternion quat(attitudeQuaternion.q1, attitudeQuaternion.q2, attitudeQuaternion.q3, attitudeQuaternion.q4);
     QVector3D rates(attitudeQuaternion.rollspeed, attitudeQuaternion.pitchspeed, attitudeQuaternion.yawspeed);
-    QQuaternion repr_offset(attitudeQuaternion.repr_offset_q[0], attitudeQuaternion.repr_offset_q[1], attitudeQuaternion.repr_offset_q[2], attitudeQuaternion.repr_offset_q[3]);
+    QQuaternion repr_offset(attitudeQuaternion.repr_offset_q[0], attitudeQuaternion.repr_offset_q[1],
+                            attitudeQuaternion.repr_offset_q[2], attitudeQuaternion.repr_offset_q[3]);
 
     // if repr_offset is valid, rotate attitude and rates
     if (repr_offset.length() >= 0.5f) {
@@ -195,7 +196,7 @@ void VehicleFactGroup::_handleVfrHud(const mavlink_message_t &message)
     }
     altitudeTuning()->setRawValue(vfrHud.alt - _altitudeTuningOffset);
     if (!qIsNaN(vfrHud.groundspeed) && !qIsNaN(_distanceToHomeFact.cookedValue().toDouble())) {
-      timeToHome()->setRawValue(_distanceToHomeFact.cookedValue().toDouble() / vfrHud.groundspeed);
+        timeToHome()->setRawValue(_distanceToHomeFact.cookedValue().toDouble() / vfrHud.groundspeed);
     }
 
     _setTelemetryAvailable(true);

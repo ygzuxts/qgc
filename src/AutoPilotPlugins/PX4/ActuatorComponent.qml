@@ -1,4 +1,5 @@
 import QtQuick
+import "ActuatorTranslation.js" as ActuatorTranslation
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
@@ -14,6 +15,11 @@ SetupPage {
     id:             actuatorPage
     pageComponent:  pageComponent
     showAdvanced:   true
+
+    // Flight-controller metadata is English; translate display text without changing parameters.
+    function translatedLabel(value) {
+        return ActuatorTranslation.label(value)
+    }
 
     property var actuators:       globals.activeVehicle.actuators
 
@@ -36,7 +42,7 @@ SetupPage {
                     width:                      _leftColumnWidth
                     visible:                    actuators.mixer.groups.count > 0
                     QGCLabel {
-                        text:                   qsTr("Geometry") + (actuators.mixer.title ? ": " + actuators.mixer.title : "")
+                        text:                   qsTr("Geometry") + (actuators.mixer.title ? ": " + translatedLabel(actuators.mixer.title) : "")
                         font.pointSize:         ScreenTools.mediumFontPointSize
                         Layout.fillWidth:       true
                     }
@@ -73,7 +79,7 @@ SetupPage {
 
                                 RowLayout {
                                     QGCLabel {
-                                        text:                    mixerGroup.label
+                                        text:                    translatedLabel(mixerGroup.label)
                                         font.bold:               true
                                         rightPadding:            ScreenTools.defaultFontPixelWidth * 3
                                     }
@@ -96,7 +102,7 @@ SetupPage {
                                     Repeater {
                                         model:              mixerGroup.channelConfigs
                                         QGCLabel {
-                                            text:           object.label
+                                            text:           translatedLabel(object.label)
                                             visible:        object.visible && (_showAdvanced || !object.advanced)
                                             Layout.row:     0
                                             Layout.column:  1 + index
@@ -106,7 +112,7 @@ SetupPage {
                                     Repeater {
                                         model:              mixerGroup.channels
                                         QGCLabel {
-                                            text:           object.label + ":"
+                                            text:           translatedLabel(object.label) + ":"
                                             Layout.row:     1 + index
                                             Layout.column:  0
                                         }
@@ -137,7 +143,7 @@ SetupPage {
                                     RowLayout {
                                         spacing:     ScreenTools.defaultFontPixelWidth
                                         QGCLabel {
-                                            text:    object.label + ":"
+                                            text:    translatedLabel(object.label) + ":"
                                             visible: _showAdvanced || !object.advanced
                                         }
                                         ActuatorFact {
@@ -295,7 +301,7 @@ SetupPage {
 
                                     QGCButton {
                                         property var actionGroup: object
-                                        text:          actionGroup.label
+                                        text:          translatedLabel(actionGroup.label)
                                         onClicked:     actionMenu.popup()
                                         QGCMenu {
                                             id:                 actionMenu
@@ -303,7 +309,7 @@ SetupPage {
                                             Instantiator {
                                                 model:              actionGroup.actions
                                                 QGCMenuItem {
-                                                    text:           object.label
+                                                    text:           translatedLabel(object.label)
                                                     onTriggered:    object.trigger()
                                                 }
                                                 onObjectAdded:      actionMenu.insertItem(index, object)
@@ -340,7 +346,7 @@ SetupPage {
                     Repeater {
                         model: actuators.actuatorOutputs
                         QGCTabButton {
-                            text:      '   ' + object.label + '   '
+                            text:      '   ' + translatedLabel(object.label) + '   '
                             width:     implicitWidth
                         }
                     }
@@ -429,7 +435,7 @@ SetupPage {
                                 property var enableParam:     selActuatorOutput.actuatorOutput.enableParam
                                 QGCLabel {
                                     visible:                  parent.enableParam != null
-                                    text:                     parent.enableParam ? parent.enableParam.label + ":" : ""
+                                    text:                     parent.enableParam ? translatedLabel(parent.enableParam.label) + ":" : ""
                                 }
                                 ActuatorFact {
                                     visible:                  parent.enableParam != null
@@ -448,7 +454,7 @@ SetupPage {
                                     RowLayout {
                                         visible: subgroup.label != ""
                                         QGCLabel {
-                                            text:                    subgroup.label
+                                            text:                    translatedLabel(subgroup.label)
                                             font.bold:               true
                                             rightPadding:            ScreenTools.defaultFontPixelWidth * 3
                                         }
@@ -471,7 +477,7 @@ SetupPage {
                                         Repeater {
                                             model: subgroup.channelConfigs
                                             QGCLabel {
-                                                text:           object.label
+                                                text:           translatedLabel(object.label)
                                                 visible:        object.visible && (_showAdvanced || !object.advanced)
                                                 Layout.row:     0
                                                 Layout.column:  1 + index
@@ -481,7 +487,7 @@ SetupPage {
                                         Repeater {
                                             model: subgroup.channels
                                             QGCLabel {
-                                                text:            object.label + ":"
+                                                text:            translatedLabel(object.label) + ":"
                                                 Layout.row:      1 + index
                                                 Layout.column:   0
                                             }
@@ -508,7 +514,7 @@ SetupPage {
 
                                         RowLayout {
                                             QGCLabel {
-                                                text: object.label + ":"
+                                                text: translatedLabel(object.label) + ":"
                                             }
                                             ActuatorFact {
                                                 fact: object.fact
@@ -525,7 +531,7 @@ SetupPage {
 
                                 RowLayout {
                                     QGCLabel {
-                                        text: object.label + ":"
+                                        text: translatedLabel(object.label) + ":"
                                     }
                                     ActuatorFact {
                                         fact: object.fact

@@ -594,7 +594,7 @@ SetupPage {
                             wrapMode:               Text.WordWrap
                             text:                   _highlightPrefix + qsTr("WARNING: Props must be removed from vehicle prior to performing ESC calibration.") + _highlightSuffix + qsTr(" Connect the battery now and calibration will begin.")
                             Layout.fillWidth:       true
-                            Layout.maximumWidth:    mainWindow.width / 2
+                            Layout.maximumWidth:    mainWindow.uiWidth / 2
                         }
                     }
                 }

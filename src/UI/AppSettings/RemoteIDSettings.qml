@@ -344,7 +344,7 @@ SettingsPage {
                 Layout.fillWidth:   true
 
                 FactCheckBoxSlider {
-                    text:               qsTr("Broadcast%1").arg(isEURegion ? " (EU Required)" : "")
+                    text:               qsTr("Broadcast%1").arg(isEURegion ? qsTr(" (EU Required)") : "")
                     fact:               sendOperatorIdFact
                     visible:            sendOperatorIdFact.visible
                     enabled:            isFAARegion
@@ -540,6 +540,7 @@ SettingsPage {
                     }
                     QGCComboBox {
                         id:                     nmeaPortCombo
+                        textRole:               "label"
                         Layout.preferredWidth:  _comboFieldWidth
 
                         model:  ListModel {
@@ -547,37 +548,44 @@ SettingsPage {
 
                         onActivated: (index) => {
                                          if (index !== -1) {
-                                             QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaPort.value = textAt(index);
+                                             QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaPort.value = model.get(index).text;
                                          }
                                      }
                         Component.onCompleted: {
-                            model.append({text: gpsDisabled})
-                            model.append({text: gpsUdpPort})
+                            model.append({text: gpsDisabled, label: qsTr("Disabled")})
+                            model.append({text: gpsUdpPort, label: qsTr("UDP Port")})
 
                             for (var i in QGroundControl.linkManager.serialPorts) {
-                                nmeaPortCombo.model.append({text:QGroundControl.linkManager.serialPorts[i]})
+                                nmeaPortCombo.model.append({text:QGroundControl.linkManager.serialPorts[i], label:QGroundControl.linkManager.serialPorts[i]})
                             }
-                            var index = nmeaPortCombo.find(QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaPort.valueString);
+                            var savedPort = QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaPort.valueString;
+                            var index = -1;
+                            for (var portIndex = 0; portIndex < model.count; ++portIndex) {
+                                if (model.get(portIndex).text === savedPort) {
+                                    index = portIndex;
+                                    break;
+                                }
+                            }
                             nmeaPortCombo.currentIndex = index;
                             if (QGroundControl.linkManager.serialPorts.length === 0) {
-                                nmeaPortCombo.model.append({text: "Serial <none available>"})
+                                nmeaPortCombo.model.append({text: "Serial <none available>", label: qsTr("Serial <none available>")})
                             }
                         }
                     }
 
                     QGCLabel {
-                        visible:          nmeaPortCombo.currentText !== gpsUdpPort && nmeaPortCombo.currentText !== gpsDisabled
+                        visible:          nmeaPortCombo.currentIndex !== 1 && nmeaPortCombo.currentIndex !== 0
                         text:             qsTr("NMEA GPS Baudrate")
                     }
                     QGCComboBox {
-                        visible:                nmeaPortCombo.currentText !== gpsUdpPort && nmeaPortCombo.currentText !== gpsDisabled
+                        visible:                nmeaPortCombo.currentIndex !== 1 && nmeaPortCombo.currentIndex !== 0
                         id:                     nmeaBaudCombo
                         Layout.preferredWidth:  _comboFieldWidth
                         model:                  [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
                         onActivated: (index) => {
                                          if (index !== -1) {
-                                             QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaBaud.value = textAt(index);
+                                             QGroundControl.settingsManager.autoConnectSettings.autoConnectNmeaBaud.value = model.get(index).text;
                                          }
                                      }
                         Component.onCompleted: {
@@ -588,10 +596,10 @@ SettingsPage {
 
                     QGCLabel {
                         text:       qsTr("NMEA stream UDP port")
-                        visible:    nmeaPortCombo.currentText === gpsUdpPort
+                        visible:    nmeaPortCombo.currentIndex === 1
                     }
                     FactTextField {
-                        visible:                nmeaPortCombo.currentText === gpsUdpPort
+                        visible:                nmeaPortCombo.currentIndex === 1
                         Layout.preferredWidth:  _valueFieldWidth
                         fact:                   QGroundControl.settingsManager.autoConnectSettings.nmeaUdpPort
                     }

@@ -1,0 +1,2874 @@
+[
+  {
+    "file": "src/drivers/camera_capture/camera_capture.cpp",
+    "line": 150,
+    "call": "mavlink_log_warning",
+    "source": "Hardware fault: Camera capture disabled\t",
+    "expression": "\"Hardware fault: Camera capture disabled\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/gnss/septentrio/septentrio.cpp",
+    "line": 184,
+    "call": "mavlink_log_warning",
+    "source": "Septentrio: Logging stream should be different from main stream",
+    "expression": "\"Septentrio: Logging stream should be different from main stream\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/gnss/septentrio/septentrio.cpp",
+    "line": 310,
+    "call": "mavlink_log_warning",
+    "source": "Septentrio: Failed to configure receiver internal logging",
+    "expression": "\"Septentrio: Failed to configure receiver internal logging\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/gnss/septentrio/septentrio.cpp",
+    "line": 434,
+    "call": "mavlink_log_critical",
+    "source": "Septentrio: Device paths must be different",
+    "expression": "\"Septentrio: Device paths must be different\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/gnss/septentrio/septentrio.cpp",
+    "line": 459,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Septentrio: Baud rate %d is unsupported, falling back to default %\" PRIu32",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/drivers/pps_capture/PPSCapture.cpp",
+    "line": 149,
+    "call": "mavlink_log_warning",
+    "source": "Hardware fault: GPS PPS disabled\t",
+    "expression": "\"Hardware fault: GPS PPS disabled\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/px4io/px4io.cpp",
+    "line": 410,
+    "call": "mavlink_log_emergency",
+    "source": "Failed to communicate with IO, abort.\t",
+    "expression": "\"Failed to communicate with IO, abort.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/px4io/px4io.cpp",
+    "line": 417,
+    "call": "mavlink_log_emergency",
+    "source": "IO protocol/firmware mismatch, abort.\t",
+    "expression": "\"IO protocol/firmware mismatch, abort.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/px4io/px4io.cpp",
+    "line": 434,
+    "call": "mavlink_log_emergency",
+    "source": "[IO] config read fail, abort.\t",
+    "expression": "\"[IO] config read fail, abort.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/px4io/px4io.cpp",
+    "line": 469,
+    "call": "mavlink_log_critical",
+    "source": "IO RC config upload fail\t",
+    "expression": "\"IO RC config upload fail\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 402,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f found bootloader revision: %4.4f",
+    "expression": "\"esc_id %1.f found bootloader revision: %4.4f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 406,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f found bootloader revision failed",
+    "expression": "\"esc_id %1.f found bootloader revision failed\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 413,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f found firmware revision: %4.4f",
+    "expression": "\"esc_id %1.f found firmware revision: %4.4f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 417,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f found firmware revision failed",
+    "expression": "\"esc_id %1.f found firmware revision failed\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 424,
+    "call": "mavlink_log_info",
+    "source": null,
+    "expression": "\"esc_id %1.f found board revision: %02\" PRIx32",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 427,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f found board revision failed",
+    "expression": "\"esc_id %1.f found board revision failed\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/tap_esc/tap_esc_uploader.cpp",
+    "line": 434,
+    "call": "mavlink_log_info",
+    "source": "esc_id %1.f check CRC is different,will upload tap esc firmware ",
+    "expression": "\"esc_id %1.f check CRC is different,will upload tap esc firmware \"",
+    "kind": "template"
+  },
+  {
+    "file": "src/drivers/transponder/sagetech_mxs/SagetechMXS.cpp",
+    "line": 558,
+    "call": "mavlink_log_info",
+    "source": "Transponder Failure\t",
+    "expression": "\"Transponder Failure\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/drivers/transponder/sagetech_mxs/SagetechMXS.cpp",
+    "line": 563,
+    "call": "mavlink_log_info",
+    "source": "Transponder System Failure\t",
+    "expression": "\"Transponder System Failure\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/lib/collision_prevention/CollisionPrevention.cpp",
+    "line": 318,
+    "call": "mavlink_log_critical",
+    "source": "Obstacle message received in unsupported frame %i\t",
+    "expression": "\"Obstacle message received in unsupported frame %i\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/lib/systemlib/mavlink_log.h",
+    "line": 82,
+    "call": "mavlink_log_info",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/lib/systemlib/mavlink_log.h",
+    "line": 94,
+    "call": "mavlink_log_warning",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/lib/systemlib/mavlink_log.h",
+    "line": 106,
+    "call": "mavlink_log_emergency",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/lib/systemlib/mavlink_log.h",
+    "line": 118,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 284,
+    "call": "mavlink_log_info",
+    "source": "No airspeed sensor detected. Switch to non-airspeed mode.\t",
+    "expression": "\"No airspeed sensor detected. Switch to non-airspeed mode.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 289,
+    "call": "mavlink_log_info",
+    "source": "Primary airspeed index bigger than number connected sensors. Take last sensor.\t",
+    "expression": "\"Primary airspeed index bigger than number connected sensors. Take last sensor.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 447,
+    "call": "mavlink_log_info",
+    "source": "Airspeed sensor Nr. %d ASPD_SCALE updated: %.4f --> %.4f",
+    "expression": "\"Airspeed sensor Nr. %d ASPD_SCALE updated: %.4f --> %.4f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 696,
+    "call": "mavlink_log_critical",
+    "source": "Airspeed sensor failure detected. Check connection and reboot.\t",
+    "expression": "\"Airspeed sensor failure detected. Check connection and reboot.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 702,
+    "call": "mavlink_log_critical",
+    "source": "Airspeed sensor failure detected. Return to launch (RTL) is advised.\t",
+    "expression": "\"Airspeed sensor failure detected. Return to launch (RTL) is advised.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 709,
+    "call": "mavlink_log_info",
+    "source": "Airspeed estimation invalid\t",
+    "expression": "\"Airspeed estimation invalid\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 715,
+    "call": "mavlink_log_info",
+    "source": "Airspeed estimation valid\t",
+    "expression": "\"Airspeed estimation valid\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/airspeed_selector/airspeed_selector_main.cpp",
+    "line": 720,
+    "call": "mavlink_log_critical",
+    "source": "Airspeed sensor healthy, start using again (%i, %i)\t",
+    "expression": "\"Airspeed sensor healthy, start using again (%i, %i)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 143,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: No response",
+    "expression": "\"Arm auth: No response\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 180,
+    "call": "mavlink_log_info",
+    "source": "Arm auth: Requesting authorization...",
+    "expression": "\"Arm auth: Requesting authorization...\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 240,
+    "call": "mavlink_log_info",
+    "source": null,
+    "expression": "\"Arm auth: Authorized for the next %\" PRId32 \" seconds\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 248,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: Temporarily rejected",
+    "expression": "\"Arm auth: Temporarily rejected\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 260,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Arm auth: Denied, waypoint %\" PRId32 \" have a invalid value\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 265,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: Denied by timeout in authorizer",
+    "expression": "\"Arm auth: Denied by timeout in authorizer\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 269,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: Denied because airspace is in use",
+    "expression": "\"Arm auth: Denied because airspace is in use\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 273,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: Denied because of bad weather",
+    "expression": "\"Arm auth: Denied because of bad weather\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 278,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: Denied",
+    "expression": "\"Arm auth: Denied\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Arming/ArmAuthorization/ArmAuthorization.cpp",
+    "line": 287,
+    "call": "mavlink_log_critical",
+    "source": "Arm auth: No response",
+    "expression": "\"Arm auth: No response\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 670,
+    "call": "mavlink_log_critical",
+    "source": "Arming denied: calibrating\t",
+    "expression": "\"Arming denied: calibrating\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 704,
+    "call": "mavlink_log_critical",
+    "source": "Arming denied: throttle not in safe position\t",
+    "expression": "\"Arming denied: throttle not in safe position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 717,
+    "call": "mavlink_log_critical",
+    "source": "Arming denied: Resolve system health failures first\t",
+    "expression": "\"Arming denied: Resolve system health failures first\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 728,
+    "call": "mavlink_log_info",
+    "source": "Armed by %s\t",
+    "expression": "\"Armed by %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 759,
+    "call": "mavlink_log_critical",
+    "source": "Disarming denied: not landed\t",
+    "expression": "\"Disarming denied: not landed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 780,
+    "call": "mavlink_log_info",
+    "source": "Disarmed by %s\t",
+    "expression": "\"Disarmed by %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 973,
+    "call": "mavlink_log_critical",
+    "source": "Unsupported auto mode\t",
+    "expression": "\"Unsupported auto mode\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 994,
+    "call": "mavlink_log_critical",
+    "source": "Unsupported main mode\t",
+    "expression": "\"Unsupported main mode\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1017,
+    "call": "mavlink_log_critical",
+    "source": "Unsupported base mode\t",
+    "expression": "\"Unsupported base mode\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1072,
+    "call": "mavlink_log_critical",
+    "source": "Unsupported ARM_DISARM param: %.3f\t",
+    "expression": "\"Unsupported ARM_DISARM param: %.3f\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1169,
+    "call": "mavlink_log_info",
+    "source": "Returning to launch\t",
+    "expression": "\"Returning to launch\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1217,
+    "call": "mavlink_log_info",
+    "source": "Landing at current position\t",
+    "expression": "\"Landing at current position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1231,
+    "call": "mavlink_log_info",
+    "source": "Precision landing\t",
+    "expression": "\"Precision landing\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1266,
+    "call": "mavlink_log_critical",
+    "source": "Mission start denied! No valid mission\t",
+    "expression": "\"Mission start denied! No valid mission\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1277,
+    "call": "mavlink_log_critical",
+    "source": "Control high latency failed! Telemetry unavailable\t",
+    "expression": "\"Control high latency failed! Telemetry unavailable\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1315,
+    "call": "mavlink_log_critical",
+    "source": "Orbit command rejected",
+    "expression": "\"Orbit command rejected\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1325,
+    "call": "mavlink_log_critical",
+    "source": "Figure 8 command only available for fixed wing and vtol vehicles.",
+    "expression": "\"Figure 8 command only available for fixed wing and vtol vehicles.\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1346,
+    "call": "mavlink_log_critical",
+    "source": "Figure 8 command rejected, Only available in fixed wing mode.",
+    "expression": "\"Figure 8 command rejected, Only available in fixed wing mode.\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1351,
+    "call": "mavlink_log_critical",
+    "source": "Figure 8 command not supported.",
+    "expression": "\"Figure 8 command not supported.\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1415,
+    "call": "mavlink_log_critical",
+    "source": "Calibration denied: not supported in SIH mode\t",
+    "expression": "\"Calibration denied: not supported in SIH mode\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1450,
+    "call": "mavlink_log_info",
+    "source": "Calibration: Disabling RC input\t",
+    "expression": "\"Calibration: Disabling RC input\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1491,
+    "call": "mavlink_log_critical",
+    "source": "ESC calibration denied! Press safety button first\t",
+    "expression": "\"ESC calibration denied! Press safety button first\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1510,
+    "call": "mavlink_log_info",
+    "source": "Calibration: Restoring RC input\t",
+    "expression": "\"Calibration: Restoring RC input\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1535,
+    "call": "mavlink_log_critical",
+    "source": "Calibration denied: not supported in SIH mode\t",
+    "expression": "\"Calibration denied: not supported in SIH mode\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1842,
+    "call": "mavlink_log_info",
+    "source": "Kill disengaged\t",
+    "expression": "\"Kill disengaged\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1856,
+    "call": "mavlink_log_info",
+    "source": null,
+    "expression": "kill_switch_string",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 1859,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "kill_switch_string",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2281,
+    "call": "mavlink_log_info",
+    "source": "Landing detected\t",
+    "expression": "\"Landing detected\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2285,
+    "call": "mavlink_log_info",
+    "source": "Takeoff detected\t",
+    "expression": "\"Takeoff detected\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2757,
+    "call": "mavlink_log_critical",
+    "source": "Switching to %s is currently not available\t",
+    "expression": "\"Switching to %s is currently not available\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2907,
+    "call": "mavlink_log_critical",
+    "source": "High latency data link lost\t",
+    "expression": "\"High latency data link lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2924,
+    "call": "mavlink_log_info",
+    "source": "GCS connection regained\t",
+    "expression": "\"GCS connection regained\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2938,
+    "call": "mavlink_log_info",
+    "source": "Onboard controller regained\t",
+    "expression": "\"Onboard controller regained\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2951,
+    "call": "mavlink_log_info",
+    "source": "Parachute system regained\t",
+    "expression": "\"Parachute system regained\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2968,
+    "call": "mavlink_log_info",
+    "source": "Remote ID system regained\t",
+    "expression": "\"Remote ID system regained\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 2986,
+    "call": "mavlink_log_info",
+    "source": "Traffic avoidance system regained\t",
+    "expression": "\"Traffic avoidance system regained\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3007,
+    "call": "mavlink_log_info",
+    "source": "Connection to ground station lost\t",
+    "expression": "\"Connection to ground station lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3020,
+    "call": "mavlink_log_critical",
+    "source": "Connection to mission computer lost\t",
+    "expression": "\"Connection to mission computer lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3029,
+    "call": "mavlink_log_critical",
+    "source": "Parachute system lost\t",
+    "expression": "\"Parachute system lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3039,
+    "call": "mavlink_log_critical",
+    "source": "Remote ID system lost\t",
+    "expression": "\"Remote ID system lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3050,
+    "call": "mavlink_log_critical",
+    "source": "Traffic avoidance system lost\t",
+    "expression": "\"Traffic avoidance system lost\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3067,
+    "call": "mavlink_log_critical",
+    "source": "Dangerously low battery! Shutting system down in 60 seconds\t",
+    "expression": "\"Dangerously low battery! Shutting system down in 60 seconds\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3074,
+    "call": "mavlink_log_critical",
+    "source": "System does not support shutdown\t",
+    "expression": "\"System does not support shutdown\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/Commander.cpp",
+    "line": 3124,
+    "call": "mavlink_log_info",
+    "source": "Pilot took over using sticks\t",
+    "expression": "\"Pilot took over using sticks\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/accelerometerCheck.cpp",
+    "line": 78,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Accel Sensor %u missing",
+    "expression": "\"Preflight Fail: Accel Sensor %u missing\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/accelerometerCheck.cpp",
+    "line": 88,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No valid data from Accel %u",
+    "expression": "\"Preflight Fail: No valid data from Accel %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/accelerometerCheck.cpp",
+    "line": 98,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Accel %u uncalibrated",
+    "expression": "\"Preflight Fail: Accel %u uncalibrated\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/airspeedCheck.cpp",
+    "line": 80,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Airspeed invalid",
+    "expression": "\"Preflight Fail: Airspeed invalid\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/airspeedCheck.cpp",
+    "line": 101,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Airspeed too high",
+    "expression": "\"Preflight Fail: Airspeed too high\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/airspeedCheck.cpp",
+    "line": 119,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Airspeed selector module down",
+    "expression": "\"Preflight Fail: Airspeed selector module down\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/armPermissionCheck.cpp",
+    "line": 52,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Vehicle is in safety configuration",
+    "expression": "\"Preflight Fail: Vehicle is in safety configuration\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/baroCheck.cpp",
+    "line": 72,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: barometer %u missing",
+    "expression": "\"Preflight Fail: barometer %u missing\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/baroCheck.cpp",
+    "line": 83,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No valid data from Baro %u",
+    "expression": "\"Preflight Fail: No valid data from Baro %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 116,
+    "call": "mavlink_log_critical",
+    "source": "Battery %i missing\t",
+    "expression": "\"Battery %i missing\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 131,
+    "call": "mavlink_log_critical",
+    "source": "Battery %i disconnected\t",
+    "expression": "\"Battery %i disconnected\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 171,
+    "call": "mavlink_log_emergency",
+    "source": "Battery %d: %s. %s \t",
+    "expression": "\"Battery %d: %s. %s \\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 225,
+    "call": "mavlink_log_critical",
+    "source": "Low battery\t",
+    "expression": "\"Low battery\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 243,
+    "call": "mavlink_log_critical",
+    "source": "Critical battery\t",
+    "expression": "\"Critical battery\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 261,
+    "call": "mavlink_log_emergency",
+    "source": "Emergency battery level\t",
+    "expression": "\"Emergency battery level\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/batteryCheck.cpp",
+    "line": 290,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Battery unhealthy",
+    "expression": "\"Preflight Fail: Battery unhealthy\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/cpuResourceCheck.cpp",
+    "line": 72,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No CPU and RAM load information",
+    "expression": "\"Preflight Fail: No CPU and RAM load information\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/cpuResourceCheck.cpp",
+    "line": 95,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: CPU load too high: %3.1f%%",
+    "expression": "\"Preflight Fail: CPU load too high: %3.1f%%\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/cpuResourceCheck.cpp",
+    "line": 115,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RAM usage too high: %3.1f%%",
+    "expression": "\"Preflight Fail: RAM usage too high: %3.1f%%\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/distanceSensorChecks.cpp",
+    "line": 69,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Distance Sensor %u missing",
+    "expression": "\"Preflight Fail: Distance Sensor %u missing\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/distanceSensorChecks.cpp",
+    "line": 80,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No valid distance sensor %u data",
+    "expression": "\"Preflight Fail: No valid distance sensor %u data\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 109,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: ESC telemetry missing",
+    "expression": "\"Preflight Fail: ESC telemetry missing\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 148,
+    "call": "mavlink_log_critical",
+    "source": "%soffline. %s\t",
+    "expression": "\"%soffline. %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 208,
+    "call": "mavlink_log_emergency",
+    "source": "ESC%d: %s. %s \t",
+    "expression": "\"ESC%d: %s. %s \\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 284,
+    "call": "mavlink_log_critical",
+    "source": "Motor failure: Motor %d undercurrent detected",
+    "expression": "\"Motor failure: Motor %d undercurrent detected\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 301,
+    "call": "mavlink_log_critical",
+    "source": "Motor failure: Motor %d overcurrent detected",
+    "expression": "\"Motor failure: Motor %d overcurrent detected\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/escCheck.cpp",
+    "line": 339,
+    "call": "mavlink_log_critical",
+    "source": "ESC failure: Not all ESCs are armed. Land now!",
+    "expression": "\"ESC failure: Not all ESCs are armed. Land now!\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 120,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: ekf2 missing data",
+    "expression": "\"Preflight Fail: ekf2 missing data\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 157,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: heading estimate invalid",
+    "expression": "\"Preflight Fail: heading estimate invalid\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 168,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: horizontal velocity unstable",
+    "expression": "\"Preflight Fail: horizontal velocity unstable\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 179,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: vertical velocity unstable",
+    "expression": "\"Preflight Fail: vertical velocity unstable\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 190,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: horizontal position unstable",
+    "expression": "\"Preflight Fail: horizontal position unstable\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 201,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: height estimate not stable",
+    "expression": "\"Preflight Fail: height estimate not stable\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 231,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Strong magnetic interference",
+    "expression": "\"Preflight Fail: Strong magnetic interference\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 248,
+    "call": "mavlink_log_warning",
+    "source": "GNSS data fusion stopped\t",
+    "expression": "\"GNSS data fusion stopped\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 259,
+    "call": "mavlink_log_info",
+    "source": "GNSS data fusion started\t",
+    "expression": "\"GNSS data fusion started\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 274,
+    "call": "mavlink_log_critical",
+    "source": "GNSS signal spoofed\t",
+    "expression": "\"GNSS signal spoofed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 290,
+    "call": "mavlink_log_critical",
+    "source": "GNSS signal jammed\t",
+    "expression": "\"GNSS signal jammed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 503,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "message",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 507,
+    "call": "mavlink_log_warning",
+    "source": null,
+    "expression": "message",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 552,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: High Accelerometer Bias",
+    "expression": "\"Preflight Fail: High Accelerometer Bias\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 586,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: High Gyro Bias",
+    "expression": "\"Preflight Fail: High Gyro Bias\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 613,
+    "call": "mavlink_log_critical",
+    "source": "Compass needs calibration - Land now!\t",
+    "expression": "\"Compass needs calibration - Land now!\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 627,
+    "call": "mavlink_log_critical",
+    "source": "GNSS heading not reliable - Land now!\t",
+    "expression": "\"GNSS heading not reliable - Land now!\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 651,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: no heading reference",
+    "expression": "\"Preflight Fail: no heading reference\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 667,
+    "call": "mavlink_log_warning",
+    "source": "GPS jamming detected\t",
+    "expression": "\"GPS jamming detected\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 702,
+    "call": "mavlink_log_warning",
+    "source": "Position estimate has low accuracy\t",
+    "expression": "\"Position estimate has low accuracy\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/estimatorCheck.cpp",
+    "line": 783,
+    "call": "mavlink_log_critical",
+    "source": "Estimated position error is approaching the failsafe threshold\t",
+    "expression": "\"Estimated position error is approaching the failsafe threshold\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/failureDetectorCheck.cpp",
+    "line": 57,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Attitude failure (roll)",
+    "expression": "\"Preflight Fail: Attitude failure (roll)\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/failureDetectorCheck.cpp",
+    "line": 73,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Attitude failure (pitch)",
+    "expression": "\"Preflight Fail: Attitude failure (pitch)\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/failureDetectorCheck.cpp",
+    "line": 84,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Altitude failure",
+    "expression": "\"Preflight Fail: Altitude failure\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/failureDetectorCheck.cpp",
+    "line": 99,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: triggered by external system",
+    "expression": "\"Preflight Fail: triggered by external system\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/failureDetectorCheck.cpp",
+    "line": 121,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Imbalanced propeller detected",
+    "expression": "\"Preflight Fail: Imbalanced propeller detected\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/flightTimeCheck.cpp",
+    "line": 43,
+    "call": "mavlink_log_critical",
+    "source": "Maximum flight time reached\t",
+    "expression": "\"Maximum flight time reached\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/flightTimeCheck.cpp",
+    "line": 78,
+    "call": "mavlink_log_warning",
+    "source": "Approaching max flight time (system will RTL in %i seconds)\t",
+    "expression": "\"Approaching max flight time (system will RTL in %i seconds)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/flightTimeCheck.cpp",
+    "line": 95,
+    "call": "mavlink_log_warning",
+    "source": "Approaching max flight time (system will RTL in %i minutes)\t",
+    "expression": "\"Approaching max flight time (system will RTL in %i minutes)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/geofenceCheck.cpp",
+    "line": 64,
+    "call": "mavlink_log_critical",
+    "source": "Geofence: exceeding maximum distance to Home",
+    "expression": "\"Geofence: exceeding maximum distance to Home\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/geofenceCheck.cpp",
+    "line": 80,
+    "call": "mavlink_log_critical",
+    "source": "Geofence: exceeding maximum altitude above Home",
+    "expression": "\"Geofence: exceeding maximum altitude above Home\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/geofenceCheck.cpp",
+    "line": 96,
+    "call": "mavlink_log_critical",
+    "source": "Geofence: approaching or outside geofence",
+    "expression": "\"Geofence: approaching or outside geofence\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/geofenceCheck.cpp",
+    "line": 113,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Geofence RTL requires valid home",
+    "expression": "\"Preflight Fail: Geofence RTL requires valid home\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/gyroCheck.cpp",
+    "line": 78,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Gyro Sensor %u missing",
+    "expression": "\"Preflight Fail: Gyro Sensor %u missing\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/gyroCheck.cpp",
+    "line": 88,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No valid data from Gyro %u",
+    "expression": "\"Preflight Fail: No valid data from Gyro %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/gyroCheck.cpp",
+    "line": 98,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Gyro %u uncalibrated",
+    "expression": "\"Preflight Fail: Gyro %u uncalibrated\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/imuConsistencyCheck.cpp",
+    "line": 68,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Accel %u inconsistent - check cal",
+    "expression": "\"Preflight Fail: Accel %u inconsistent - check cal\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/imuConsistencyCheck.cpp",
+    "line": 99,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Gyro %u inconsistent - check cal",
+    "expression": "\"Preflight Fail: Gyro %u inconsistent - check cal\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 96,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Compass Sensor %u missing",
+    "expression": "\"Preflight Fail: Compass Sensor %u missing\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 106,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No valid data from Compass %u",
+    "expression": "\"Preflight Fail: No valid data from Compass %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 117,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Compass %u uncalibrated",
+    "expression": "\"Preflight Fail: Compass %u uncalibrated\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 129,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Compass %u fault",
+    "expression": "\"Preflight Fail: Compass %u fault\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 154,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Preflight Fail: Found %i compass (required: %\" PRId32 \")\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/magnetometerCheck.cpp",
+    "line": 221,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Compasses %d° inconsistent",
+    "expression": "\"Preflight Fail: Compasses %d° inconsistent\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/manualControlCheck.cpp",
+    "line": 57,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RTL switch engaged",
+    "expression": "\"Preflight Fail: RTL switch engaged\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/manualControlCheck.cpp",
+    "line": 69,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Kill switch engaged",
+    "expression": "\"Preflight Fail: Kill switch engaged\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/manualControlCheck.cpp",
+    "line": 81,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Landing gear switch set in UP position",
+    "expression": "\"Preflight Fail: Landing gear switch set in UP position\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/missionCheck.cpp",
+    "line": 54,
+    "call": "mavlink_log_critical",
+    "source": "Mission cannot be completed\t",
+    "expression": "\"Mission cannot be completed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/openDroneIDCheck.cpp",
+    "line": 65,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Open Drone ID system missing",
+    "expression": "\"Preflight Fail: Open Drone ID system missing\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/openDroneIDCheck.cpp",
+    "line": 82,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Open Drone ID system not ready",
+    "expression": "\"Preflight Fail: Open Drone ID system not ready\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/parachuteCheck.cpp",
+    "line": 60,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Parachute system missing",
+    "expression": "\"Preflight Fail: Parachute system missing\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/parachuteCheck.cpp",
+    "line": 77,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Parachute system not ready",
+    "expression": "\"Preflight Fail: Parachute system not ready\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/powerCheck.cpp",
+    "line": 72,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Power module not connected",
+    "expression": "\"Preflight Fail: Power module not connected\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/powerCheck.cpp",
+    "line": 119,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Avionics Power low: %6.2f Volt",
+    "expression": "\"Preflight Fail: Avionics Power low: %6.2f Volt\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/powerCheck.cpp",
+    "line": 137,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Avionics Power high: %6.2f Volt",
+    "expression": "\"Preflight Fail: Avionics Power high: %6.2f Volt\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/powerCheck.cpp",
+    "line": 159,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Preflight Fail: Power redundancy not met: %d of %\" PRId32 \"\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/powerCheck.cpp",
+    "line": 208,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: system power unavailable",
+    "expression": "\"Preflight Fail: system power unavailable\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rallyPointCheck.cpp",
+    "line": 65,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: No rally point available\t",
+    "expression": "\"Preflight Fail: No rally point available\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rcAndDataLinkCheck.cpp",
+    "line": 97,
+    "call": "mavlink_log_warning",
+    "source": "Preflight Fail: No connection to the GCS",
+    "expression": "\"Preflight Fail: No connection to the GCS\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rcCalibrationCheck.cpp",
+    "line": 91,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RC ERROR: RC%d_MIN < %u",
+    "expression": "\"Preflight Fail: RC ERROR: RC%d_MIN < %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rcCalibrationCheck.cpp",
+    "line": 106,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RC ERROR: RC%d_MAX > %u",
+    "expression": "\"Preflight Fail: RC ERROR: RC%d_MAX > %u\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rcCalibrationCheck.cpp",
+    "line": 122,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RC ERROR: RC%d_TRIM < MIN (%d/%d)",
+    "expression": "\"Preflight Fail: RC ERROR: RC%d_TRIM < MIN (%d/%d)\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/rcCalibrationCheck.cpp",
+    "line": 138,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: RC ERROR: RC%d_TRIM > MAX (%d/%d)",
+    "expression": "\"Preflight Fail: RC ERROR: RC%d_TRIM > MAX (%d/%d)\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/sdcardCheck.cpp",
+    "line": 67,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Missing FMU SD Card",
+    "expression": "\"Preflight Fail: Missing FMU SD Card\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/sdcardCheck.cpp",
+    "line": 114,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Crash dumps present on SD",
+    "expression": "\"Preflight Fail: Crash dumps present on SD\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/sdcardCheck.cpp",
+    "line": 163,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Task watchdog dumps present on SD",
+    "expression": "\"Preflight Fail: Task watchdog dumps present on SD\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 52,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Flight termination active",
+    "expression": "\"Preflight Fail: Flight termination active\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 71,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Flying with USB is not safe",
+    "expression": "\"Preflight Fail: Flying with USB is not safe\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 89,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Global position estimate required",
+    "expression": "\"Preflight Fail: Global position estimate required\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 103,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Home position required",
+    "expression": "\"Preflight Fail: Home position required\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 120,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Press safety button first",
+    "expression": "\"Preflight Fail: Press safety button first\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 133,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Vehicle is in transition state",
+    "expression": "\"Preflight Fail: Vehicle is in transition state\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/systemCheck.cpp",
+    "line": 149,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Vehicle is not in multicopter mode",
+    "expression": "\"Preflight Fail: Vehicle is not in multicopter mode\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/trafficAvoidanceCheck.cpp",
+    "line": 68,
+    "call": "mavlink_log_critical",
+    "source": "Preflight Fail: Traffic avoidance system missing",
+    "expression": "\"Preflight Fail: Traffic avoidance system missing\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/HealthAndArmingChecks/checks/vtolCheck.cpp",
+    "line": 54,
+    "call": "mavlink_log_info",
+    "source": "Preflight Fail: VTOL fixed-wing system failure detected\t",
+    "expression": "\"Preflight Fail: VTOL fixed-wing system failure detected\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/calibration_routines.cpp",
+    "line": 347,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "CAL_QGC_CANCELLED_MSG",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/calibration_routines.cpp",
+    "line": 353,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"command denied during calibration: %\" PRIu32 \"\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/calibration_routines.h",
+    "line": 93,
+    "call": "mavlink_log_info",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/calibration_routines.h",
+    "line": 99,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/calibration_routines.h",
+    "line": 105,
+    "call": "mavlink_log_emergency",
+    "source": null,
+    "expression": "_text",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/commander/failsafe/framework.cpp",
+    "line": 215,
+    "call": "mavlink_log_critical",
+    "source": "Failsafe activated: entering Hold for %i seconds\t",
+    "expression": "\"Failsafe activated: entering Hold for %i seconds\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/commander/failsafe/framework.cpp",
+    "line": 294,
+    "call": "mavlink_log_critical",
+    "source": "Failsafe activated\t",
+    "expression": "\"Failsafe activated\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/rc_calibration.cpp",
+    "line": 61,
+    "call": "mavlink_log_critical",
+    "source": "no inputs, aborting\t",
+    "expression": "\"no inputs, aborting\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/rc_calibration.cpp",
+    "line": 100,
+    "call": "mavlink_log_critical",
+    "source": "TRIM: PARAM SET FAIL\t",
+    "expression": "\"TRIM: PARAM SET FAIL\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/rc_calibration.cpp",
+    "line": 106,
+    "call": "mavlink_log_info",
+    "source": "trim cal done\t",
+    "expression": "\"trim cal done\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/worker_thread.cpp",
+    "line": 154,
+    "call": "mavlink_log_critical",
+    "source": "Error loading settings\t",
+    "expression": "\"Error loading settings\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/commander/worker_thread.cpp",
+    "line": 164,
+    "call": "mavlink_log_critical",
+    "source": "Error saving settings\t",
+    "expression": "\"Error saving settings\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/ekf2/EKF2.cpp",
+    "line": 902,
+    "call": "mavlink_log_critical",
+    "source": "EKF2_MAG_TYPE invalid, resetting to default",
+    "expression": "\"EKF2_MAG_TYPE invalid, resetting to default\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/flight_mode_manager/tasks/Orbit/FlightTaskOrbit.cpp",
+    "line": 86,
+    "call": "mavlink_log_critical",
+    "source": "Orbit radius limit exceeded\t",
+    "expression": "\"Orbit radius limit exceeded\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/fw_autotune_attitude_control/fw_autotune_attitude_control.cpp",
+    "line": 325,
+    "call": "mavlink_log_info",
+    "source": "Autotune started",
+    "expression": "\"Autotune started\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/fw_autotune_attitude_control/fw_autotune_attitude_control.cpp",
+    "line": 494,
+    "call": "mavlink_log_info",
+    "source": "Autotune finished successfully",
+    "expression": "\"Autotune finished successfully\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/fw_autotune_attitude_control/fw_autotune_attitude_control.cpp",
+    "line": 551,
+    "call": "mavlink_log_info",
+    "source": "Autotune returned to idle",
+    "expression": "\"Autotune returned to idle\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/fw_autotune_attitude_control/fw_autotune_attitude_control.cpp",
+    "line": 571,
+    "call": "mavlink_log_critical",
+    "source": "Autotune aborted before finishing",
+    "expression": "\"Autotune aborted before finishing\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/fw_autotune_attitude_control/fw_autotune_attitude_control.cpp",
+    "line": 578,
+    "call": "mavlink_log_critical",
+    "source": "Autotune axis timeout, skipping to next axis",
+    "expression": "\"Autotune axis timeout, skipping to next axis\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 223,
+    "call": "mavlink_log_info",
+    "source": "%sDownward-facing Lidar detected with ID %zu",
+    "expression": "\"%sDownward-facing Lidar detected with ID %zu\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 229,
+    "call": "mavlink_log_info",
+    "source": "%sDownward-facing Sonar detected with ID %zu",
+    "expression": "\"%sDownward-facing Sonar detected with ID %zu\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 366,
+    "call": "mavlink_log_info",
+    "source": "[lpe] global origin init (parameter) : lat %6.2f lon %6.2f alt %5.1f m",
+    "expression": "\"[lpe] global origin init (parameter) : lat %6.2f lon %6.2f alt %5.1f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 379,
+    "call": "mavlink_log_info",
+    "source": "%sreinit x, x(%zu) not finite",
+    "expression": "\"%sreinit x, x(%zu) not finite\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 389,
+    "call": "mavlink_log_info",
+    "source": "%sreinit x",
+    "expression": "\"%sreinit x\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 398,
+    "call": "mavlink_log_info",
+    "source": "%sreinit P (%zu, %zu) not finite",
+    "expression": "\"%sreinit P (%zu, %zu) not finite\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 406,
+    "call": "mavlink_log_info",
+    "source": "%sreinit P (%zu, %zu) negative",
+    "expression": "\"%sreinit P (%zu, %zu) negative\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/BlockLocalPositionEstimator.cpp",
+    "line": 1015,
+    "call": "mavlink_log_info",
+    "source": "%sdelayed data old: %8.4f",
+    "expression": "\"%sdelayed data old: %8.4f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/baro.cpp",
+    "line": 25,
+    "call": "mavlink_log_info",
+    "source": "[lpe] baro init %d m std %d cm",
+    "expression": "\"[lpe] baro init %d m std %d cm\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/baro.cpp",
+    "line": 79,
+    "call": "mavlink_log_critical",
+    "source": "[lpe] baro fault, r %5.2f m, beta %5.2f",
+    "expression": "\"[lpe] baro fault, r %5.2f m, beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/baro.cpp",
+    "line": 86,
+    "call": "mavlink_log_info",
+    "source": "[lpe] baro OK",
+    "expression": "\"[lpe] baro OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/baro.cpp",
+    "line": 102,
+    "call": "mavlink_log_info",
+    "source": "[lpe] baro timeout ",
+    "expression": "\"[lpe] baro timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/flow.cpp",
+    "line": 25,
+    "call": "mavlink_log_info",
+    "source": "[lpe] flow init: quality %d std %d",
+    "expression": "\"[lpe] flow init: \" \"quality %d std %d\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/flow.cpp",
+    "line": 186,
+    "call": "mavlink_log_info",
+    "source": "[lpe] flow fault,  beta %5.2f",
+    "expression": "\"[lpe] flow fault,  beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/flow.cpp",
+    "line": 192,
+    "call": "mavlink_log_info",
+    "source": "[lpe] flow OK",
+    "expression": "\"[lpe] flow OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/flow.cpp",
+    "line": 210,
+    "call": "mavlink_log_critical",
+    "source": "[lpe] flow timeout ",
+    "expression": "\"[lpe] flow timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/gps.cpp",
+    "line": 78,
+    "call": "mavlink_log_info",
+    "source": "[lpe] global origin init (gps) : lat %6.2f lon %6.2f alt %5.1f m",
+    "expression": "\"[lpe] global origin init (gps) : lat %6.2f lon %6.2f alt %5.1f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/gps.cpp",
+    "line": 218,
+    "call": "mavlink_log_critical",
+    "source": "[lpe] gps fault %3g %3g %3g %3g %3g %3g",
+    "expression": "\"[lpe] gps fault %3g %3g %3g %3g %3g %3g\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/gps.cpp",
+    "line": 226,
+    "call": "mavlink_log_info",
+    "source": "[lpe] GPS OK",
+    "expression": "\"[lpe] GPS OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/gps.cpp",
+    "line": 242,
+    "call": "mavlink_log_critical",
+    "source": "[lpe] GPS timeout ",
+    "expression": "\"[lpe] GPS timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/land.cpp",
+    "line": 24,
+    "call": "mavlink_log_info",
+    "source": "[lpe] land init",
+    "expression": "\"[lpe] land init\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/land.cpp",
+    "line": 76,
+    "call": "mavlink_log_info",
+    "source": "[lpe] land fault,  beta %5.2f",
+    "expression": "\"[lpe] land fault,  beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/land.cpp",
+    "line": 84,
+    "call": "mavlink_log_info",
+    "source": "[lpe] land OK",
+    "expression": "\"[lpe] land OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/land.cpp",
+    "line": 100,
+    "call": "mavlink_log_info",
+    "source": "[lpe] land timeout ",
+    "expression": "\"[lpe] land timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/landing_target.cpp",
+    "line": 19,
+    "call": "mavlink_log_info",
+    "source": "Landing target init",
+    "expression": "\"Landing target init\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/landing_target.cpp",
+    "line": 92,
+    "call": "mavlink_log_info",
+    "source": "Landing target fault, beta %5.2f",
+    "expression": "\"Landing target fault, beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/landing_target.cpp",
+    "line": 101,
+    "call": "mavlink_log_info",
+    "source": "Landing target OK",
+    "expression": "\"Landing target OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/landing_target.cpp",
+    "line": 118,
+    "call": "mavlink_log_info",
+    "source": "Landing target timeout",
+    "expression": "\"Landing target timeout\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/lidar.cpp",
+    "line": 24,
+    "call": "mavlink_log_info",
+    "source": "[lpe] lidar init: mean %d cm stddev %d cm",
+    "expression": "\"[lpe] lidar init: \" \"mean %d cm stddev %d cm\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/lidar.cpp",
+    "line": 106,
+    "call": "mavlink_log_info",
+    "source": "[lpe] lidar fault,  beta %5.2f",
+    "expression": "\"[lpe] lidar fault,  beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/lidar.cpp",
+    "line": 115,
+    "call": "mavlink_log_info",
+    "source": "[lpe] lidar OK",
+    "expression": "\"[lpe] lidar OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/lidar.cpp",
+    "line": 131,
+    "call": "mavlink_log_info",
+    "source": "[lpe] lidar timeout ",
+    "expression": "\"[lpe] lidar timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/mocap.cpp",
+    "line": 28,
+    "call": "mavlink_log_info",
+    "source": "[lpe] mocap position init: %5.2f, %5.2f, %5.2f m std %5.2f, %5.2f, %5.2f m",
+    "expression": "\"[lpe] mocap position init: \" \"%5.2f, %5.2f, %5.2f m std %5.2f, %5.2f, %5.2f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/mocap.cpp",
+    "line": 48,
+    "call": "mavlink_log_info",
+    "source": "[lpe] global origin init (mocap) : lat %6.2f lon %6.2f alt %5.1f m",
+    "expression": "\"[lpe] global origin init (mocap) : lat %6.2f lon %6.2f alt %5.1f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/mocap.cpp",
+    "line": 106,
+    "call": "mavlink_log_info",
+    "source": "[lpe] mocap data invalid. eph: %f epv: %f",
+    "expression": "\"[lpe] mocap data invalid. eph: %f epv: %f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/mocap.cpp",
+    "line": 190,
+    "call": "mavlink_log_info",
+    "source": "[lpe] mocap timeout ",
+    "expression": "\"[lpe] mocap timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/sonar.cpp",
+    "line": 29,
+    "call": "mavlink_log_info",
+    "source": "[lpe] sonar init std > min",
+    "expression": "\"[lpe] sonar init std > min\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/sonar.cpp",
+    "line": 33,
+    "call": "mavlink_log_info",
+    "source": "[lpe] sonar init timeout ",
+    "expression": "\"[lpe] sonar init timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/sonar.cpp",
+    "line": 127,
+    "call": "mavlink_log_info",
+    "source": "[lpe] sonar fault,  beta %5.2f",
+    "expression": "\"[lpe] sonar fault,  beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/sonar.cpp",
+    "line": 154,
+    "call": "mavlink_log_info",
+    "source": "[lpe] sonar timeout ",
+    "expression": "\"[lpe] sonar timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 33,
+    "call": "mavlink_log_info",
+    "source": "[lpe] vision position init: %5.2f %5.2f %5.2f m std %5.2f %5.2f %5.2f m",
+    "expression": "\"[lpe] vision position init: \" \"%5.2f %5.2f %5.2f m std %5.2f %5.2f %5.2f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 53,
+    "call": "mavlink_log_info",
+    "source": "[lpe] global origin init (vision) : lat %6.2f lon %6.2f alt %5.1f m",
+    "expression": "\"[lpe] global origin init (vision) : lat %6.2f lon %6.2f alt %5.1f m\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 111,
+    "call": "mavlink_log_info",
+    "source": "[lpe] vision data invalid. eph: %f epv: %f",
+    "expression": "\"[lpe] vision data invalid. eph: %f epv: %f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 185,
+    "call": "mavlink_log_info",
+    "source": "[lpe] vision position fault, beta %5.2f",
+    "expression": "\"[lpe] vision position fault, beta %5.2f\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 191,
+    "call": "mavlink_log_info",
+    "source": "[lpe] vision position OK",
+    "expression": "\"[lpe] vision position OK\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/local_position_estimator/sensors/vision.cpp",
+    "line": 209,
+    "call": "mavlink_log_critical",
+    "source": "[lpe] vision position timeout ",
+    "expression": "\"[lpe] vision position timeout \"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/logger/logger.cpp",
+    "line": 1358,
+    "call": "mavlink_log_info",
+    "source": "[logger] %s\t",
+    "expression": "\"[logger] %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/logger/logger.cpp",
+    "line": 1413,
+    "call": "mavlink_log_info",
+    "source": "[logger] %s\t",
+    "expression": "\"[logger] %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/logger/util.cpp",
+    "line": 313,
+    "call": "mavlink_log_critical",
+    "source": "[logger] Storage full: %u MiB free\t",
+    "expression": "\"[logger] Storage full: %u MiB free\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/manual_control/ManualControl.cpp",
+    "line": 357,
+    "call": "mavlink_log_critical",
+    "source": "Arm stick gesture disabled if arm switch in use\t",
+    "expression": "\"Arm stick gesture disabled if arm switch in use\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/manual_control/ManualControl.cpp",
+    "line": 379,
+    "call": "mavlink_log_critical",
+    "source": "Yaw Airmode requires disabling the stick arm gesture\t",
+    "expression": "\"Yaw Airmode requires disabling the stick arm gesture\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 1127,
+    "call": "mavlink_log_info",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 1133,
+    "call": "mavlink_log_critical",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 1139,
+    "call": "mavlink_log_emergency",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 2681,
+    "call": "mavlink_log_info",
+    "source": "Disable transmitting with IRIDIUM mavlink on device %s\t",
+    "expression": "\"Disable transmitting with IRIDIUM mavlink on device %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 2688,
+    "call": "mavlink_log_info",
+    "source": "Enable transmitting with IRIDIUM mavlink on device %s\t",
+    "expression": "\"Enable transmitting with IRIDIUM mavlink on device %s\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 2745,
+    "call": "mavlink_log_info",
+    "source": "Enable transmitting with IRIDIUM mavlink on device %s by command\t",
+    "expression": "\"Enable transmitting with IRIDIUM mavlink on device %s by command\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_main.cpp",
+    "line": 2756,
+    "call": "mavlink_log_info",
+    "source": "Disable transmitting with IRIDIUM mavlink on device %s by command\t",
+    "expression": "\"Disable transmitting with IRIDIUM mavlink on device %s by command\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_mission.cpp",
+    "line": 398,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Mission storage: Unable to read from storage, type: %\" PRId8 \"\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_parameters.cpp",
+    "line": 101,
+    "call": "mavlink_log_warning",
+    "source": "CAN node %u blocked by MAV camera (reassign ID)\t",
+    "expression": "\"CAN node %u blocked by MAV camera (reassign ID)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_parameters.cpp",
+    "line": 369,
+    "call": "mavlink_log_warning",
+    "source": "parameter_rc_channel_index out of bounds\t",
+    "expression": "\"parameter_rc_channel_index out of bounds\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1212,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"SET_POSITION_TARGET_LOCAL_NED coordinate frame %\" PRIu8 \" unsupported\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1226,
+    "call": "mavlink_log_critical",
+    "source": "SET_POSITION_TARGET_LOCAL_NED force not supported\t",
+    "expression": "\"SET_POSITION_TARGET_LOCAL_NED force not supported\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1247,
+    "call": "mavlink_log_critical",
+    "source": "SET_POSITION_TARGET_LOCAL_NED invalid\t",
+    "expression": "\"SET_POSITION_TARGET_LOCAL_NED invalid\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1317,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"SET_POSITION_TARGET_GLOBAL_INT invalid coordinate frame %\" PRIu8 \"\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1345,
+    "call": "mavlink_log_critical",
+    "source": "SET_POSITION_TARGET_GLOBAL_INT force not supported\t",
+    "expression": "\"SET_POSITION_TARGET_GLOBAL_INT force not supported\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 1692,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"ODOMETRY: estimator_type %\" PRIu8 \" unsupported\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 2720,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Landing target: coordinate frame %\" PRIu8 \" unsupported\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 3143,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"target relative: coordinate frame %\" PRIu8 \" unsupported.\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 3153,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"target relative: type %\" PRIu8 \" unsupported.\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mavlink/mavlink_receiver.cpp",
+    "line": 3179,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"target relative: coordinate frame %\" PRIu8 \" unsupported when the q_sensor is not filled.\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 179,
+    "call": "mavlink_log_critical",
+    "source": "Tilt constrained to safe value\t",
+    "expression": "\"Tilt constrained to safe value\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 190,
+    "call": "mavlink_log_critical",
+    "source": "Land tilt has been constrained by max tilt\t",
+    "expression": "\"Land tilt has been constrained by max tilt\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 221,
+    "call": "mavlink_log_critical",
+    "source": "Cruise speed has been constrained by max speed\t",
+    "expression": "\"Cruise speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 232,
+    "call": "mavlink_log_critical",
+    "source": "Manual speed has been constrained by max speed\t",
+    "expression": "\"Manual speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 243,
+    "call": "mavlink_log_critical",
+    "source": "Manual backward speed has been constrained by forward speed\t",
+    "expression": "\"Manual backward speed has been constrained by forward speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 254,
+    "call": "mavlink_log_critical",
+    "source": "Manual sideways speed has been constrained by forward speed\t",
+    "expression": "\"Manual sideways speed has been constrained by forward speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 265,
+    "call": "mavlink_log_critical",
+    "source": "Ascent speed has been constrained by max speed\t",
+    "expression": "\"Ascent speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 276,
+    "call": "mavlink_log_critical",
+    "source": "Descent speed has been constrained by max speed\t",
+    "expression": "\"Descent speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/mc_pos_control/MulticopterPositionControl.cpp",
+    "line": 289,
+    "call": "mavlink_log_critical",
+    "source": "Hover thrust has been constrained by min/max\t",
+    "expression": "\"Hover thrust has been constrained by min/max\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 237,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: No home pos, WP %d uses rel alt\t",
+    "expression": "\"Mission rejected: No home pos, WP %d uses rel alt\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 291,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: item %i: unsupported cmd: %d\t",
+    "expression": "\"Mission rejected: item %i: unsupported cmd: %d\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 302,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: starts with landing\t",
+    "expression": "\"Mission rejected: starts with landing\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 322,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Takeoff altitude below home altitude!\t",
+    "expression": "\"Mission rejected: Takeoff altitude below home altitude!\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 339,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: takeoff not first waypoint item\t",
+    "expression": "\"Mission rejected: takeoff not first waypoint item\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 394,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: the approach waypoint must be above the landing point.\t",
+    "expression": "\"Mission rejected: the approach waypoint must be above the landing point.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 412,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: the landing point must be outside the orbit radius.\t",
+    "expression": "\"Mission rejected: the landing point must be outside the orbit radius.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 430,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: unsupported landing approach entrance waypoint type. Only ORBIT_TO_ALT or WAYPOINT allowed.\t",
+    "expression": "\"Mission rejected: unsupported landing approach entrance waypoint type. Only ORBIT_TO_ALT or WAYPOINT allowed.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 451,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: the landing glide slope is steeper than the vehicle setting of %d.%d degrees.\t",
+    "expression": "\"Mission rejected: the landing glide slope is steeper than the vehicle setting of %d.%d degrees.\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 461,
+    "call": "mavlink_log_critical",
+    "source": "Reduce the glide slope, lower the entrance altitude %d meters, or increase the landing approach distance %d meters.\t",
+    "expression": "\"Reduce the glide slope, lower the entrance altitude %d meters, or increase the landing approach distance %d meters.\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 486,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: more than one land start.\t",
+    "expression": "\"Mission rejected: more than one land start.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 504,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: starts with land waypoint.\t",
+    "expression": "\"Mission rejected: starts with land waypoint.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 512,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: land start item before RTL item not possible.\t",
+    "expression": "\"Mission rejected: land start item before RTL item not possible.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 521,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: invalid land start.\t",
+    "expression": "\"Mission rejected: invalid land start.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 546,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Takeoff waypoint required.\t",
+    "expression": "\"Mission rejected: Takeoff waypoint required.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 558,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Landing waypoint/pattern required.\t",
+    "expression": "\"Mission rejected: Landing waypoint/pattern required.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 569,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Takeoff or Landing item missing.\t",
+    "expression": "\"Mission rejected: Takeoff or Landing item missing.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 589,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Landing waypoint/pattern required.",
+    "expression": "\"Mission rejected: Landing waypoint/pattern required.\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 610,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Add Landing item or remove Takeoff.\t",
+    "expression": "\"Mission rejected: Add Landing item or remove Takeoff.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 615,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Add Takeoff item or remove Landing.\t",
+    "expression": "\"Mission rejected: Add Takeoff item or remove Landing.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 641,
+    "call": "mavlink_log_critical",
+    "source": "First waypoint far away from home: %dm. Correct mission loaded?\t",
+    "expression": "\"First waypoint far away from home: %dm. Correct mission loaded?\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 681,
+    "call": "mavlink_log_critical",
+    "source": "Distance between waypoint and gate too close: %d meters\t",
+    "expression": "\"Distance between waypoint and gate too close: %d meters\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/MissionFeasibility/FeasibilityChecker.cpp",
+    "line": 706,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: Mission contains VTOL items but vehicle is not a VTOL\t",
+    "expression": "\"Mission rejected: Mission contains VTOL items but vehicle is not a VTOL\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/geofence.cpp",
+    "line": 313,
+    "call": "mavlink_log_critical",
+    "source": "Geofence invalid, doesn't contain Home position\t",
+    "expression": "\"Geofence invalid, doesn't contain Home position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/geofence.cpp",
+    "line": 332,
+    "call": "mavlink_log_critical",
+    "source": "Geofence invalid, doesn't contain current vehicle position\t",
+    "expression": "\"Geofence invalid, doesn't contain current vehicle position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/geofence.cpp",
+    "line": 673,
+    "call": "mavlink_log_info",
+    "source": "Geofence imported\t",
+    "expression": "\"Geofence imported\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/geofence.cpp",
+    "line": 682,
+    "call": "mavlink_log_critical",
+    "source": "Geofence: import error\t",
+    "expression": "\"Geofence: import error\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission.cpp",
+    "line": 311,
+    "call": "mavlink_log_info",
+    "source": "Climb to %.1f meters above home\t",
+    "expression": "\"Climb to %.1f meters above home\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/mission.cpp",
+    "line": 482,
+    "call": "mavlink_log_critical",
+    "source": "Invalid mission state.\t",
+    "expression": "\"Invalid mission state.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 426,
+    "call": "mavlink_log_critical",
+    "source": "No valid mission available, refusing takeoff\t",
+    "expression": "\"No valid mission available, refusing takeoff\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 431,
+    "call": "mavlink_log_critical",
+    "source": "No valid mission available, loitering\t",
+    "expression": "\"No valid mission available, loitering\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 440,
+    "call": "mavlink_log_info",
+    "source": "Executing Mission\t",
+    "expression": "\"Executing Mission\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 486,
+    "call": "mavlink_log_info",
+    "source": "Mission finished, landed\t",
+    "expression": "\"Mission finished, landed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 492,
+    "call": "mavlink_log_info",
+    "source": "Mission finished, loitering\t",
+    "expression": "\"Mission finished, loitering\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 539,
+    "call": "mavlink_log_critical",
+    "source": "Mission item could not be set.\t",
+    "expression": "\"Mission item could not be set.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 900,
+    "call": "mavlink_log_info",
+    "source": "Holding at %d m above landing waypoint.\t",
+    "expression": "\"Holding at %d m above landing waypoint.\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 986,
+    "call": "mavlink_log_critical",
+    "source": "Waypoint could not be read.\t",
+    "expression": "\"Waypoint could not be read.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 1008,
+    "call": "mavlink_log_critical",
+    "source": "DO JUMP waypoint could not be written.\t",
+    "expression": "\"DO JUMP waypoint could not be written.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 1266,
+    "call": "mavlink_log_critical",
+    "source": "Could not set mission closest to position.\t",
+    "expression": "\"Could not set mission closest to position.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_base.cpp",
+    "line": 1337,
+    "call": "mavlink_log_critical",
+    "source": "Mission could not reset jump count.\t",
+    "expression": "\"Mission could not reset jump count.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_block.cpp",
+    "line": 1057,
+    "call": "mavlink_log_info",
+    "source": "Target altitude higher than max HAGL\t",
+    "expression": "\"Target altitude higher than max HAGL\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_feasibility_checker.cpp",
+    "line": 72,
+    "call": "mavlink_log_info",
+    "source": "Not yet ready for mission, no position lock.\t",
+    "expression": "\"Not yet ready for mission, no position lock.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_feasibility_checker.cpp",
+    "line": 113,
+    "call": "mavlink_log_critical",
+    "source": "Geofence requires valid home position\t",
+    "expression": "\"Geofence requires valid home position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_feasibility_checker.cpp",
+    "line": 135,
+    "call": "mavlink_log_critical",
+    "source": "Geofence requires valid home position\t",
+    "expression": "\"Geofence requires valid home position\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/mission_feasibility_checker.cpp",
+    "line": 147,
+    "call": "mavlink_log_critical",
+    "source": "Geofence violation for waypoint %zu\t",
+    "expression": "\"Geofence violation for waypoint %zu\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/mission_feasibility_checker.cpp",
+    "line": 161,
+    "call": "mavlink_log_critical",
+    "source": "Mission rejected: dataman read failed at item %zu (dm_id=%u)\t",
+    "expression": "\"Mission rejected: dataman read failed at item %zu (dm_id=%u)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 421,
+    "call": "mavlink_log_critical",
+    "source": "Reposition is outside geofence\t",
+    "expression": "\"Reposition is outside geofence\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 496,
+    "call": "mavlink_log_critical",
+    "source": "Altitude change is outside geofence\t",
+    "expression": "\"Altitude change is outside geofence\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 548,
+    "call": "mavlink_log_critical",
+    "source": "Orbit is outside geofence",
+    "expression": "\"Orbit is outside geofence\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 600,
+    "call": "mavlink_log_critical",
+    "source": "Figure 8 is outside geofence",
+    "expression": "\"Figure 8 is outside geofence\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 902,
+    "call": "mavlink_log_info",
+    "source": "Transition to hover mode and descend.\t",
+    "expression": "\"Transition to hover mode and descend.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 1395,
+    "call": "mavlink_log_critical",
+    "source": "unable to reach heading within timeout\t",
+    "expression": "\"unable to reach heading within timeout\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/navigator_main.cpp",
+    "line": 1691,
+    "call": "mavlink_log_critical",
+    "source": "Terrain collision risk, descent is stopped\t",
+    "expression": "\"Terrain collision risk, descent is stopped\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/rtl.cpp",
+    "line": 509,
+    "call": "mavlink_log_critical",
+    "source": "Mission land item could not be read.\t",
+    "expression": "\"Mission land item could not be read.\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/rtl.cpp",
+    "line": 575,
+    "call": "mavlink_log_critical",
+    "source": "RTL: unsupported MAV_FRAME\t",
+    "expression": "\"RTL: unsupported MAV_FRAME\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/rtl_direct.cpp",
+    "line": 86,
+    "call": "mavlink_log_info",
+    "source": "RTL: start return at %d m (%d m above destination)\t",
+    "expression": "\"RTL: start return at %d m (%d m above destination)\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/rtl_direct.cpp",
+    "line": 292,
+    "call": "mavlink_log_info",
+    "source": "RTL: completed, loitering\t",
+    "expression": "\"RTL: completed, loitering\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/rtl_direct.cpp",
+    "line": 358,
+    "call": "mavlink_log_info",
+    "source": "RTL: land at destination\t",
+    "expression": "\"RTL: land at destination\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/navigator/rtl_direct_mission_land.cpp",
+    "line": 148,
+    "call": "mavlink_log_info",
+    "source": "RTL Mission land: climb to %d m\t",
+    "expression": "\"RTL Mission land: climb to %d m\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/takeoff.cpp",
+    "line": 189,
+    "call": "mavlink_log_info",
+    "source": "Using default takeoff altitude: %.1f m\t",
+    "expression": "\"Using default takeoff altitude: %.1f m\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/navigator/takeoff.cpp",
+    "line": 200,
+    "call": "mavlink_log_critical",
+    "source": "Already higher than takeoff altitude\t",
+    "expression": "\"Already higher than takeoff altitude\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/sensors/vehicle_air_data/VehicleAirData.cpp",
+    "line": 384,
+    "call": "mavlink_log_emergency",
+    "source": "%s #%i failed: %s%s%s%s%s!\t",
+    "expression": "\"%s #%i failed: %s%s%s%s%s!\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/sensors/vehicle_imu/VehicleIMU.cpp",
+    "line": 393,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Accel %\" PRIu8 \" clipping, not safe to fly!\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/sensors/vehicle_imu/VehicleIMU.cpp",
+    "line": 522,
+    "call": "mavlink_log_critical",
+    "source": null,
+    "expression": "\"Gyro %\" PRIu8 \" clipping, not safe to fly!\\t\"",
+    "kind": "unresolved"
+  },
+  {
+    "file": "src/modules/sensors/vehicle_magnetometer/VehicleMagnetometer.cpp",
+    "line": 648,
+    "call": "mavlink_log_emergency",
+    "source": "%s #%i failed: %s%s%s%s%s!\t",
+    "expression": "\"%s #%i failed: %s%s%s%s%s!\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/sensors/voted_sensors_update.cpp",
+    "line": 308,
+    "call": "mavlink_log_emergency",
+    "source": "%s #%i fail: %s%s%s%s%s!\t",
+    "expression": "\"%s #%i fail: %s%s%s%s%s!\\t\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/modules/spacecraft/SpacecraftPositionControl/SpacecraftPositionControl.cpp",
+    "line": 106,
+    "call": "mavlink_log_critical",
+    "source": "Cruise speed has been constrained by max speed\t",
+    "expression": "\"Cruise speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/spacecraft/SpacecraftPositionControl/SpacecraftPositionControl.cpp",
+    "line": 117,
+    "call": "mavlink_log_critical",
+    "source": "Manual speed has been constrained by max speed\t",
+    "expression": "\"Manual speed has been constrained by max speed\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/modules/vtol_att_control/vtol_att_control_main.cpp",
+    "line": 199,
+    "call": "mavlink_log_critical",
+    "source": "Quad-chute triggered\t",
+    "expression": "\"Quad-chute triggered\\t\"",
+    "kind": "literal"
+  },
+  {
+    "file": "src/systemcmds/test_popup/test_popup.cpp",
+    "line": 61,
+    "call": "mavlink_log_critical",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/systemcmds/test_popup/test_popup.cpp",
+    "line": 64,
+    "call": "mavlink_log_warning",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  },
+  {
+    "file": "src/systemcmds/test_popup/test_popup.cpp",
+    "line": 67,
+    "call": "mavlink_log_info",
+    "source": "%s",
+    "expression": "\"%s\"",
+    "kind": "template"
+  }
+]

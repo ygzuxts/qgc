@@ -20,8 +20,8 @@ MouseArea {
     property real _itemHeight:              fillItem ? fillItem.height : height
     property real _touchWidth:              Math.max(_itemWidth, ScreenTools.minTouchPixels)
     property real _touchHeight:             Math.max(_itemHeight, ScreenTools.minTouchPixels)
-    property real _touchMarginHorizontal:   debugMobile || ScreenTools.isMobile ? (_touchWidth - _itemWidth) / 2 : 0
-    property real _touchMarginVertical:     debugMobile || ScreenTools.isMobile ? (_touchHeight - _itemHeight) / 2 : 0
+    property real _touchMarginHorizontal:   debugMobile || ScreenTools.isMobileLayout ? (_touchWidth - _itemWidth) / 2 : 0
+    property real _touchMarginVertical:     debugMobile || ScreenTools.isMobileLayout ? (_touchHeight - _itemHeight) / 2 : 0
 
     Rectangle {
         anchors.fill:   parent

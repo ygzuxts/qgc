@@ -35,7 +35,7 @@ Item {
         ColumnLayout {
             id:         mainLayout
             x:          Math.max(0, root.width / 2 - width / 2)
-            width:      ScreenTools.isMobile ? Math.max(root.width, implicitWidth) : Math.max(implicitWidth, ScreenTools.defaultFontPixelWidth * 50)
+            width:      ScreenTools.isMobileLayout ? Math.max(root.width, implicitWidth) : Math.max(implicitWidth, ScreenTools.defaultFontPixelWidth * 50)
             spacing:    ScreenTools.defaultFontPixelHeight
         }
     }

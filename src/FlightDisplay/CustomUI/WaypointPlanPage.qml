@@ -218,13 +218,13 @@ Item {
             return
         }
         if (_missionItems.count <= 1 && !(_geoFenceController && _geoFenceController.containsItems)) {
-            messageDialog.text = "当前没有可保存的任务"
+            messageDialog.text = qsTr("No mission to save")
             messageDialog.open()
             return
         }
         var saveFile = lastSavedFile
         if (!saveFile || saveFile.length === 0) {
-            saveFile = _savePath() + "任务_" + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
+            saveFile = _savePath() + qsTr("Mission_") + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
         }
         _masterController.saveToFile(saveFile)
         // The controller clears currentPlanFile when opening the save file fails.
@@ -332,7 +332,7 @@ Item {
     }
 
     function _landButtonText() {
-        return _vehicleIsMultiRotor() ? "返航" : "着陆"
+        return _vehicleIsMultiRotor() ? qsTr("Return") : qsTr("Land")
     }
 
     function _insertIndexBeforeLandIfNeeded() {
@@ -349,13 +349,13 @@ Item {
 
     function _createLandAtCoordinate(coordinate) {
         if (!landEnabled || !missionController) {
-            messageDialog.text = _landButtonText() + "当前不可添加"
+            messageDialog.text = _landButtonText() + qsTr("Cannot add here")
             messageDialog.open()
             return false
         }
         var landCoordinate = _normalizeMapCoordinate(coordinate)
         if (!landCoordinate.isValid) {
-            messageDialog.text = "地图坐标无效，无法添加" + _landButtonText()
+            messageDialog.text = qsTr("Invalid map coordinates; cannot add item") + _landButtonText()
             messageDialog.open()
             return false
         }
@@ -373,7 +373,7 @@ Item {
         if (selected) {
             currentTool = toolLandLocate
         } else {
-            messageDialog.text = _landButtonText() + "添加失败，请确认当前任务位置允许插入"
+            messageDialog.text = _landButtonText() + qsTr("Failed to add item. Check whether insertion is allowed here.")
             messageDialog.open()
         }
         return selected
@@ -399,13 +399,13 @@ Item {
         }
         var coordinate = root._vehicleCoordinateForTakeoff()
         if (!coordinate.isValid) {
-            messageDialog.text = "当前飞机位置无效，无法创建起飞点"
+            messageDialog.text = qsTr("Vehicle position is invalid; cannot create takeoff point")
             messageDialog.open()
             return false
         }
         var takeoffItem = root.missionController.insertTakeoffItem(coordinate, -1, true)
         if (!takeoffItem) {
-            messageDialog.text = "起飞点创建失败"
+            messageDialog.text = qsTr("Failed to Create Takeoff Point")
             messageDialog.open()
             return false
         }
@@ -437,41 +437,41 @@ Item {
 
     function _itemTitle(item) {
         if (!item) {
-            return "任务项"
+            return qsTr("Mission Item")
         }
         var seq = item.sequenceNumber !== undefined ? item.sequenceNumber : ""
         if (item.isTakeoffItem) {
-            return "起飞 " + seq
+            return qsTr("Takeoff ") + seq
         }
         if (_isRTLVisualItem(item)) {
-            return "返航 " + seq
+            return qsTr("Return ") + seq
         }
         if (_isLandVisualItem(item)) {
-            return "着陆 " + seq
+            return qsTr("Land ") + seq
         }
         if (item.commandName && String(item.commandName).indexOf("ROI") >= 0) {
-            return "兴趣点 " + seq
+            return qsTr("Point of interest ") + seq
         }
-        return "航点 " + seq
+        return qsTr("Waypoint ") + seq
     }
 
     function _itemTypeText(item) {
         if (!item) {
-            return "任务项"
+            return qsTr("Mission Item")
         }
         if (item.isTakeoffItem) {
-            return "起飞"
+            return qsTr("Takeoff")
         }
         if (_isRTLVisualItem(item)) {
-            return "返航"
+            return qsTr("Return")
         }
         if (_isLandVisualItem(item)) {
-            return "着陆"
+            return qsTr("Land")
         }
         if (item.commandName && String(item.commandName).indexOf("ROI") >= 0) {
-            return "兴趣点"
+            return qsTr("Point of Interest")
         }
-        return "航点"
+        return qsTr("Waypoint")
     }
 
     function _itemSeqText(item) {
@@ -480,7 +480,7 @@ Item {
 
     function _selectedCommandEditable() {
         return root.selectedItem &&
-               root._itemTypeText(root.selectedItem) === "航点" &&
+               root._itemTypeText(root.selectedItem) === qsTr("Waypoint") &&
                root.selectedItem.command !== undefined &&
                root.selectedItem.setMapCenterHintForCommandChange !== undefined
     }
@@ -714,7 +714,7 @@ Item {
             anchors.horizontalCenter: saveButton.horizontalCenter
             anchors.topMargin: Math.round((root.mobileLayout ? 1 : 2) * root.pageScale)
             z: 60
-            text: "保存"
+            text: qsTr("Save")
             font.pixelSize: Math.max(7, Math.round((theme ? theme.fontXs : 9) * (root.mobileLayout ? 0.70 : 1.0)))
             color: theme ? theme.green : "#16a34a"
         }
@@ -792,7 +792,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: root.panelSideMargin
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "任务规划"
+                    text: qsTr("Plan View")
                     font.pixelSize: root.panelTitleFont
                     font.weight: Font.Bold
                     color: root.panelTitleText
@@ -807,7 +807,7 @@ Item {
 
                 RectBtn {
                     Layout.fillWidth: true
-                    label: "✈ 航线规划"
+                    label: qsTr("✈ Route Planning")
                     btnSelected: root.rightTab === 0
                     btnEnabled: true
                     onClicked: root.rightTab = 0
@@ -815,7 +815,7 @@ Item {
 
                 RectBtn {
                     Layout.fillWidth: true
-                    label: "⌗ 电子围栏"
+                    label: qsTr("⌗ Geofence")
                     btnSelected: root.rightTab === 1
                     btnEnabled: true
                     onClicked: root.rightTab = 1
@@ -843,7 +843,7 @@ Item {
                         spacing: root.panelGap
                         visible: root.rightTab === 0
 
-                        SectionTitle { text: "点击地图新增"; theme: root.theme }
+                        SectionTitle { text: qsTr("Click the map to add"); theme: root.theme }
 
                         GridLayout {
                             width: parent.width
@@ -853,14 +853,14 @@ Item {
 
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "起飞"
+                                label: qsTr("Takeoff")
                                 btnSelected: root.currentTool === root.toolTakeoff
                                 btnEnabled: root.takeoffEnabled
                                 onClicked: root._setTool(root.toolTakeoff)
                             }
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "航点"
+                                label: qsTr("Waypoint")
                                 btnSelected: root.currentTool === root.toolWaypoint
                                 btnEnabled: root.waypointEnabled
                                 onClicked: root._setTool(root.toolWaypoint)
@@ -874,7 +874,7 @@ Item {
                             }
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "兴趣点"
+                                label: qsTr("Point of Interest")
                                 btnSelected: root.currentTool === root.toolROI
                                 btnEnabled: root.roiEnabled
                                 onClicked: root._setTool(root.toolROI)
@@ -883,13 +883,13 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: "选择类型后点击地图添加"
+                            text: qsTr("Select a type, then click the map to add")
                             font.pixelSize: theme ? theme.fontXs : 10
                             color: theme ? theme.text3 : "#9aa3b2"
                         }
 
                         // 选中项
-                        SectionTitle { text: "选中项"; theme: root.theme }
+                        SectionTitle { text: qsTr("Selected Item"); theme: root.theme }
 
                         Rectangle {
                             width: parent.width
@@ -958,7 +958,7 @@ Item {
                                     RectBtn {
                                         Layout.preferredWidth: 76
                                         height: 34
-                                        label: "删除"
+                                        label: qsTr("Delete")
                                         danger: true
                                         onClicked: root._removeSelected()
                                     }
@@ -966,7 +966,7 @@ Item {
 
                                 Text {
                                     width: parent.width
-                                    text: root._coordText(root.selectedItem) + "  高度 " + root._altText(root.selectedItem) + " m"
+                                    text: root._coordText(root.selectedItem) + qsTr("  Altitude ") + root._altText(root.selectedItem) + " m"
                                     font.pixelSize: theme ? theme.fontSm : 11
                                     color: theme ? theme.text3 : "#8b98aa"
                                     elide: Text.ElideRight
@@ -974,7 +974,7 @@ Item {
 
                                 Text {
                                     width: parent.width
-                                    text: "高度"
+                                    text: qsTr("Height")
                                     font.pixelSize: theme ? theme.fontMd : 12
                                     color: theme ? theme.text2 : "#5a6272"
                                 }
@@ -999,7 +999,7 @@ Item {
 
                                 Text {
                                     width: parent.width
-                                    text: "速度"
+                                    text: qsTr("Speed")
                                     font.pixelSize: theme ? theme.fontMd : 12
                                     color: theme ? theme.text2 : "#5a6272"
                                 }
@@ -1057,7 +1057,7 @@ Item {
                                 width: parent.width - 20
                                 horizontalAlignment: Text.AlignHCenter
                                 wrapMode: Text.WordWrap
-                                text: root._visibleItemCount > 0 ? "点击地图中的航点/着陆点查看与编辑" : "选择类型后点击地图添加任务项"
+                                text: root._visibleItemCount > 0 ? qsTr("Select a waypoint or landing point on the map to view and edit") : qsTr("Select a type, then click the map to add a mission item")
                                 font.pixelSize: theme ? theme.fontSm : 11
                                 color: theme ? theme.text3 : "#9aa3b2"
                             }
@@ -1070,12 +1070,12 @@ Item {
                         spacing: 10
                         visible: root.rightTab === 1
 
-                        PanelSectionTitle { text: "地理围栏" }
+                        PanelSectionTitle { text: qsTr("GeoFence") }
 
                         Text {
                             width: parent.width
                             wrapMode: Text.WordWrap
-                            text: "地理围栏允许你在飞行区域周围设置虚拟围栏。"
+                            text: qsTr("Geofences define virtual boundaries around the flight area.")
                             font.pixelSize: root.panelBodyFont
                             font.weight: Font.Medium
                             color: root.panelHintText
@@ -1091,7 +1091,7 @@ Item {
                             color: root.panelHintText
                         }
 
-                        PanelSectionTitle { text: "插入地理围栏" }
+                        PanelSectionTitle { text: qsTr("Insert GeoFence") }
 
                         GridLayout {
                             width: parent.width
@@ -1101,19 +1101,19 @@ Item {
 
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "＋ 多边形围栏"
+                                label: qsTr("＋ Polygon Fence")
                                 btnEnabled: root.fenceEnabled
                                 onClicked: root._addPolyFence()
                             }
                             RectBtn {
                                 Layout.fillWidth: true
-                                label: "＋ 圆形围栏"
+                                label: qsTr("＋ Circular Fence")
                                 btnEnabled: root.fenceEnabled
                                 onClicked: root._addCircleFence()
                             }
                         }
 
-                        PanelSectionTitle { text: "多边形围栏" }
+                        PanelSectionTitle { text: qsTr("Polygon Fence") }
 
                         RowLayout {
                             width: parent.width
@@ -1122,18 +1122,18 @@ Item {
 
                             ColumnHeaderText {
                                 Layout.preferredWidth: 38
-                                text: "包含"
+                                text: qsTr("Inclusion")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             ColumnHeaderText {
                                 Layout.preferredWidth: 38
-                                text: "编辑"
+                                text: qsTr("Edit")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             Item { Layout.fillWidth: true }
                             ColumnHeaderText {
                                 Layout.preferredWidth: 54
-                                text: "删除"
+                                text: qsTr("Delete")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }
@@ -1164,7 +1164,7 @@ Item {
 
                                 Text {
                                     Layout.fillWidth: true
-                                    text: "多边形 " + (index + 1)
+                                    text: qsTr("Polygon ") + (index + 1)
                                     font.pixelSize: root.panelBodyFont
                                     font.weight: Font.DemiBold
                                     color: root.panelTitleText
@@ -1174,7 +1174,7 @@ Item {
                                 RectBtn {
                                     Layout.preferredWidth: 54
                                     height: 28
-                                    label: "删除"
+                                    label: qsTr("Delete")
                                     danger: true
                                     onClicked: {
                                         if (root._geoFenceController) {
@@ -1187,13 +1187,13 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: root._geoFenceController && root._geoFenceController.polygons.count === 0 ? "暂无多边形围栏" : ""
+                            text: root._geoFenceController && root._geoFenceController.polygons.count === 0 ? qsTr("No polygon fences") : ""
                             visible: root._geoFenceController && root._geoFenceController.polygons.count === 0
                             font.pixelSize: root.panelBodyFont
                             color: root.panelMutedText
                         }
 
-                        PanelSectionTitle { text: "圆形围栏" }
+                        PanelSectionTitle { text: qsTr("Circular Fence") }
 
                         RowLayout {
                             width: parent.width
@@ -1202,22 +1202,22 @@ Item {
 
                             ColumnHeaderText {
                                 Layout.preferredWidth: 38
-                                text: "包含"
+                                text: qsTr("Inclusion")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             ColumnHeaderText {
                                 Layout.preferredWidth: 38
-                                text: "编辑"
+                                text: qsTr("Edit")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             ColumnHeaderText {
                                 Layout.fillWidth: true
-                                text: "半径"
+                                text: qsTr("Radius")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             ColumnHeaderText {
                                 Layout.preferredWidth: 54
-                                text: "删除"
+                                text: qsTr("Delete")
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }
@@ -1255,7 +1255,7 @@ Item {
                                 RectBtn {
                                     Layout.preferredWidth: 54
                                     height: 28
-                                    label: "删除"
+                                    label: qsTr("Delete")
                                     danger: true
                                     onClicked: {
                                         if (root._geoFenceController) {
@@ -1268,18 +1268,18 @@ Item {
 
                         Text {
                             width: parent.width
-                            text: root._geoFenceController && root._geoFenceController.circles.count === 0 ? "暂无圆形围栏" : ""
+                            text: root._geoFenceController && root._geoFenceController.circles.count === 0 ? qsTr("No circular fences") : ""
                             visible: root._geoFenceController && root._geoFenceController.circles.count === 0
                             font.pixelSize: root.panelBodyFont
                             color: root.panelMutedText
                         }
 
-                        PanelSectionTitle { text: "越界返回点" }
+                        PanelSectionTitle { text: qsTr("Breach Return Point") }
 
                         RectBtn {
                             width: parent.width
                             height: theme ? theme.controlHMd : 34
-                            label: root._geoFenceController && root._geoFenceController.breachReturnPoint.isValid ? "移除越界返回点" : "增加越界返回点"
+                            label: root._geoFenceController && root._geoFenceController.breachReturnPoint.isValid ? qsTr("Remove Breach Return Point") : qsTr("Add Breach Return Point")
                             btnEnabled: root.fenceEnabled
                             danger: root._geoFenceController && root._geoFenceController.breachReturnPoint.isValid
                             onClicked: {
@@ -1300,7 +1300,7 @@ Item {
                             visible: root._geoFenceController && root._geoFenceController.breachReturnPoint.isValid
 
                             Text {
-                                text: "返回高度"
+                                text: qsTr("Return Altitude")
                                 font.pixelSize: theme ? theme.fontSm : 11
                                 color: theme ? theme.text2 : "#5a6272"
                             }
@@ -1398,7 +1398,7 @@ Item {
             Text {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: "保存成功"
+                text: qsTr("Saved Successfully")
                 font.pixelSize: theme ? theme.fontLg : 15
                 font.weight: Font.DemiBold
                 color: theme ? theme.text : "#1a1d23"
@@ -1421,7 +1421,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "确定"
+                        text: qsTr("Ok")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: okMouse.containsMouse ? "#ffffff" : root.brandBlue
@@ -1463,7 +1463,7 @@ Item {
 
             Text {
                 width: parent.width
-                text: "任务尚未保存"
+                text: qsTr("Unsaved Mission")
                 font.pixelSize: theme ? theme.fontLg : 15
                 font.weight: Font.DemiBold
                 color: theme ? theme.text : "#1a1d23"
@@ -1473,7 +1473,7 @@ Item {
 
             Text {
                 width: parent.width
-                text: "当前任务有未保存的修改，是否保存？"
+                text: qsTr("The current mission has unsaved changes. Save them?")
                 font.pixelSize: theme ? theme.fontMd : 12
                 color: theme ? theme.text2 : "#5a6272"
                 horizontalAlignment: Text.AlignHCenter
@@ -1497,7 +1497,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "保存"
+                        text: qsTr("Save")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: promptSaveMouse.containsMouse ? "#ffffff" : root.brandBlue
@@ -1522,7 +1522,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "不保存"
+                        text: qsTr("Discard")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: theme ? theme.text2 : "#5a6272"
@@ -1551,7 +1551,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "取消"
+                        text: qsTr("Cancel")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: theme ? theme.text2 : "#5a6272"
@@ -1619,7 +1619,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "确定"
+                        text: qsTr("Ok")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: msgOkMouse.containsMouse ? "#ffffff" : root.brandBlue

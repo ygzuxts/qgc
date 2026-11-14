@@ -29,31 +29,39 @@ Rectangle {
     readonly property color _navColor: _dark ? "#030509" : "#f8fafc"
     readonly property color _lineColor: _dark ? "#253044" : "#d7e2f0"
     readonly property color _accent: qgcPal.brandingPurple
-    readonly property real _navWidth: (ScreenTools.isMobile || width < 1000) ? Math.max(112, Math.min(170, width * 0.18)) : Math.max(220, Math.min(270, width * 0.22))
-    readonly property real _pageScale: Math.max(ScreenTools.isMobile ? 1.02 : 0.78,
-                                              Math.min(1.30, Math.min(mainWindow.width / 1280, mainWindow.height / 720)))
-    readonly property bool _compactLayout: ScreenTools.isMobile || width < 1000
-    readonly property real _contentMargin: ScreenTools.isMobile ? 8 : 24
-    readonly property real _contentPadding: ScreenTools.isMobile ? 4 : 16
+    readonly property real _navWidth: _compactLayout ? Math.max(112, Math.min(170, width * 0.18)) : Math.max(220, Math.min(270, width * 0.22))
+    readonly property real _pageScale: Math.max(ScreenTools.isMobileLayout ? 1.02 : 0.78,
+                                              Math.min(1.30, Math.min(mainWindow.uiWidth / 1280, mainWindow.uiHeight / 720)))
+    readonly property bool _compactLayout: ScreenTools.isMobileLayout || width < 1000
+    readonly property real _navMargin: Math.round((_compactLayout ? 10 : 18) * _pageScale)
+    readonly property real _navSpacing: Math.round((_compactLayout ? 10 : 14) * _pageScale)
+    readonly property color _navHoverColor: Qt.rgba(_accent.r, _accent.g, _accent.b, _dark ? 0.28 : 0.10)
+    readonly property color _navTextColor: _dark ? "#e5edf8" : "#111827"
+    readonly property real _contentMargin: ScreenTools.isMobileLayout ? 8 : 24
+    readonly property real _contentPadding: ScreenTools.isMobileLayout ? 4 : 16
     property string _panelTitle: qsTr("Summary")
     signal popout()
 
     component NavigationButton: ConfigButton {
         id: navButton
-        implicitHeight: Math.max(44, ScreenTools.defaultFontPixelHeight * 2.4)
-        textColor: checked ? "#ffffff" : qgcPal.text
+        Layout.preferredHeight: Math.round((setupView._compactLayout ? 42 : 48) * setupView._pageScale)
+        padding: 0
+        leftPadding: Math.round((setupView._compactLayout ? 8 : 14) * setupView._pageScale)
+        rightPadding: Math.round((setupView._compactLayout ? 8 : 12) * setupView._pageScale)
+        textColor: checked ? "#ffffff" : setupView._navTextColor
         background: Rectangle {
             radius: 6
             color: navButton.checked ? setupView._accent
-                 : navButton.hovered ? Qt.rgba(setupView._accent.r, setupView._accent.g, setupView._accent.b, 0.10)
+                 : navButton.hovered ? setupView._navHoverColor
                  : "transparent"
         }
         contentItem: RowLayout {
-            spacing: 10
+            spacing: Math.round((setupView._compactLayout ? 6 : 10) * setupView._pageScale)
             Text {
                 font.family: setupView.configurationFontFamily
                 text: "•"
-                color: !navButton.setupComplete ? "#dc2626" : navButton.checked ? "#ffffff" : "#a8bddc"
+                color: !navButton.setupComplete ? "#dc2626" : navButton.checked ? "#ffffff"
+                       : Qt.rgba(setupView._accent.r, setupView._accent.g, setupView._accent.b, setupView._dark ? 0.55 : 0.35)
                 font.pixelSize: Math.max(14, Math.round(18 * setupView._pageScale))
                 font.weight: Font.Bold
             }
@@ -122,7 +130,7 @@ Rectangle {
     {
         if (mainWindow.allowViewSwitch()) {
             var autopilotPlugin = QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin
-            _panelTitle = vehicleComponent.name
+            _panelTitle = Qt.binding(function() { return vehicleComponent.name })
             var prereq = autopilotPlugin.prerequisiteSetup(vehicleComponent)
             if (prereq !== "") {
                 _messagePanelText = qsTr("%1 setup must be completed prior to %2 setup.").arg(prereq).arg(vehicleComponent.name)
@@ -265,16 +273,16 @@ Rectangle {
         id: backButton
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.margins: 14
-        width: setupView._navWidth - 28
-        height: 44
+        anchors.margins: setupView._navMargin
+        width: setupView._navWidth - 2 * setupView._navMargin
+        height: Math.round(48 * setupView._pageScale)
         text: qsTr("Back")
         font.pixelSize: Math.max(12, Math.round(15 * setupView._pageScale))
         textColor: setupView._accent
         contentItem: Text {
             font.family: setupView.configurationFontFamily
             text: backButton.text
-            color: setupView._accent
+            color: setupView._dark ? "#e6e6f0" : setupView._accent
             font.pixelSize: backButton.font.pixelSize
             font.weight: Font.Normal
             horizontalAlignment: Text.AlignHCenter
@@ -282,8 +290,8 @@ Rectangle {
         }
         onClicked: if (mainWindow.allowViewSwitch()) setupView.popout()
         background: Rectangle {
-            radius: 8
-            color: backButton.hovered ? Qt.rgba(setupView._accent.r, setupView._accent.g, setupView._accent.b, 0.1) : qgcPal.window
+            radius: Math.round(8 * setupView._pageScale)
+            color: backButton.hovered ? setupView._navHoverColor : (setupView._dark ? "#05070c" : "#ffffff")
             border.color: setupView._lineColor
         }
     }
@@ -293,10 +301,11 @@ Rectangle {
         font.family: setupView.configurationFontFamily
         id: navigationTitle
         anchors.top: backButton.bottom
-        anchors.topMargin: setupView._contentPadding
+        anchors.topMargin: setupView._navSpacing
         anchors.left: backButton.left
         width: backButton.width
         text: qsTr("Vehicle Configuration")
+        color: setupView._navTextColor
         font.weight: Font.Bold
         font.pixelSize: Math.max(16, Math.round((setupView._compactLayout ? 18 : 22) * setupView._pageScale))
         wrapMode: Text.WordWrap
@@ -304,12 +313,12 @@ Rectangle {
 
     QGCFlickable {
         id:                 buttonScroll
-        width:              setupView._navWidth - 28
-        anchors.topMargin:  14
+        width:              backButton.width
+        anchors.topMargin:  setupView._navSpacing
         anchors.top:        navigationTitle.bottom
         anchors.bottom:     parent.bottom
-        anchors.leftMargin: 14
-        anchors.left:       parent.left
+        anchors.bottomMargin: setupView._navMargin
+        anchors.left:       backButton.left
         contentHeight:      buttonColumn.height
         flickableDirection: Flickable.VerticalFlick
         clip:               true

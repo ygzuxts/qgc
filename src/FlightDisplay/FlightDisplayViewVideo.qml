@@ -22,7 +22,8 @@ import QGroundControl.Controllers
 
 Item {
     id:     root
-    clip:   true
+    property bool ffmpegTestEnabled: false
+
 
     property bool useSmallFont: true
 
@@ -57,7 +58,7 @@ Item {
             anchors.fill:   parent
             source:         "/res/NoVideoBackground.jpg"
             fillMode:       Image.PreserveAspectCrop
-            visible:        !(QGroundControl.videoManager.decoding)
+            visible:        !root.ffmpegTestEnabled && !(QGroundControl.videoManager.decoding)
 
             Rectangle {
                 anchors.centerIn:   parent
@@ -77,6 +78,13 @@ Item {
                 anchors.centerIn:   parent
             }
         }
+
+    FFmpegVideoItem {
+        anchors.fill: parent
+        visible: QGroundControl.videoManager.ffmpegEnabled && root.ffmpegTestEnabled
+        onVisibleChanged: if (visible) startTest()
+        Component.onCompleted: if (visible) startTest()
+    }
 
     Rectangle {
         id:             videoBackground
@@ -118,6 +126,12 @@ Item {
             QGCVideoBackground {
                 id:             videoContent
                 objectName:     "videoContent"
+
+                FFmpegVideoItem {
+                    objectName: "ffmpegVideoSink"
+                    anchors.fill: parent
+                    visible: QGroundControl.videoManager.ffmpegEnabled
+                }
 
                 Connections {
                     target: QGroundControl.videoManager
@@ -209,6 +223,11 @@ Item {
                 objectName:     "thermalVideo"
                 anchors.fill:   parent
                 opacity:        _camera ? (_camera.thermalMode === MavlinkCameraControl.THERMAL_BLEND ? _camera.thermalOpacity / 100 : 1.0) : 0
+                FFmpegVideoItem {
+                    objectName: "ffmpegVideoSink"
+                    anchors.fill: parent
+                    visible: QGroundControl.videoManager.ffmpegEnabled
+                }
             }
         }
         //-- Zoom

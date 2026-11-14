@@ -20,7 +20,7 @@ PX4TuningComponent::PX4TuningComponent(Vehicle* vehicle, AutoPilotPlugin* autopi
 
 QString PX4TuningComponent::name(void) const
 {
-    return _name;
+    return tr("PID Tuning");
 }
 
 QString PX4TuningComponent::description(void) const

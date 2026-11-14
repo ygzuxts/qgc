@@ -59,7 +59,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: theme ? theme.spacingLg : 14
                 anchors.verticalCenter: parent.verticalCenter
-                text: "起降"
+                text: qsTr("Takeoff / Landing")
                 font.pixelSize: theme ? theme.fontXl : 18
                 font.weight: Font.DemiBold
                 color: root.theme ? root.theme.text : "#111827"

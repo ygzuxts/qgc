@@ -14,10 +14,10 @@ Rectangle {
 
     function actionLabel(index) {
         switch (index) {
-        case 0: return "原地悬停"
-        case 1: return "恢复任务"
-        case 2: return "执行任务"
-        default: return "返航降落"
+        case 0: return qsTr("Hold Position")
+        case 1: return qsTr("Resume Mission")
+        case 2: return qsTr("Execute Mission")
+        default: return qsTr("Return and Land")
         }
     }
 
@@ -59,17 +59,17 @@ Rectangle {
 
     function summaryLabel(index) {
         switch (index) {
-        case 0: return "链路"
-        case 1: return "任务"
-        default: return "模式"
+        case 0: return qsTr("Link")
+        case 1: return qsTr("Mission")
+        default: return qsTr("Mode")
         }
     }
 
     function summaryValue(index) {
         switch (index) {
-        case 0: return root.state && root.state.vehicleConnected ? "已连接" : "未连接"
+        case 0: return root.state && root.state.vehicleConnected ? qsTr("Connected") : qsTr("Disconnected")
         case 1: return root.state && root.state.vehicleConnected ? (root.state.currentWP + "/" + root.state.totalWP) : "--/--"
-        default: return root.state ? root.state.flightMode : "未连接"
+        default: return root.state ? root.state.flightMode : qsTr("Disconnected")
         }
     }
 
@@ -138,7 +138,7 @@ Rectangle {
 
             Text {
                 anchors.centerIn: parent
-                text: "⚠ 确认切换"
+                text: qsTr("⚠ Confirm Failover")
                 font.pixelSize: theme ? theme.fontMd : 12; font.weight: Font.DemiBold
                 color: root.theme ? root.theme.amber : "#d97706"
             }

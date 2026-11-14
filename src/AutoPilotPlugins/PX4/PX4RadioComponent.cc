@@ -20,7 +20,7 @@ PX4RadioComponent::PX4RadioComponent(Vehicle* vehicle, AutoPilotPlugin* autopilo
 
 QString PX4RadioComponent::name(void) const
 {
-    return _name;
+    return tr("Radio");
 }
 
 QString PX4RadioComponent::description(void) const

@@ -14,6 +14,30 @@
 #include "MultiVehicleManager.h"
 #include "Vehicle.h"
 #include "FactGroup.h"
+#include "JsonHelper.h"
+#include <QtCore/QTranslator>
+
+namespace {
+QString translatedTelemetryLabel(const QString& text)
+{
+    // Saved labels may predate the metadata translation. Translate at display time
+    // so existing layouts work without clearing settings or changing their keys.
+    static const char* const contexts[] = {
+        "VehicleFact.json", "BatteryFact.json", "ClockFact.json", "DistanceSensorFact.json",
+        "EFIFact.json", "EscStatusFactGroup.json", "EstimatorStatusFactGroup.json",
+        "GeneratorFact.json", "GPSFact.json", "HygrometerFact.json", "LocalPositionFact.json",
+        "RPMFact.json", "SetpointFact.json", "SubmarineFact.json", "TemperatureFact.json",
+        "TerrainFactGroup.json", "VibrationFact.json", "WindFact.json"
+    };
+    for (const char* context : contexts) {
+        const QString translated = JsonHelper::translator()->translate(context, text.toUtf8().constData());
+        if (!translated.isEmpty()) {
+            return translated;
+        }
+    }
+    return text;
+}
+}
 
 // Important: The indices of these strings must match the InstrumentValueData::RangeType enum
 const QStringList InstrumentValueData::_rangeTypeNames = {
@@ -120,6 +144,11 @@ void InstrumentValueData::setText(const QString& text)
         _text = text;
         emit textChanged(text);
     }
+}
+
+QString InstrumentValueData::displayText(void) const
+{
+    return translatedTelemetryLabel(_text);
 }
 
 void InstrumentValueData::setShowUnits(bool showUnits)
@@ -362,4 +391,61 @@ QStringList InstrumentValueData::factValueNames(void) const
     }
 
     return valueNames;
+}
+
+QStringList InstrumentValueData::factGroupLabels(void) const
+{
+    // Display labels only: selectors and saved settings still use raw names.
+    const QMap<QString, QString> labels = {
+        { QStringLiteral("vehicle"), tr("Vehicle") },
+        { QStringLiteral("gps"), tr("GPS") },
+        { QStringLiteral("gps2"), tr("GPS 2") },
+        { QStringLiteral("wind"), tr("Wind") },
+        { QStringLiteral("vibration"), tr("Vibration") },
+        { QStringLiteral("temperature"), tr("Temperature") },
+        { QStringLiteral("clock"), tr("Clock") },
+        { QStringLiteral("setpoint"), tr("Attitude Setpoint") },
+        { QStringLiteral("distancesensor"), tr("Distance Sensor") },
+        { QStringLiteral("localposition"), tr("Local Position") },
+        { QStringLiteral("localpositionsetpoint"), tr("Local Position Setpoint") },
+        { QStringLiteral("escstatus"), tr("ESC Status") },
+        { QStringLiteral("estimatorstatus"), tr("Estimator Status") },
+        { QStringLiteral("hygrometer"), tr("Hygrometer") },
+        { QStringLiteral("generator"), tr("Generator") },
+        { QStringLiteral("efi"), tr("EFI") },
+        { QStringLiteral("rpm"), tr("RPM") },
+        { QStringLiteral("terrain"), tr("Terrain") },
+        { QStringLiteral("submarine"), tr("Submarine") },
+    };
+    QStringList result;
+    for (const QString& name : factGroupNames()) {
+        if (name.startsWith(QStringLiteral("Battery"), Qt::CaseInsensitive)) {
+            const QString suffix = name.mid(7);
+            bool isIndex = false;
+            (void) suffix.toInt(&isIndex);
+            result.append(suffix.isEmpty() ? tr("Battery") : isIndex ? tr("Battery %1").arg(suffix) : name);
+        } else {
+            result.append(labels.value(name.toLower(), name));
+        }
+    }
+    return result;
+}
+
+QStringList InstrumentValueData::factValueLabels(void) const
+{
+    FactGroup* group = _factGroupName == vehicleFactGroupName ? _vehicle : _vehicle->getFactGroup(_factGroupName);
+    const QStringList names = factValueNames();
+    QStringList result;
+    for (const QString& name : names) {
+        Fact* fact = group ? group->getFact(name) : nullptr;
+        result.append(fact && !fact->shortDescription().isEmpty() ? translatedTelemetryLabel(fact->shortDescription()) : name);
+    }
+    // Some ESC channels share a description; retain their identifiers to distinguish them.
+    const QStringList descriptions = result;
+    for (int index = 0; index < result.size(); ++index) {
+        if (descriptions.count(descriptions[index]) > 1) {
+            result[index] += QStringLiteral(" (%1)").arg(names[index]);
+        }
+    }
+    return result;
 }

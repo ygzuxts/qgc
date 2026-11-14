@@ -61,7 +61,7 @@ Rectangle {
         }
 
         QGCLabel {
-            text:           qsTr("返回飞行")
+            text:           qsTr("Back to Flight")
             font.pointSize: ScreenTools.largeFontPointSize
             color:          theme ? theme.text2 : qgcPal.text
         }

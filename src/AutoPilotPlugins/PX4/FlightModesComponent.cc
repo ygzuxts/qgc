@@ -28,7 +28,7 @@ FlightModesComponent::FlightModesComponent(Vehicle* vehicle, AutoPilotPlugin* au
 
 QString FlightModesComponent::name(void) const
 {
-    return _name;
+    return tr("Flight Modes");
 }
 
 QString FlightModesComponent::description(void) const

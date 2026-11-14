@@ -122,9 +122,9 @@ Item {
             id: _cr; anchors.centerIn: parent; spacing: 8
             Text { text: "23.3054°N  113.6846°E"; font.pixelSize: 11; color: root.theme ? root.theme.text2 : "#5a6272" }
             Rectangle { width: 1; height: 14; color: root.theme ? root.theme.border : "#e4e8ed"; anchors.verticalCenter: parent.verticalCenter }
-            Text { text: "高度 87m"; font.pixelSize: 11; color: root.theme ? root.theme.text2 : "#5a6272" }
+            Text { text: qsTr("Altitude 87m"); font.pixelSize: 11; color: root.theme ? root.theme.text2 : "#5a6272" }
             Rectangle { width: 1; height: 14; color: root.theme ? root.theme.border : "#e4e8ed"; anchors.verticalCenter: parent.verticalCenter }
-            Text { text: "级别 " + Math.round(map.zoomLevel); font.pixelSize: 11; color: root.theme ? root.theme.text3 : "#9aa3b2" }
+            Text { text: qsTr("Level ") + Math.round(map.zoomLevel); font.pixelSize: 11; color: root.theme ? root.theme.text3 : "#9aa3b2" }
         }
     }
 

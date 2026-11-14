@@ -458,7 +458,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 4
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "空速"; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
+                text: qsTr("Airspeed"); font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
             }
 
             // 刻度
@@ -528,7 +528,7 @@ Item {
             Text {
                 anchors.top: parent.top; anchors.topMargin: 4
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "高度"; font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
+                text: qsTr("Height"); font.pixelSize: Math.round(9 * (theme ? theme.uiScale : 1)); color: root._textColor
             }
 
             // 刻度
@@ -598,9 +598,9 @@ Item {
                 anchors.centerIn: parent; spacing: 20
                 Repeater {
                     model: [
-                        { label: "横滚", value: root._displayRoll.toFixed(1)    + "°" },
-                        { label: "俯仰", value: root._displayPitch.toFixed(1)   + "°" },
-                        { label: "偏航", value: root._displayHeading.toFixed(0) + "°" }
+                        { label: qsTr("Roll"), value: root._displayRoll.toFixed(1)    + "°" },
+                        { label: qsTr("Tilt"), value: root._displayPitch.toFixed(1)   + "°" },
+                        { label: qsTr("Yaw"), value: root._displayHeading.toFixed(0) + "°" }
                     ]
                     delegate: Row {
                         spacing: 4

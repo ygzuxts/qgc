@@ -29,7 +29,7 @@ SensorsComponent::SensorsComponent(Vehicle* vehicle, AutoPilotPlugin* autopilot,
 
 QString SensorsComponent::name(void) const
 {
-    return _name;
+    return tr("Sensors");
 }
 
 QString SensorsComponent::description(void) const

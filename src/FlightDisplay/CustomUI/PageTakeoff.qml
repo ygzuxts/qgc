@@ -109,10 +109,10 @@ Rectangle {
 
     function actionLabel(index) {
         switch (index) {
-        case 0: return "起飞"
-        case 1: return "着陆"
-        case 2: return "返航降落"
-        default: return "原地悬停"
+        case 0: return qsTr("Takeoff")
+        case 1: return qsTr("Land")
+        case 2: return qsTr("Return and Land")
+        default: return qsTr("Hold Position")
         }
     }
 
@@ -126,7 +126,7 @@ Rectangle {
     }
 
     function actionHint(index) {
-        return index === 3 ? "保持当前位置高度" : "长按执行"
+        return index === 3 ? qsTr("Hold current altitude") : qsTr("Hold to Execute")
     }
 
     function actionEnabled(index) {
@@ -155,10 +155,10 @@ Rectangle {
 
     function missionLoadedText() {
         if (!root.hasMission) {
-            return "未加载"
+            return qsTr("Not Loaded")
         }
         var count = state ? state.totalWP : 0
-        return count > 0 ? (count + " 个任务项") : "已加载"
+        return count > 0 ? (count + qsTr(" mission items")) : qsTr("Loaded")
     }
 
     function gpsCheckText() {
@@ -166,7 +166,7 @@ Rectangle {
             return "--"
         }
         var lock = state.gpsLockText && state.gpsLockText !== "--" ? state.gpsLockText : "--"
-        var sats = state.gpsSatellitesText && state.gpsSatellitesText !== "--" ? state.gpsSatellitesText + "星" : "--"
+        var sats = state.gpsSatellitesText && state.gpsSatellitesText !== "--" ? state.gpsSatellitesText + qsTr(" satellites") : "--"
         return lock + " · " + sats
     }
 
@@ -439,10 +439,10 @@ Rectangle {
 
     function safetyLabel(index) {
         switch (index) {
-        case 0: return "返航高度"
-        case 1: return "最大起飞高度"
-        case 2: return batteryThresholdParamName === "BAT_LOW_THR" ? "低电量告警阈值" : (batteryThresholdParamName.indexOf("VOLT") !== -1 ? "低电量电压阈值" : "低电量容量阈值")
-        default: return "失联超时"
+        case 0: return qsTr("Return Altitude")
+        case 1: return qsTr("Maximum Takeoff Altitude")
+        case 2: return batteryThresholdParamName === "BAT_LOW_THR" ? qsTr("Low battery warning threshold") : (batteryThresholdParamName.indexOf("VOLT") !== -1 ? qsTr("Low battery voltage threshold") : qsTr("Low battery capacity threshold"))
+        default: return qsTr("Connection loss timeout")
         }
     }
 
@@ -493,10 +493,10 @@ Rectangle {
 
     function safetyRangeText(index) {
         switch (index) {
-        case 0: return "范围 0–1000 m"
-        case 1: return "范围 0–500 m"
-        case 2: return batteryThresholdParamName === "BAT_LOW_THR" ? "范围 0.00–1.00" : "按当前飞控参数单位"
-        default: return "范围 0–300 s"
+        case 0: return qsTr("Range 0–1000 m")
+        case 1: return qsTr("Range 0–500 m")
+        case 2: return batteryThresholdParamName === "BAT_LOW_THR" ? qsTr("Range 0.00–1.00") : qsTr("Uses flight controller parameter units")
+        default: return qsTr("Range 0–300 s")
         }
     }
 
@@ -617,7 +617,9 @@ Rectangle {
         color: root.cardBg
         border.width: Math.round(1 * (theme ? theme.uiScale : 1))
         border.color: root.cardBorder
+        // Never compress a card below its content, including expanded editors.
         implicitHeight: inner.implicitHeight + 20
+        Layout.minimumHeight: implicitHeight
 
         Column {
             id: inner
@@ -862,18 +864,18 @@ Rectangle {
             height: Math.round(32 * (theme ? theme.uiScale : 1))
 
             TakeoffAltButton {
-                width: Math.round(94 * (theme ? theme.uiScale : 1))
+                width: (parent.width - parent.spacing) / 2
                 height: parent.height
                 enabled: editorRoot.enabledState
-                label: "使用默认值"
+                label: qsTr("Use Default")
                 onActivated: editorRoot.useDefault()
             }
 
             TakeoffAltButton {
-                width: Math.round(74 * (theme ? theme.uiScale : 1))
+                width: (parent.width - parent.spacing) / 2
                 height: parent.height
                 enabled: editorRoot.enabledState
-                label: editorRoot.confirmed ? "已确认" : "确认执行"
+                label: editorRoot.confirmed ? qsTr("Confirmed") : qsTr("Confirm Action")
                 primary: !editorRoot.confirmed
                 onActivated: editorRoot.confirm()
             }
@@ -900,18 +902,22 @@ Rectangle {
         anchors.rightMargin: 12
 
         PanelCard {
+            id: flightTimeCard
             implicitHeight: Math.round(48 * (theme ? theme.uiScale : 1))
             contentItem: RowLayout {
                 width: parent.width
+                height: flightTimeCard.height - 20
                 Text {
-                    text: "飞行时间"
+                    text: qsTr("Flight Time")
                     font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                     color: root.textMain
                     Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
+                    Layout.alignment: Qt.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
                 }
                 Text {
-                    text: state && state.flightTime ? state.flightTime : "--:--"
+                    text: root.state && root.state.flightTime ? root.state.flightTime : "--:--"
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                     font.pixelSize: Math.round(17 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Bold
                     color: root.brandBlue
@@ -921,7 +927,6 @@ Rectangle {
 
         PanelCard {
             visible: root.showMissionControl
-            implicitHeight: Math.round(150 * (theme ? theme.uiScale : 1))
             contentItem: Column {
                 width: parent.width
                 spacing: 12
@@ -930,14 +935,14 @@ Rectangle {
                     width: parent.width
                     height: Math.round(24 * (theme ? theme.uiScale : 1))
                     Text {
-                        text: "任务控制"
+                        text: qsTr("Mission Control")
                         font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
                         font.weight: Font.Bold
                         color: root.textMain
                     }
                     Text {
                         anchors.right: parent.right
-                        text: root.missionIsActive() ? (root.state && root.state.missionPaused ? "已暂停" : "执行中") : "待执行"
+                        text: root.missionIsActive() ? (root.state && root.state.missionPaused ? qsTr("Paused") : qsTr("In Progress")) : qsTr("Queued")
                         font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                         color: root.missionIsActive() ? "#16a34a" : root.textSub
                     }
@@ -951,21 +956,21 @@ Rectangle {
 
                     SmallActionButton {
                         width: (parent.width - parent.columnSpacing) / 2
-                        label: "开始任务"
+                        label: qsTr("Start Mission")
                         requireHold: true
                         enabledState: root.missionStartEnabled()
                         onClicked: root.openStartMissionCheck()
                     }
                     SmallActionButton {
                         width: (parent.width - parent.columnSpacing) / 2
-                        label: "继续任务"
+                        label: qsTr("Continue Mission")
                         requireHold: true
                         enabledState: root.missionContinueEnabled()
                         onClicked: root.continueMissionNow()
                     }
                     SmallActionButton {
                         width: (parent.width - parent.columnSpacing) / 2
-                        label: "暂停任务"
+                        label: qsTr("Pause Mission")
                         requireHold: true
                         enabledState: root.missionPauseEnabled()
                         onClicked: {
@@ -975,7 +980,7 @@ Rectangle {
                     }
                     SmallActionButton {
                         width: (parent.width - parent.columnSpacing) / 2
-                        label: "中止任务"
+                        label: qsTr("Abort Mission")
                         tone: "danger"
                         requireHold: true
                         enabledState: root.missionAbortEnabled()
@@ -994,20 +999,30 @@ Rectangle {
                 width: parent.width
                 spacing: 8
 
-                Row {
+                Item {
                     width: parent.width
-                    height: Math.round(24 * (theme ? theme.uiScale : 1))
-                    Text {
-                        text: "起飞目标高度"
-                        font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
-                        font.weight: Font.Bold
-                        color: root.textMain
-                    }
-                    Text {
+                    implicitHeight: Math.max(takeoffHeader.implicitHeight, 36 * (theme ? theme.uiScale : 1))
+                    height: implicitHeight
+
+                    RowLayout {
+                        id: takeoffHeader
+                        anchors.left: parent.left
                         anchors.right: parent.right
-                        text: root.takeoffTargetExpanded ? "收起" : "展开"
-                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
-                        color: root.brandBlue
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 10
+                        Text {
+                            Layout.fillWidth: true
+                            text: qsTr("Target Takeoff Altitude")
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
+                            font.weight: Font.Bold
+                            color: root.textMain
+                        }
+                        Text {
+                            text: root.takeoffTargetExpanded ? qsTr("Collapse") : qsTr("Expand")
+                            font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
+                        }
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -1023,12 +1038,12 @@ Rectangle {
                     height: visible ? implicitHeight : 0
 
                     Text {
-                        text: "一键起飞高度"
+                        text: qsTr("Takeoff altitude")
                         font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                         color: root.textMain
                     }
                     Text {
-                        text: root.takeoffSafetyParamName.length > 0 ? root.takeoffSafetyParamName : "本地起飞目标高度"
+                        text: root.takeoffSafetyParamName.length > 0 ? root.takeoffSafetyParamName : qsTr("Local Takeoff Altitude")
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
@@ -1075,23 +1090,25 @@ Rectangle {
                         }
                     }
                     Row {
+                        width: parent.width
+                        height: Math.round(34 * (theme ? theme.uiScale : 1))
                         spacing: 8
                         TakeoffAltButton {
-                            width: Math.round(98 * (theme ? theme.uiScale : 1))
+                            width: (parent.width - parent.spacing) / 2
                             height: Math.round(34 * (theme ? theme.uiScale : 1))
-                            label: "使用默认值"
+                            label: qsTr("Use Default")
                             onActivated: root.useDefaultTakeoffAlt()
                         }
                         TakeoffAltButton {
-                            width: Math.round(70 * (theme ? theme.uiScale : 1))
+                            width: (parent.width - parent.spacing) / 2
                             height: Math.round(34 * (theme ? theme.uiScale : 1))
-                            label: root.takeoffAltConfirmed ? "已确认" : "确认数值"
+                            label: root.takeoffAltConfirmed ? qsTr("Confirmed") : qsTr("Confirm Value")
                             primary: !root.takeoffAltConfirmed
                             onActivated: root.confirmTakeoffAlt()
                         }
                     }
                     Text {
-                        text: "范围 0–500 m"
+                        text: qsTr("Range 0–500 m")
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
                     }
@@ -1105,26 +1122,31 @@ Rectangle {
                 width: parent.width
                 spacing: 8
 
-                Row {
+                Item {
                     width: parent.width
-                    height: Math.round(28 * (theme ? theme.uiScale : 1))
+                    implicitHeight: Math.max(actionsHeader.implicitHeight, 36 * (theme ? theme.uiScale : 1))
+                    height: implicitHeight
 
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "飞行动作"
-                        font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
-                        font.weight: Font.Bold
-                        color: root.textMain
-                    }
-
-                    Text {
+                    RowLayout {
+                        id: actionsHeader
+                        anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        text: root.actionsExpanded ? "收起" : "展开"
-                        font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
-                        color: root.brandBlue
+                        spacing: 10
+                        Text {
+                            Layout.fillWidth: true
+                            text: qsTr("Flight Actions")
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: Math.round(16 * (theme ? theme.uiScale : 1))
+                            font.weight: Font.Bold
+                            color: root.textMain
+                        }
+                        Text {
+                            text: root.actionsExpanded ? qsTr("Collapse") : qsTr("Expand")
+                            font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                            color: root.brandBlue
+                        }
                     }
-
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -1141,10 +1163,10 @@ Rectangle {
                     ActionValueEditor {
                         id: actionAltEditor
                         width: parent.width
-                        title: "改变高度"
-                        subtitle: "目标相对高度"
+                        title: qsTr("Change Altitude")
+                        subtitle: qsTr("Target Relative Altitude")
                         unit: "m"
-                        rangeText: "范围 0–1000 m"
+                        rangeText: qsTr("Range 0–1000 m")
                         valueText: "50"
                         confirmed: root.actionAltConfirmed
                         enabledState: root.additionalActionEnabled("altitude")
@@ -1158,10 +1180,10 @@ Rectangle {
                     ActionValueEditor {
                         id: actionSpeedEditor
                         width: parent.width
-                        title: "改变最大地速"
-                        subtitle: "最大地速"
+                        title: qsTr("Change Maximum Ground Speed")
+                        subtitle: qsTr("Maximum Ground Speed")
                         unit: "m/s"
-                        rangeText: "范围 0.1–100.0 m/s"
+                        rangeText: qsTr("Range 0.1–100.0 m/s")
                         valueText: "5.0"
                         confirmed: root.actionSpeedConfirmed
                         enabledState: root.additionalActionEnabled("speed")
@@ -1174,7 +1196,7 @@ Rectangle {
 
                     Text {
                         width: parent.width
-                        text: "飞行中可用；未解锁或未起飞时会自动禁用。"
+                        text: qsTr("Available in flight; disabled while disarmed or on the ground.")
                         wrapMode: Text.WordWrap
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                         color: root.textSub
@@ -1303,7 +1325,7 @@ Rectangle {
 
         Text {
             Layout.fillWidth: true
-            text: "安全设置"
+            text: qsTr("Safety Settings")
             font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
             font.weight: Font.Bold
             color: root.textMain
@@ -1312,13 +1334,27 @@ Rectangle {
 
         PanelCard {
             visible: !root.parametersReady
-            contentItem: Text {
+            contentItem: Column {
                 width: parent.width
-                text: "参数未就绪，当前\n无法读取和修改飞\n控安全参数"
-                wrapMode: Text.WordWrap
-                font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
-                lineHeight: 1.15
-                color: root.textMain
+                spacing: 4
+
+                Text {
+                    width: parent.width
+                    text: qsTr("Parameters not ready")
+                    wrapMode: Text.Wrap
+                    font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
+                    font.weight: Font.DemiBold
+                    color: root.textMain
+                }
+
+                Text {
+                    width: parent.width
+                    text: qsTr("Flight controller safety parameters cannot be read or modified yet.")
+                    wrapMode: Text.Wrap
+                    font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                    lineHeight: 1.15
+                    color: root.textMain
+                }
             }
         }
 
@@ -1331,56 +1367,50 @@ Rectangle {
                     width: parent.width
                     spacing: 8
 
-                    RowLayout {
+                    Item {
                         width: parent.width
-                        height: Math.round(42 * (theme ? theme.uiScale : 1))
-                        spacing: 8
+                        implicitHeight: safetyHeader.implicitHeight + 8
+                        height: implicitHeight
 
                         Column {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            spacing: 2
-
+                            id: safetyHeader
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 6
                             Text {
                                 width: parent.width
                                 text: root.safetyLabel(index)
                                 font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                                 font.weight: Font.Bold
                                 color: root.textMain
-                                elide: Text.ElideRight
+                                wrapMode: Text.WordWrap
                             }
-
                             Text {
                                 width: parent.width
                                 text: root.safetyParamName(index)
                                 font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1))
-                                color: root.brandBlue
-                                elide: Text.ElideRight
+                                color: root.textSub
+                                wrapMode: Text.WrapAnywhere
+                            }
+                            RowLayout {
+                                width: parent.width
+                                spacing: 12
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: root.safetyCollapsedValue(index)
+                                    font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                                    font.weight: Font.DemiBold
+                                    color: root.textMain
+                                    elide: Text.ElideRight
+                                }
+                                Text {
+                                    text: root.safetyExpandedAt(index) ? qsTr("Collapse") : qsTr("Expand")
+                                    font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
+                                    color: root.brandBlue
+                                }
                             }
                         }
-
-                        Text {
-                            id: valueSummary
-                            Layout.preferredWidth: Math.round(54 * (theme ? theme.uiScale : 1))
-                            Layout.alignment: Qt.AlignVCenter
-                            text: root.safetyCollapsedValue(index)
-                            horizontalAlignment: Text.AlignRight
-                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
-                            font.weight: Font.DemiBold
-                            color: theme && theme.darkMode ? "#dbeafe" : "#475569"
-                            elide: Text.ElideRight
-                        }
-
-                        Text {
-                            id: expandText
-                            Layout.preferredWidth: Math.round(28 * (theme ? theme.uiScale : 1))
-                            Layout.alignment: Qt.AlignVCenter
-                            text: root.safetyExpandedAt(index) ? "收起" : "展开"
-                            horizontalAlignment: Text.AlignRight
-                            font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
-                            color: root.brandBlue
-                        }
-
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
@@ -1443,7 +1473,7 @@ Rectangle {
                 spacing: 10
 
                 Text {
-                    text: "开始任务前检查"
+                    text: qsTr("Pre-Mission Checks")
                     font.pixelSize: Math.round(15 * (theme ? theme.uiScale : 1))
                     font.weight: Font.Bold
                     color: root.textMain
@@ -1451,11 +1481,11 @@ Rectangle {
 
                 Repeater {
                     model: [
-                        { label: "飞行器连接", value: root.vehicleConnected ? "已连接" : "未连接" },
-                        { label: "任务已加载", value: root.missionLoadedText() },
-                        { label: "飞行器可执行", value: state ? state.mainStatusText : "--" },
-                        { label: "GPS 定位", value: root.gpsCheckText() },
-                        { label: "电池电量", value: state ? state.batteryPercentText : "--" }
+                        { label: qsTr("Vehicle Connection"), value: root.vehicleConnected ? qsTr("Connected") : qsTr("Disconnected") },
+                        { label: qsTr("Mission Loaded"), value: root.missionLoadedText() },
+                        { label: qsTr("Vehicle Ready"), value: state ? state.mainStatusText : "--" },
+                        { label: qsTr("GPS Fix"), value: root.gpsCheckText() },
+                        { label: qsTr("Battery Level"), value: state ? state.batteryPercentText : "--" }
                     ]
 
                     Row {
@@ -1490,7 +1520,7 @@ Rectangle {
 
                 Text {
                     width: startMissionCheckPopup.width - 36
-                    text: "GPS 或电池项为警告时仍可执行，但请确认现场飞行条件安全。"
+                    text: qsTr("GPS or battery warnings do not block this action. Confirm that flight conditions are safe.")
                     wrapMode: Text.WordWrap
                     font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                     color: "#f59e0b"
@@ -1518,7 +1548,7 @@ Rectangle {
                         border.color: confirmMouse.containsMouse || confirmMouse.pressed ? root.brandBorder : (theme && theme.darkMode ? "#3a3a3a" : "#cfd4dc")
                         Text {
                             anchors.centerIn: parent
-                            text: "确定"
+                            text: qsTr("Ok")
                             font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: confirmMouse.pressed ? "#ffffff" : (confirmMouse.containsMouse ? root.brandBlue : root.textMain)
                         }
@@ -1546,7 +1576,7 @@ Rectangle {
                         border.color: cancelMouse.containsMouse || cancelMouse.pressed ? root.brandBorder : (theme && theme.darkMode ? "#3a3a3a" : "#cfd4dc")
                         Text {
                             anchors.centerIn: parent
-                            text: "取消"
+                            text: qsTr("Cancel")
                             font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                             color: cancelMouse.pressed ? "#ffffff" : (cancelMouse.containsMouse ? root.brandBlue : root.textMain)
                         }

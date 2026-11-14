@@ -26,7 +26,9 @@ DECLARE_SETTINGGROUP(Video, "Video")
 
     // Setup enum values for videoSource settings into meta data
     QVariantList videoSourceList;
-#if defined(QGC_GST_STREAMING) || defined(QGC_QT_STREAMING)
+#if defined(QGC_FFMPEG_STREAMING)
+    videoSourceList.append(videoSourceRTSP);
+#elif defined(QGC_GST_STREAMING) || defined(QGC_QT_STREAMING)
     videoSourceList.append(videoSourceRTSP);
     videoSourceList.append(videoSourceUDPH264);
     videoSourceList.append(videoSourceUDPH265);
@@ -42,7 +44,7 @@ DECLARE_SETTINGGROUP(Video, "Video")
         videoSourceList.append(videoSourceHerelinkHotspot);
     #endif
 #endif
-#ifndef QGC_DISABLE_UVC
+#if !defined(QGC_DISABLE_UVC) && !defined(QGC_FFMPEG_STREAMING)
     QStringList uvcDevices = UVCReceiver::getDeviceNameList();
     for (const QString& device : uvcDevices) {
         videoSourceList.append(device);
@@ -148,7 +150,7 @@ DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspTimeout)
         _rtspTimeoutFact = _createSettingsFact(rtspTimeoutName);
 
         _rtspTimeoutFact->setVisible(
-#ifdef QGC_GST_STREAMING
+#if defined(QGC_GST_STREAMING) || defined(QGC_FFMPEG_STREAMING)
             true
 #else
             false

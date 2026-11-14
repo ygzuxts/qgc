@@ -1,8 +1,12 @@
 // FlyViewHUD.qml
-// 起飞页左下角 HUD：罗盘、角度条、姿态仪、速度/经纬度/高度信息栏
+// 起飞页左下角 HUD：罗盘、角度条、姿态仪、速度/姿态/高度信息栏
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
+
+import QGroundControl.Controls
+import QGroundControl.Templates as T
 
 import QGroundControl.FlightMap
 import QGroundControl.ScreenTools
@@ -23,23 +27,12 @@ Rectangle {
         return value !== undefined && value !== null && value === value
     }
 
-    function fmt(value, decimals, suffix) {
-        return validNumber(value) ? (Number(value).toFixed(decimals) + (suffix || "")) : "--"
-    }
-
-    readonly property bool mobileLayout: theme ? theme.mobile : ScreenTools.isMobile
+    readonly property bool mobileLayout: theme ? theme.mobile : ScreenTools.isMobileLayout
     readonly property real edgePad: Math.max(2, Math.round(4 * hudScale))
 
     readonly property bool connected: !!(state && state.vehicleConnected)
-    readonly property real roll: connected && validNumber(state.roll) ? state.roll : 0
-    readonly property real pitch: connected && validNumber(state.pitch) ? state.pitch : 0
     readonly property real heading: connected && validNumber(state.heading) ? state.heading : 0
-    readonly property string speedText: connected ? fmt(state.groundSpeed, 1, "") : "--"
-    readonly property string latText: connected ? fmt(state.latitude, 5, "") : "--"
-    readonly property string lonText: connected ? fmt(state.longitude, 5, "") : "--"
-    readonly property string altText: connected ? fmt(state.altitude, 1, "") : "--"
     readonly property real infoOpacity: state && state.infoBarOpacity !== undefined ? Math.max(0.1, Math.min(1, state.infoBarOpacity)) : 0.82
-    readonly property color glassBg: Qt.rgba(0, 0, 0, infoOpacity)
     readonly property color glassLine: Qt.rgba(1, 1, 1, 0.16)
     readonly property real leftPad: compactMode ? Math.max(2, Math.round(4 * hudScale)) : (theme ? theme.spacingXl : 16)
     readonly property real bottomPad: mobileLayout ? edgePad : compactMode ? Math.max(2, Math.round(4 * hudScale)) : (theme ? theme.spacingXl : 16)
@@ -74,8 +67,6 @@ Rectangle {
             id: compass
             size: root.instrumentSize
             heading: root.heading
-            roll: root.roll
-            pitch: root.pitch
             theme: root.theme
             infoBarOpacity: root.infoOpacity
         }
@@ -141,83 +132,136 @@ Rectangle {
         }
     }
 
+    // Reuse the stock data model and persistence, with a fixed six-slot renderer.
+    T.HorizontalFactValueGrid {
+        id: telemetryModel
+        visible: false
+        settingsGroup: "CustomFlyViewTelemetry"
+        specificVehicleForCard: null
+
+        function ensureSixSlots() {
+            if (!columns) return
+            while (columns.count < 3) appendColumn()
+            while (columns.count > 3) deleteLastColumn()
+            while (rowCount < 2) appendRow()
+            while (rowCount > 2) deleteLastRow()
+        }
+        onColumnsChanged: Qt.callLater(ensureSixSlots)
+        Component.onCompleted: ensureSixSlots()
+    }
+
+    Component {
+        id: telemetryValueEditor
+        InstrumentValueEditDialog { }
+    }
+
     Rectangle {
         id: telemetryBar
         anchors.left: root.mobileLayout ? mobileInstruments.right : instrumentColumn.right
         anchors.leftMargin: root.mobileLayout ? root.edgePad : root.telemetryGap
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.mobileLayout ? root.bottomPad : root.bottomPad + Math.round(28 * root.hudScale * root.telemetryScale)
+        anchors.bottomMargin: root.bottomPad
         visible: root.enoughSpaceForTelemetry
         width: Math.max(220, Math.min(root.telemetryPreferredWidth, root.mobileLayout ? root.width - mobileInstruments.width - root.edgePad * 3 : root.width - instrumentColumn.x - instrumentColumn.width - root.telemetryGap - root.leftPad))
-        height: Math.round((root.mobileLayout ? 44 : 66) * root.hudScale * root.telemetryScale)
+        height: Math.max(120, Math.round(128 * root.hudScale * root.telemetryScale))
         radius: Math.round(8 * root.hudScale * root.telemetryScale)
-        color: root.glassBg
+        // Match the heading strip's tint and alpha, including the opacity setting.
+        color: Qt.rgba(0.03, 0.05, 0.09, root.infoOpacity)
         border.width: 1
         border.color: root.glassLine
 
-        RowLayout {
+        Row {
             anchors.fill: parent
-            anchors.leftMargin: Math.round(16 * root.hudScale * root.telemetryScale)
-            anchors.rightMargin: Math.round(16 * root.hudScale * root.telemetryScale)
+            anchors.margins: 6
             spacing: 0
 
-            Column {
-                Layout.fillWidth: true
-                spacing: Math.round((root.mobileLayout ? 2 : 5) * root.hudScale * root.telemetryScale)
+            Repeater {
+                model: telemetryModel.columns
 
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "飞行速度"
-                    font.pixelSize: Math.max(9, Math.round(12 * root.hudScale * root.telemetryScale))
-                    color: Qt.rgba(1, 1, 1, 0.82)
-                }
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: root.speedText
-                    font.pixelSize: Math.max(12, Math.round(16 * root.hudScale * root.telemetryScale))
-                    font.weight: Font.Bold
-                    color: "#ffffff"
-                }
-            }
+                Item {
+                    id: telemetryColumn
+                    required property var object
+                    required property int index
+                    width: parent.width / 3
+                    height: parent.height
 
-            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: root.glassLine }
+                    Rectangle {
+                        visible: telemetryColumn.index > 0
+                        width: 1
+                        height: parent.height - 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: root.glassLine
+                    }
 
-            Column {
-                Layout.fillWidth: true
-                spacing: Math.round((root.mobileLayout ? 2 : 4) * root.hudScale * root.telemetryScale)
+                    Column {
+                        anchors.fill: parent
+                        anchors.leftMargin: 5
+                        anchors.rightMargin: 5
+                        spacing: 0
 
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: Math.round((root.mobileLayout ? 2 : 5) * root.hudScale * root.telemetryScale)
-                    Text { text: "纬度"; font.pixelSize: Math.max(9, Math.round(12 * root.hudScale * root.telemetryScale)); color: Qt.rgba(1, 1, 1, 0.82) }
-                    Text { text: root.latText; font.pixelSize: Math.max(11, Math.round(15 * root.hudScale * root.telemetryScale)); font.weight: Font.Bold; color: "#ffffff" }
-                }
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: Math.round((root.mobileLayout ? 2 : 5) * root.hudScale * root.telemetryScale)
-                    Text { text: "经度"; font.pixelSize: Math.max(9, Math.round(12 * root.hudScale * root.telemetryScale)); color: Qt.rgba(1, 1, 1, 0.82) }
-                    Text { text: root.lonText; font.pixelSize: Math.max(11, Math.round(15 * root.hudScale * root.telemetryScale)); font.weight: Font.Bold; color: "#ffffff" }
-                }
-            }
+                        Repeater {
+                            model: telemetryColumn.object
 
-            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: root.glassLine }
+                            Rectangle {
+                                id: telemetrySlot
+                                required property var object
+                                required property int index
+                                objectName: "telemetrySlot_" + telemetryColumn.index + "_" + index
+                                readonly property var valueData: object
+                                readonly property var fact: valueData ? valueData.fact : null
+                                readonly property string valueText: root.connected && fact ? fact.enumOrValueString : "--"
+                                readonly property string unitText: fact && valueData.showUnits
+                                                                   ? (fact.units === "deg" ? "°" : fact.units) : ""
+                                width: parent.width
+                                height: parent.height / 2
+                                radius: 5
+                                color: slotMouse.pressed ? Qt.rgba(1, 1, 1, 0.16)
+                                                        : slotMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
 
-            Column {
-                Layout.fillWidth: true
-                spacing: Math.round((root.mobileLayout ? 2 : 5) * root.hudScale * root.telemetryScale)
+                                Column {
+                                    anchors.centerIn: parent
+                                    width: parent.width - 4
+                                    spacing: 1
 
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "飞行高度"
-                    font.pixelSize: Math.max(9, Math.round(12 * root.hudScale * root.telemetryScale))
-                    color: Qt.rgba(1, 1, 1, 0.82)
-                }
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: root.altText
-                    font.pixelSize: Math.max(12, Math.round(16 * root.hudScale * root.telemetryScale))
-                    font.weight: Font.Bold
-                    color: "#ffffff"
+                                    Text {
+                                        width: parent.width
+                                        text: telemetrySlot.valueData
+                                              ? (telemetrySlot.valueData.displayText || (telemetrySlot.fact ? telemetrySlot.fact.shortDescription : qsTr("Select Data")))
+                                              : qsTr("Select Data")
+                                        horizontalAlignment: Text.AlignHCenter
+                                        elide: Text.ElideRight
+                                        font.pointSize: 12
+                                        color: Qt.rgba(1, 1, 1, 0.82)
+                                    }
+                                    Text {
+                                        width: parent.width
+                                        text: telemetrySlot.valueText + (telemetrySlot.unitText ? " " + telemetrySlot.unitText : "")
+                                        horizontalAlignment: Text.AlignHCenter
+                                        elide: Text.ElideRight
+                                        font.pointSize: 16
+                                        font.bold: true
+                                        color: "#ffffff"
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: slotMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    enabled: !!telemetrySlot.valueData
+                                    onClicked: {
+                                        var dialog = telemetryValueEditor.createObject(mainWindow, {
+                                            instrumentValueData: telemetrySlot.valueData
+                                        })
+                                        if (dialog) dialog.open()
+                                    }
+                                }
+                                ToolTip.visible: slotMouse.containsMouse
+                                ToolTip.text: qsTr("Click to choose displayed data")
+                            }
+                        }
+                    }
                 }
             }
         }

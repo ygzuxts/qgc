@@ -21,6 +21,9 @@ RowLayout {
     id:         control
     spacing:    ScreenTools.defaultFontPixelWidth
 
+    // Reuse the status drawer from toolbars which already show flight status.
+    property bool messageIconOnly: false
+
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property var    _vehicleInAir:      _activeVehicle ? _activeVehicle.flying || _activeVehicle.landing : false
     property bool   _vtolInFWDFlight:   _activeVehicle ? _activeVehicle.vtolInFwdFlight : false
@@ -37,9 +40,9 @@ RowLayout {
     QGCLabel {
         id:                 mainStatusLabel
         Layout.fillHeight:  true
-        Layout.preferredWidth: contentWidth + vehicleMessagesIcon.width + control.spacing
+        Layout.preferredWidth: contentWidth + vehicleMessagesIcon.width + (control.messageIconOnly ? 0 : control.spacing)
         verticalAlignment:  Text.AlignVCenter
-        text:               mainStatusText()
+        text:               control.messageIconOnly ? "" : mainStatusText()
         font.pointSize:     ScreenTools.largeFontPointSize
 
         property string _commLostText:      qsTr("Comms Lost")
@@ -152,7 +155,7 @@ RowLayout {
         verticalAlignment:  Text.AlignVCenter
         text:               _vtolInFWDFlight ? qsTr("FW(vtol)") : qsTr("MR(vtol)")
         font.pointSize:     _vehicleInAir ? ScreenTools.largeFontPointSize : ScreenTools.defaultFontPointSize
-        visible:            _activeVehicle && _activeVehicle.vtol
+        visible:            !control.messageIconOnly && _activeVehicle && _activeVehicle.vtol
 
         QGCMouseArea {
             anchors.fill: parent

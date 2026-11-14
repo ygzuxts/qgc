@@ -1,0 +1,11 @@
+{
+  "revision": "b6ca5d8c-dirty",
+  "calls": 359,
+  "kinds": {
+    "literal": 226,
+    "unresolved": 29,
+    "template": 104
+  },
+  "unique_literal_candidates": 221,
+  "limitations": "Source candidates only; not build-filtered. Dynamic templates and EVENT require separate integration."
+}

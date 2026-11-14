@@ -1,10 +1,11 @@
-// PageSettings.qml  换皮系统设置页：导航换皮，内容复用 QGC 原版设置页
+// Shared navigation for the custom settings and analysis pages.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
 import QGroundControl
 import QGroundControl.AppSettings
+import QGroundControl.Controllers
 import QGroundControl.Palette
 import QGroundControl.ScreenTools
 
@@ -14,9 +15,18 @@ Rectangle {
     property var state: null
     property var theme: null
     property var appSettings: QGroundControl.settingsManager ? QGroundControl.settingsManager.appSettings : null
+    property bool analyzeMode: false
     property int selectedIndex: 0
-    property string selectedUrl: "qrc:/qml/QGroundControl/AppSettings/GeneralSettings.qml"
+    readonly property string defaultSettingsUrl: "qrc:/qml/QGroundControl/AppSettings/GeneralSettings.qml"
+    property string selectedUrl: defaultSettingsUrl
+    readonly property var analyzePages: analyzeMode ? QGroundControl.corePlugin.analyzePages : []
+    readonly property var selectedAnalyzePage: analyzePages[selectedIndex]
     signal closeRequested()
+
+    onAnalyzeModeChanged: {
+        selectedIndex = 0
+        selectedUrl = defaultSettingsUrl
+    }
 
     readonly property bool pageDark: theme ? !!theme.darkMode : false
     readonly property color brandColor: qgcPal.brandingPurple
@@ -30,7 +40,7 @@ Rectangle {
     readonly property color hoverColor: brandHoverColor
     readonly property color blueColor: brandColor
     readonly property real pageScale: theme ? theme.uiScale : 1
-    readonly property bool compactLayout: ScreenTools.isMobile || root.width < 1000
+    readonly property bool compactLayout: ScreenTools.isMobileLayout || root.width < 1000
     readonly property real navWidth: compactLayout ? Math.max(112, Math.min(170, root.width * 0.18)) : Math.max(220, Math.min(270, root.width * 0.22))
 
     color: bgColor
@@ -38,6 +48,14 @@ Rectangle {
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     SettingsPagesModel { id: settingsPagesModel }
+
+    Loader {
+        id: geoTagControllerLoader
+        active: root.analyzeMode
+        sourceComponent: Component {
+            GeoTagController {}
+        }
+    }
 
     function _paletteValueIsDark(value) {
         return value === true || value === 1 || value === "1" || String(value).toLowerCase() === "true"
@@ -234,7 +252,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: qsTr("System Settings")
+                    text: root.analyzeMode ? qsTranslate("MainWindow", "Analyze Tools") : qsTr("System Settings")
                     font.pixelSize: Math.max(16, Math.round((root.compactLayout ? 18 : 22) * root.pageScale))
                     font.weight: Font.Bold
                     color: root.textColor
@@ -253,13 +271,23 @@ Rectangle {
                         spacing: 8
 
                         Repeater {
-                            model: settingsPagesModel
+                            model: root.analyzeMode ? null : settingsPagesModel
 
                             NavItem {
                                 title: root._titleFor(name)
                                 pageUrl: url
                                 pageIndex: index
                                 pageVisibleState: pageVisible()
+                            }
+                        }
+
+                        Repeater {
+                            model: root.analyzePages
+
+                            NavItem {
+                                title: modelData.title
+                                pageUrl: modelData.url
+                                pageIndex: index
                             }
                         }
                     }
@@ -285,6 +313,9 @@ Rectangle {
                         width: parent.width
                         wrapMode: Text.WordWrap
                         text: {
+                            if (root.analyzeMode) {
+                                return root.selectedAnalyzePage ? root.selectedAnalyzePage.title : ""
+                            }
                             var item = settingsPagesModel.get(root.selectedIndex)
                             return item ? root._titleFor(item.name) : qsTr("General")
                         }
@@ -295,6 +326,7 @@ Rectangle {
 
                     Text {
                         width: parent.width
+                        visible: !root.analyzeMode
                         wrapMode: Text.WordWrap
                         text: {
                             var item = settingsPagesModel.get(root.selectedIndex)
@@ -315,13 +347,25 @@ Rectangle {
                     border.color: root.lineColor
                     clip: true
 
-                    // Original settings pages own their scrolling. Give them the
-                    // actual viewport instead of nesting a second Flickable.
+                    // Give each page its own viewport so it can manage scrolling.
                     Loader {
-                        id: originalSettingsLoader
+                        id: contentLoader
+                        // GeoTagPage accesses its controller through the loader context.
+                        readonly property var geoController: geoTagControllerLoader.item
                         anchors.fill: parent
                         anchors.margins: Math.round((root.compactLayout ? 4 : 16) * root.pageScale)
-                        source: root.selectedUrl
+                        source: root.analyzeMode
+                                ? (root.selectedAnalyzePage ? root.selectedAnalyzePage.url : "")
+                                : root.selectedUrl
+
+                        Connections {
+                            target: root.analyzeMode ? contentLoader.item : null
+                            ignoreUnknownSignals: true
+
+                            function onPopout() {
+                                mainWindow.createrWindowedAnalyzePage(root.selectedAnalyzePage.title, contentLoader.source)
+                            }
+                        }
                     }
                 }
             }

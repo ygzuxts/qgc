@@ -11,6 +11,7 @@
 #include "ParameterManager.h"
 #include "QGCLoggingCategory.h"
 #include "Vehicle.h"
+#include "QGCApplication.h"
 
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickItem>
@@ -23,7 +24,7 @@ VehicleComponent::VehicleComponent(Vehicle *vehicle, AutoPilotPlugin *autopilot,
     , _autopilot(autopilot)
     , _KnownVehicleComponent(KnownVehicleComponent)
 {
-    // qCDebug(VehicleComponentLog) << Q_FUNC_INFO << this;
+    connect(qgcApp(), &QGCApplication::languageChanged, this, &VehicleComponent::nameChanged);
 
     if (!vehicle || !autopilot) {
         qCWarning(VehicleComponentLog) << "Internal error";

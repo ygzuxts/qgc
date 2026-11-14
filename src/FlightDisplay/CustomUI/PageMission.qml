@@ -34,15 +34,15 @@ Rectangle {
         dim: true
         anchors.centerIn: parent
         width: Math.min(root.width - 32, 300)
-        title: confirmAction === "clearVehicle" ? "清空飞控任务" : "删除任务"
+        title: confirmAction === "clearVehicle" ? qsTr("Clear Vehicle Mission") : qsTr("Delete Mission")
         standardButtons: Dialog.Ok | Dialog.Cancel
 
         Label {
             width: parent.width
             wrapMode: Text.WordWrap
             text: confirmAction === "clearVehicle"
-                  ? "确定要清空飞控上的任务吗？此操作会同步删除飞控中的任务。"
-                  : "确定要删除这个本地任务吗？"
+                  ? qsTr("Clear the mission on the vehicle? This will remove all vehicle mission items.")
+                  : qsTr("Delete this local mission?")
         }
 
         onAccepted: {
@@ -89,7 +89,7 @@ Rectangle {
         if (name.toLowerCase().endsWith(".plan")) {
             name = name.substring(0, name.length - 5)
         }
-        return name.length > 0 ? name : "未命名任务"
+        return name.length > 0 ? name : qsTr("Untitled Mission")
     }
 
     function _fileNameFromPath(path) {
@@ -144,7 +144,7 @@ Rectangle {
     }
 
     function _vehicleTaskSavePath() {
-        return _saveDir() + "任务_" + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
+        return _saveDir() + qsTr("Mission_") + Qt.formatDateTime(new Date(), "yyyyMMdd_HHmmss") + ".plan"
     }
 
     function _saveVehicleTaskToLocal() {
@@ -293,7 +293,7 @@ Rectangle {
         anchors.fill: parent
         spacing: theme ? theme.spacingXs : 6
 
-        SectionTitle { text: "任务列表"; theme: root.theme }
+        SectionTitle { text: qsTr("Mission List"); theme: root.theme }
 
         Item {
             id: missionListArea
@@ -348,7 +348,7 @@ Rectangle {
                         Text {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            text: "飞控中有任务"
+                            text: qsTr("Vehicle Has Mission")
                             font.pixelSize: root.narrowMode ? 13 : (theme ? theme.fontMd : 13)
                             font.weight: Font.Bold
                             color: theme ? theme.text : "#111827"
@@ -360,7 +360,7 @@ Rectangle {
                     Text {
                         anchors.centerIn: parent
                         visible: !root.vehicleTaskAvailable
-                        text: "暂无保存任务"
+                        text: qsTr("No saved missions")
                         font.pixelSize: theme ? theme.fontMd : 13
                         font.weight: Font.Medium
                         color: theme ? theme.text3 : "#9aa3b2"
@@ -376,8 +376,8 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.WordWrap
                         text: root.vehicleTaskAvailable
-                              ? "本地任务列表为空，可保存\n飞控任务或清空飞控任务。"
-                              : "点击右下角新增"
+                              ? qsTr("No local missions. Save the vehicle mission\\nor clear the vehicle mission.")
+                              : qsTr("Use Add at the bottom right")
                         font.pixelSize: root.narrowMode ? 11 : (theme ? theme.fontXs : 10)
                         color: theme ? theme.text3 : "#9aa3b2"
                     }
@@ -391,7 +391,7 @@ Rectangle {
                         SmallButton {
                             width: Math.max(54, Math.min(68, (emptyCard.width - (root.narrowMode ? 34 : 44)) / 2))
                             height: 24
-                            label: "保存任务"
+                            label: qsTr("Save Mission")
                             textPixelSize: root.narrowMode ? 10 : 11
                             enabledState: root.vehicleTaskAvailable
                             onClicked: root._saveVehicleTaskToLocal()
@@ -400,7 +400,7 @@ Rectangle {
                         SmallButton {
                             width: Math.max(54, Math.min(68, (emptyCard.width - (root.narrowMode ? 34 : 44)) / 2))
                             height: 24
-                            label: "清空飞控"
+                            label: qsTr("Clear Vehicle Mission")
                             textPixelSize: root.narrowMode ? 10 : 11
                             enabledState: root.vehicleTaskAvailable
                             onClicked: root._confirmClearVehicleTask()
@@ -619,7 +619,7 @@ Rectangle {
                         color: executeTaskMouse.containsMouse || executeTaskMouse.pressed ? "#ffffff" : (theme ? theme.text2 : "#5a6272")
                     }
                     Text {
-                        text: "执行任务"
+                        text: qsTr("Execute Mission")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: executeTaskMouse.containsMouse || executeTaskMouse.pressed ? "#ffffff" : (theme ? theme.text2 : "#5a6272")
@@ -663,7 +663,7 @@ Rectangle {
                         color: editTaskMouse.containsMouse || editTaskMouse.pressed ? "#ffffff" : (theme ? theme.text2 : "#5a6272")
                     }
                     Text {
-                        text: "编辑"
+                        text: qsTr("Edit")
                         font.pixelSize: theme ? theme.fontMd : 12
                         font.weight: Font.Medium
                         color: editTaskMouse.containsMouse || editTaskMouse.pressed ? "#ffffff" : (theme ? theme.text2 : "#5a6272")

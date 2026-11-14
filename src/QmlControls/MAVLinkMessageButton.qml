@@ -40,7 +40,7 @@ Button {
             text:                   control.compID
             color:                  checked ? qgcPal.buttonHighlightText : qgcPal.buttonText
             verticalAlignment:      Text.AlignVCenter
-            Layout.minimumHeight:   ScreenTools.isMobile ? (ScreenTools.defaultFontPixelHeight * 2) : (ScreenTools.defaultFontPixelHeight * 1.5)
+            Layout.minimumHeight:   ScreenTools.isMobileLayout ? (ScreenTools.defaultFontPixelHeight * 2) : (ScreenTools.defaultFontPixelHeight * 1.5)
             Layout.minimumWidth:    _compIDWidth
         }
         QGCLabel {

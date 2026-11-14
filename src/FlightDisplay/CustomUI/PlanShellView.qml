@@ -35,24 +35,24 @@ Rectangle {
 
     function itemTitle(item, visibleIndex) {
         if (!item) {
-            return "任务项 " + String(visibleIndex + 1)
+            return qsTr("Mission item ") + String(visibleIndex + 1)
         }
-        const base = item.commandName && item.commandName.length > 0 ? item.commandName : (item.commandDescription && item.commandDescription.length > 0 ? item.commandDescription : "任务项")
+        const base = item.commandName && item.commandName.length > 0 ? item.commandName : (item.commandDescription && item.commandDescription.length > 0 ? item.commandDescription : qsTr("Mission Item"))
         return "SEQ " + item.sequenceNumber + " · " + base
     }
 
     function itemSubtitle(item) {
         if (!item) {
-            return "等待接入 PlanView 底层逻辑"
+            return qsTr("PlanView integration pending")
         }
         const parts = []
         if (item.specifiesCoordinate && item.coordinate && item.coordinate.isValid) {
             parts.push(item.coordinate.latitude.toFixed(5) + ", " + item.coordinate.longitude.toFixed(5))
         }
         if (item.altitude) {
-            parts.push("高度 " + Number(item.altitude.value).toFixed(0) + "m")
+            parts.push(qsTr("Altitude ") + Number(item.altitude.value).toFixed(0) + "m")
         }
-        return parts.length > 0 ? parts.join("  ") : "可直接复用 MissionController / PlanMasterController"
+        return parts.length > 0 ? parts.join("  ") : qsTr("Uses MissionController / PlanMasterController")
     }
 
     color: "transparent"
@@ -97,14 +97,14 @@ Rectangle {
                 spacing: 2
 
                 Text {
-                    text: "任务规划"
+                    text: qsTr("Plan View")
                     font.pixelSize: 15
                     font.weight: Font.DemiBold
                     color: theme ? theme.text : "#1a1d23"
                 }
 
                 Text {
-                    text: "任务规划"
+                    text: qsTr("Plan View")
                     font.pixelSize: 10
                     color: theme ? theme.text3 : "#9aa3b2"
                 }
@@ -122,7 +122,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "返回飞行"
+                    text: qsTr("Back to Flight")
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     color: theme ? theme.text2 : "#5a6272"
@@ -149,7 +149,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "返回飞行"
+                    text: qsTr("Back to Flight")
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     color: theme ? theme.blue : "#000066"
@@ -220,10 +220,10 @@ Rectangle {
                     width: parent.width
                     spacing: 0
 
-                    SectionTitle { text: "任务规划"; theme: root.theme }
+                    SectionTitle { text: qsTr("Plan View"); theme: root.theme }
 
                     Rectangle { width: parent.width; height: 1; color: theme ? theme.border : "#e4e8ed" }
-                    SectionTitle { text: root.currentLayerIndex === 0 ? "航线规划" : (root.currentLayerIndex === 1 ? "电子围栏" : "返航点"); theme: root.theme }
+                    SectionTitle { text: root.currentLayerIndex === 0 ? qsTr("Route Planning") : (root.currentLayerIndex === 1 ? qsTr("Geofence") : qsTr("Home Position")); theme: root.theme }
 
                     Column {
                         x: 12
@@ -278,7 +278,7 @@ Rectangle {
                                         }
 
                                         Text {
-                                            text: root.currentLayerIndex === 0 ? root.itemSubtitle(missionItem) : (root.currentLayerIndex === 1 ? "编辑围栏边界与安全区域" : "编辑返航点位置")
+                                            text: root.currentLayerIndex === 0 ? root.itemSubtitle(missionItem) : (root.currentLayerIndex === 1 ? qsTr("Edit fence boundaries and safety areas") : qsTr("Edit home position"))
                                             font.pixelSize: 10
                                             color: theme ? theme.text3 : "#9aa3b2"
                                             elide: Text.ElideRight
@@ -328,10 +328,10 @@ Rectangle {
 
                 Repeater {
                     model: [
-                        { title: "任务", value: "编辑" },
-                        { title: "地图", value: "可用" },
-                        { title: "连线", value: "正常" },
-                        { title: "状态", value: "就绪" }
+                        { title: qsTr("Mission"), value: qsTr("Edit") },
+                        { title: qsTr("Maps"), value: qsTr("Available") },
+                        { title: qsTr("Connection"), value: qsTr("Normal") },
+                        { title: qsTr("Status"), value: qsTr("Ready") }
                     ]
 
                     delegate: Rectangle {

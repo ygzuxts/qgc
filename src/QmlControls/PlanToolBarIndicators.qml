@@ -40,7 +40,7 @@ Item {
     property real   _mediumValueWidth:          ScreenTools.defaultFontPixelWidth * 4
     property real   _smallValueWidth:           ScreenTools.defaultFontPixelWidth * 3
     property real   _labelToValueSpacing:       ScreenTools.defaultFontPixelWidth
-    property real   _rowSpacing:                ScreenTools.isMobile ? 1 : 0
+    property real   _rowSpacing:                ScreenTools.isMobileLayout ? 1 : 0
     property real   _distance:                  _currentMissionItemValid ? _currentMissionItem.distance : NaN
     property real   _altDifference:             _currentMissionItemValid ? _currentMissionItem.altDifference : NaN
     property real   _azimuth:                   _currentMissionItemValid ? _currentMissionItem.azimuth : NaN

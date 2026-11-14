@@ -29,6 +29,35 @@ ApplicationWindow {
     id:             mainWindow
     visible:        true
 
+    // Android presents the desktop canvas in one uniformly scaled coordinate system.
+    readonly property real uiWidth: ScreenTools.isAndroid ? ScreenTools.screenWidth : contentItem.width
+    readonly property real uiHeight: ScreenTools.isAndroid ? ScreenTools.screenHeight : contentItem.height
+    readonly property real uiScale: ScreenTools.isAndroid
+                                   ? Math.max(0.001, Math.min(contentItem.width / uiWidth, contentItem.height / uiHeight) * 1.15)
+                                   : 1
+    readonly property Item uiRoot: desktopViewport
+
+    property Item desktopViewport: Item {
+        parent: mainWindow.contentItem
+        width: mainWindow.uiWidth
+        height: mainWindow.uiHeight
+        x: (mainWindow.contentItem.width - width * mainWindow.uiScale) / 2
+        y: (mainWindow.contentItem.height - height * mainWindow.uiScale) / 2
+        scale: mainWindow.uiScale
+        transformOrigin: Item.TopLeft
+    }
+
+    // Popups live in the window overlay. Scale around its center so centered
+    // dialogs stay aligned with the desktop canvas, including on wide screens.
+    readonly property real popupOffsetX: (Overlay.overlay.width - uiWidth) / 2
+    readonly property real popupOffsetY: (Overlay.overlay.height - uiHeight) / 2
+    Overlay.overlay.transform: Scale {
+        origin.x: mainWindow.Overlay.overlay.width / 2
+        origin.y: mainWindow.Overlay.overlay.height / 2
+        xScale: mainWindow.uiScale
+        yScale: mainWindow.uiScale
+    }
+
     property bool   _utmspSendActTrigger
     property bool   _utmspStartTelemetry
 
@@ -282,18 +311,27 @@ ApplicationWindow {
     }
 
     FlyView { 
+        parent: mainWindow.uiRoot
         id:                     flyView
         anchors.fill:           parent
+        anchors.bottomMargin: replayStatus.visible ? replayStatus.height : 0
         utmspSendActTrigger:    _utmspSendActTrigger
     }
 
     PlanView {
+        parent: mainWindow.uiRoot
         id:             planView
         anchors.fill:   parent
+        anchors.bottomMargin: replayStatus.visible ? replayStatus.height : 0
         visible:        false
     }
 
-    footer: LogReplayStatusBar {
+    LogReplayStatusBar {
+        id: replayStatus
+        parent: mainWindow.uiRoot
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
         visible: QGroundControl.settingsManager.flyViewSettings.showLogReplayStatusBar.rawValue
     }
 
@@ -482,6 +520,8 @@ ApplicationWindow {
 
     Rectangle {
         id:             toolDrawer
+        parent:         mainWindow.uiRoot
+        z:              QGroundControl.zOrderTopMost
         anchors.fill:   parent
         anchors.topMargin: flyView.visible && toolDrawerLoader.item && toolDrawerLoader.item.customNavigation === true
                            ? flyView.informationBarHeight : 0
@@ -582,9 +622,10 @@ ApplicationWindow {
 
     Popup {
         id:                 criticalVehicleMessagePopup
-        y:                  ScreenTools.toolbarHeight + ScreenTools.defaultFontPixelHeight
-        x:                  Math.round((mainWindow.width - width) * 0.5)
-        width:              mainWindow.width  * 0.55
+        parent:             mainWindow.Overlay.overlay
+        y:                  mainWindow.popupOffsetY + ScreenTools.toolbarHeight + ScreenTools.defaultFontPixelHeight
+        x:                  mainWindow.popupOffsetX + Math.round((mainWindow.uiWidth - width) * 0.5)
+        width:              mainWindow.uiWidth  * 0.55
         height:             criticalVehicleMessageText.contentHeight + ScreenTools.defaultFontPixelHeight * 2
         modal:              false
         focus:              true
@@ -684,8 +725,9 @@ ApplicationWindow {
 
     Popup {
         id:             indicatorDrawer
+        parent:         mainWindow.Overlay.overlay
         x:              calcXPosition()
-        y:              ScreenTools.toolbarHeight + _margins
+        y:              mainWindow.popupOffsetY + _toolbarHeight + _margins
         leftInset:      0
         rightInset:     0
         topInset:       0
@@ -701,11 +743,14 @@ ApplicationWindow {
 
         property bool _expanded:    false
         property real _margins:     ScreenTools.defaultFontPixelHeight / 4
+        readonly property real _toolbarHeight: flyView.visible
+                                               ? Math.max(ScreenTools.toolbarHeight, flyView.informationBarHeight)
+                                               : ScreenTools.toolbarHeight
 
         function calcXPosition() {
             if (indicatorItem) {
-                var xCenter = indicatorItem.mapToItem(mainWindow.contentItem, indicatorItem.width / 2, 0).x
-                return Math.max(_margins, Math.min(xCenter - (contentItem.implicitWidth / 2), mainWindow.contentItem.width - contentItem.implicitWidth - _margins - (indicatorDrawer.padding * 2) - (ScreenTools.defaultFontPixelHeight / 2)))
+                var xCenter = indicatorItem.mapToItem(mainWindow.Overlay.overlay, indicatorItem.width / 2, 0).x
+                return Math.max(mainWindow.popupOffsetX + _margins, Math.min(xCenter - (contentItem.implicitWidth / 2), mainWindow.popupOffsetX + mainWindow.uiWidth - contentItem.implicitWidth - _margins - (indicatorDrawer.padding * 2) - (ScreenTools.defaultFontPixelHeight / 2)))
             } else {
                 return _margins
             }
@@ -755,8 +800,8 @@ ApplicationWindow {
 
         contentItem: QGCFlickable {
             id:             indicatorDrawerLoaderFlickable
-            implicitWidth:  Math.min(mainWindow.contentItem.width - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.width)
-            implicitHeight: Math.min(mainWindow.contentItem.height - ScreenTools.toolbarHeight - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.height)
+            implicitWidth:  Math.min(mainWindow.uiWidth - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.width)
+            implicitHeight: Math.min(mainWindow.uiHeight - indicatorDrawer._toolbarHeight - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.height)
             contentWidth:   indicatorDrawerLoader.width
             contentHeight:  indicatorDrawerLoader.height
 
@@ -824,6 +869,7 @@ ApplicationWindow {
     }
 
     UTMSPActivationStatusBar{
+        parent: mainWindow.uiRoot
          id:                         activationbar
          activationStartTimestamp:   UTMSPStateStorage.startTimeStamp
          activationApproval:         UTMSPStateStorage.showActivationTab && QGroundControl.utmspManager.utmspVehicle.vehicleActivation

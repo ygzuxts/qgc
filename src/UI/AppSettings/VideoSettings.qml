@@ -103,7 +103,7 @@ SettingsPage {
             Layout.fillWidth:   true
             text:               qsTr("Low Latency Mode")
             fact:               _videoSettings.lowLatencyMode
-            visible:            !_videoAutoStreamConfig && _isStreamSource && fact.visible && _isGST
+            visible:            !_videoAutoStreamConfig && _isStreamSource && fact.visible && (_isGST || _videoManager.ffmpegEnabled)
         }
 
         LabelledFactComboBox {

@@ -50,11 +50,11 @@ Item {
     property int currentTab: 1
     property bool customPlanShellVisible: false
     property string customPlanFilePath: ""
-    property bool settingsPageVisible: false
+    property string openToolPage: ""
     readonly property real informationBarHeight: topBar.height
     property real leftW: Math.max(minLeftW, Math.min(maxLeftW, theme.leftPanelW))
     property real rightW: Math.max(minRightW, Math.min(maxRightW, theme.rightPanelW))
-    property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobile ? 0.44 : 0.52)))
+    property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobileLayout ? 0.44 : 0.52)))
     property bool hudCollapsed: false
     property bool showLeftPanel: _panelSettings.showLeftPanel
     property bool showRightPanel: _panelSettings.showRightPanel
@@ -64,22 +64,22 @@ Item {
     property bool showBottomActionBar: _panelSettings.showBottomActionBar
     property bool showViewSwitchBar: _flyViewSettings.showViewSwitchBar.rawValue
     readonly property var uiTheme: theme
-    readonly property var uiState: state
+    readonly property var uiState: flightViewState
     readonly property bool taskListPageActive: currentTab === 1 && !customPlanShellVisible
     readonly property bool takeoffPageActive: currentTab === 0 && !customPlanShellVisible
     readonly property bool bottomBarVisible: false
     readonly property real effectiveLeftW: taskListPageActive && showLeftPanel ? leftW : 0
     readonly property real effectiveRightW: takeoffPageActive && showRightPanel ? rightW : 0
-    readonly property real minLeftW: width * (ScreenTools.isMobile ? 0.17 : 0.104)
-    readonly property real maxLeftW: width * (ScreenTools.isMobile ? 0.34 : 0.208)
-    readonly property real minRightW: width * (ScreenTools.isMobile ? 0.18 : 0.115)
-    readonly property real maxRightW: width * (ScreenTools.isMobile ? 0.34 : 0.219)
+    readonly property real minLeftW: width * (ScreenTools.isMobileLayout ? 0.17 : 0.104)
+    readonly property real maxLeftW: width * (ScreenTools.isMobileLayout ? 0.34 : 0.208)
+    readonly property real minRightW: width * (ScreenTools.isMobileLayout ? 0.18 : 0.115)
+    readonly property real maxRightW: width * (ScreenTools.isMobileLayout ? 0.34 : 0.219)
     readonly property real qgcAndroidInstrumentSize: Math.min(ScreenTools.defaultFontPixelHeight * 6.38, height * 0.253, width * 0.132)
-    readonly property real minHudH: Math.round(ScreenTools.isMobile ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
-    readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobile ? 0.50 : 0.58), ScreenTools.isMobile ? minHudH : 0))
+    readonly property real minHudH: Math.round(ScreenTools.isMobileLayout ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
+    readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobileLayout ? 0.50 : 0.58), ScreenTools.isMobileLayout ? minHudH : 0))
     readonly property real bottomBarH: theme.bottomBarH
     // Mobile instruments use the actual map viewport dimensions in FlyViewHUD.
-    readonly property real sharedHudInstrumentSize: ScreenTools.isMobile ? 0
+    readonly property real sharedHudInstrumentSize: ScreenTools.isMobileLayout ? 0
                                                     : Math.max(96, Math.min(172, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
     readonly property real sharedHudTelemetryWidth: Math.max(220, Math.min(Math.round(430 * theme.uiScale), width - theme.spacingXl - sharedHudInstrumentSize - Math.max(8, Math.round(18 * theme.uiScale)) - theme.spacingXl))
 
@@ -129,7 +129,7 @@ Item {
     }
 
     FlyViewState {
-        id: state
+        id: flightViewState
         activeVehicle: _root.activeVehicle
         missionController: _root.missionController
         guidedController: _root.guidedController
@@ -161,7 +161,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        state: state
+        state: _root.uiState
         theme: theme
         currentTab: _root.currentTab
         flightModePanelVisible: _root.flightModePanelVisible
@@ -169,19 +169,26 @@ Item {
         z: 120
         onFlightModeButtonClicked: _root.flightModePanelVisible = !_root.flightModePanelVisible
         onFlightModePanelCloseRequested: _root.flightModePanelVisible = false
+        onAnalyzeToolsRequested: {
+            if (!mainWindow.allowViewSwitch() || !mainWindow.closeTool()) {
+                return
+            }
+            _root.flightModePanelVisible = false
+            _root.openToolPage = "analyze"
+        }
         onSettingsRequested: {
             if (!mainWindow.closeTool()) {
                 return
             }
             _root.flightModePanelVisible = false
-            _root.settingsPageVisible = true
+            _root.openToolPage = "settings"
         }
         onPageSwitchRequested: {
-            if (_root.settingsPageVisible || mainWindow.vehicleConfigurationOpen()) {
+            if (_root.openToolPage !== "" || mainWindow.vehicleConfigurationOpen()) {
                 if (!mainWindow.closeTool()) {
                     return
                 }
-                _root.settingsPageVisible = false
+                _root.openToolPage = ""
                 _root.customPlanShellVisible = false
                 _root.flightModePanelVisible = false
                 _root.currentTab = 0
@@ -208,7 +215,7 @@ Item {
         anchors.bottom: parent.bottom
         width: _root.effectiveLeftW
         visible: _root.customFlyViewEnabled && _root.taskListPageActive && _root.showLeftPanel
-        state: state
+        state: _root.uiState
         theme: theme
         clip: true
         backgroundOpacity: _root.sidePanelOpacity
@@ -381,7 +388,7 @@ Item {
             visible: _root.takeoffPageActive && !_root.hudCollapsed
             clip: false
             z: 8
-            state: state
+            state: _root.uiState
             theme: theme
             instrumentSizeOverride: _root.sharedHudInstrumentSize
             telemetryWidthOverride: _root.sharedHudTelemetryWidth
@@ -392,7 +399,7 @@ Item {
         id: flightModePanel
         x: topBar.flightModePanelX
         y: topBar.flightModePanelY
-        state: state
+        state: _root.uiState
         theme: theme
         visible: _root.customFlyViewEnabled && _root.flightModePanelVisible
         z: 90
@@ -405,7 +412,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: _root.bottomBarVisible ? bottomBar.top : parent.bottom
         width: _root.effectiveRightW
-        state: state
+        state: _root.uiState
         theme: theme
         clip: true
         currentTab: _root.currentTab
@@ -457,7 +464,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         height: _root.bottomBarH
-        state: state
+        state: _root.uiState
         theme: theme
         visible: _root.bottomBarVisible
         onFailoverRequested: failoverDialog.visible = true
@@ -493,21 +500,22 @@ Item {
     }
 
     Loader {
-        id: settingsPageLoader
+        id: toolPageLoader
         anchors.top: topBar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        active: _root.customFlyViewEnabled && _root.settingsPageVisible
+        active: _root.customFlyViewEnabled && _root.openToolPage !== ""
         asynchronous: true
         visible: active
         z: 110
 
         sourceComponent: Component {
             PageSettings {
-                state: state
+                state: _root.uiState
                 theme: _root.uiTheme
-                onCloseRequested: _root.settingsPageVisible = false
+                analyzeMode: _root.openToolPage === "analyze"
+                onCloseRequested: _root.openToolPage = ""
             }
         }
     }

@@ -18,6 +18,7 @@ import QGroundControl.Palette
 
 ColumnLayout {
     property var    instrumentValueData:            null
+    property real   minimumFontPointSize:           0
     property bool   settingsUnlocked:               false
     property alias  contentWidth:                   label.contentWidth
 
@@ -35,13 +36,17 @@ ColumnLayout {
     QGCLabel {
         id:                 label
         Layout.alignment:   Qt.AlignVCenter
-        font.pointSize:     _fontSize
+        font.pointSize:     Math.max(_fontSize, minimumFontPointSize)
         color:              instrumentValueData.isValidColor(instrumentValueData.currentColor) ? instrumentValueData.currentColor : qgcPal.text
         text:               valueText()
 
         function valueText() {
             if (instrumentValueData.fact) {
-                return instrumentValueData.fact.enumOrValueString + (instrumentValueData.showUnits ? " " + instrumentValueData.fact.units : "")
+                var units = instrumentValueData.fact.units
+                if (units === "deg") {
+                    units = "°"
+                }
+                return instrumentValueData.fact.enumOrValueString + (instrumentValueData.showUnits ? " " + units : "")
             } else {
                 return qsTr("--.--")
             }

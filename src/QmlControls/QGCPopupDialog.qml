@@ -41,8 +41,10 @@ import QGroundControl.ScreenTools
 //      preventClose = true prior to returning from your signal handlers.
 Popup {
     id:                 root
-    width:  mainWindow.width
-    height: mainWindow.height
+    width:  mainWindow.uiWidth
+    height: mainWindow.uiHeight
+    x:                  mainWindow.popupOffsetX
+    y:                  mainWindow.popupOffsetY
     parent:             Overlay.overlay
     modal:              true
     focus:              true
@@ -69,8 +71,8 @@ Popup {
     property int    _previousValidationErrorCount: 0
 
     background: QGCMouseArea {
-        width:  mainWindow.width
-        height: mainWindow.height
+        width:  mainWindow.uiWidth
+        height: mainWindow.uiHeight
 
         onClicked: {
             if (closePolicy & Popup.CloseOnPressOutside) {
@@ -252,8 +254,8 @@ Popup {
             Layout.preferredHeight: Math.min(maxAvailableHeight, totalContentHeight)
             color:                  _qgcPal.window
 
-            property real maxAvailableWidth:    mainWindow.width - _contentMargin * 4
-            property real maxAvailableHeight:   mainWindow.height - titleRowLayout.height - _contentMargin * 5
+            property real maxAvailableWidth:    mainWindow.uiWidth - _contentMargin * 4
+            property real maxAvailableHeight:   mainWindow.uiHeight - titleRowLayout.height - _contentMargin * 5
             property real totalContentWidth:    dialogContentParent.childrenRect.width + _contentMargin * 2
             property real totalContentHeight:   dialogContentParent.childrenRect.height + _contentMargin * 2
 

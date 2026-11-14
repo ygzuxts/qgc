@@ -1,0 +1,221 @@
+{"context": "VehicleMessages", "source": "Airspeed estimation invalid\t"}
+{"context": "VehicleMessages", "source": "Airspeed estimation valid\t"}
+{"context": "VehicleMessages", "source": "Airspeed sensor failure detected. Check connection and reboot.\t"}
+{"context": "VehicleMessages", "source": "Airspeed sensor failure detected. Return to launch (RTL) is advised.\t"}
+{"context": "VehicleMessages", "source": "Already higher than takeoff altitude\t"}
+{"context": "VehicleMessages", "source": "Altitude change is outside geofence\t"}
+{"context": "VehicleMessages", "source": "Arm auth: Denied"}
+{"context": "VehicleMessages", "source": "Arm auth: Denied because airspace is in use"}
+{"context": "VehicleMessages", "source": "Arm auth: Denied because of bad weather"}
+{"context": "VehicleMessages", "source": "Arm auth: Denied by timeout in authorizer"}
+{"context": "VehicleMessages", "source": "Arm auth: No response"}
+{"context": "VehicleMessages", "source": "Arm auth: Requesting authorization..."}
+{"context": "VehicleMessages", "source": "Arm auth: Temporarily rejected"}
+{"context": "VehicleMessages", "source": "Arm stick gesture disabled if arm switch in use\t"}
+{"context": "VehicleMessages", "source": "Arming denied: Resolve system health failures first\t"}
+{"context": "VehicleMessages", "source": "Arming denied: calibrating\t"}
+{"context": "VehicleMessages", "source": "Arming denied: throttle not in safe position\t"}
+{"context": "VehicleMessages", "source": "Ascent speed has been constrained by max speed\t"}
+{"context": "VehicleMessages", "source": "Autotune aborted before finishing"}
+{"context": "VehicleMessages", "source": "Autotune axis timeout, skipping to next axis"}
+{"context": "VehicleMessages", "source": "Autotune finished successfully"}
+{"context": "VehicleMessages", "source": "Autotune returned to idle"}
+{"context": "VehicleMessages", "source": "Autotune started"}
+{"context": "VehicleMessages", "source": "Calibration denied: not supported in SIH mode\t"}
+{"context": "VehicleMessages", "source": "Calibration: Disabling RC input\t"}
+{"context": "VehicleMessages", "source": "Calibration: Restoring RC input\t"}
+{"context": "VehicleMessages", "source": "Compass needs calibration - Land now!\t"}
+{"context": "VehicleMessages", "source": "Connection to ground station lost\t"}
+{"context": "VehicleMessages", "source": "Connection to mission computer lost\t"}
+{"context": "VehicleMessages", "source": "Control high latency failed! Telemetry unavailable\t"}
+{"context": "VehicleMessages", "source": "Could not set mission closest to position.\t"}
+{"context": "VehicleMessages", "source": "Critical battery\t"}
+{"context": "VehicleMessages", "source": "Cruise speed has been constrained by max speed\t"}
+{"context": "VehicleMessages", "source": "DO JUMP waypoint could not be written.\t"}
+{"context": "VehicleMessages", "source": "Dangerously low battery! Shutting system down in 60 seconds\t"}
+{"context": "VehicleMessages", "source": "Descent speed has been constrained by max speed\t"}
+{"context": "VehicleMessages", "source": "Disarming denied: not landed\t"}
+{"context": "VehicleMessages", "source": "EKF2_MAG_TYPE invalid, resetting to default"}
+{"context": "VehicleMessages", "source": "ESC calibration denied! Press safety button first\t"}
+{"context": "VehicleMessages", "source": "ESC failure: Not all ESCs are armed. Land now!"}
+{"context": "VehicleMessages", "source": "Emergency battery level\t"}
+{"context": "VehicleMessages", "source": "Error loading settings\t"}
+{"context": "VehicleMessages", "source": "Error saving settings\t"}
+{"context": "VehicleMessages", "source": "Estimated position error is approaching the failsafe threshold\t"}
+{"context": "VehicleMessages", "source": "Executing Mission\t"}
+{"context": "VehicleMessages", "source": "Failed to communicate with IO, abort.\t"}
+{"context": "VehicleMessages", "source": "Failsafe activated\t"}
+{"context": "VehicleMessages", "source": "Figure 8 command not supported."}
+{"context": "VehicleMessages", "source": "Figure 8 command only available for fixed wing and vtol vehicles."}
+{"context": "VehicleMessages", "source": "Figure 8 command rejected, Only available in fixed wing mode."}
+{"context": "VehicleMessages", "source": "Figure 8 is outside geofence"}
+{"context": "VehicleMessages", "source": "GCS connection regained\t"}
+{"context": "VehicleMessages", "source": "GNSS data fusion started\t"}
+{"context": "VehicleMessages", "source": "GNSS data fusion stopped\t"}
+{"context": "VehicleMessages", "source": "GNSS heading not reliable - Land now!\t"}
+{"context": "VehicleMessages", "source": "GNSS signal jammed\t"}
+{"context": "VehicleMessages", "source": "GNSS signal spoofed\t"}
+{"context": "VehicleMessages", "source": "GPS jamming detected\t"}
+{"context": "VehicleMessages", "source": "Geofence imported\t"}
+{"context": "VehicleMessages", "source": "Geofence invalid, doesn't contain Home position\t"}
+{"context": "VehicleMessages", "source": "Geofence invalid, doesn't contain current vehicle position\t"}
+{"context": "VehicleMessages", "source": "Geofence requires valid home position\t"}
+{"context": "VehicleMessages", "source": "Geofence: approaching or outside geofence"}
+{"context": "VehicleMessages", "source": "Geofence: exceeding maximum altitude above Home"}
+{"context": "VehicleMessages", "source": "Geofence: exceeding maximum distance to Home"}
+{"context": "VehicleMessages", "source": "Geofence: import error\t"}
+{"context": "VehicleMessages", "source": "Hardware fault: Camera capture disabled\t"}
+{"context": "VehicleMessages", "source": "Hardware fault: GPS PPS disabled\t"}
+{"context": "VehicleMessages", "source": "High latency data link lost\t"}
+{"context": "VehicleMessages", "source": "Hover thrust has been constrained by min/max\t"}
+{"context": "VehicleMessages", "source": "IO RC config upload fail\t"}
+{"context": "VehicleMessages", "source": "IO protocol/firmware mismatch, abort.\t"}
+{"context": "VehicleMessages", "source": "Invalid mission state.\t"}
+{"context": "VehicleMessages", "source": "Kill disengaged\t"}
+{"context": "VehicleMessages", "source": "Land tilt has been constrained by max tilt\t"}
+{"context": "VehicleMessages", "source": "Landing at current position\t"}
+{"context": "VehicleMessages", "source": "Landing detected\t"}
+{"context": "VehicleMessages", "source": "Landing target OK"}
+{"context": "VehicleMessages", "source": "Landing target init"}
+{"context": "VehicleMessages", "source": "Landing target timeout"}
+{"context": "VehicleMessages", "source": "Low battery\t"}
+{"context": "VehicleMessages", "source": "Manual backward speed has been constrained by forward speed\t"}
+{"context": "VehicleMessages", "source": "Manual sideways speed has been constrained by forward speed\t"}
+{"context": "VehicleMessages", "source": "Manual speed has been constrained by max speed\t"}
+{"context": "VehicleMessages", "source": "Maximum flight time reached\t"}
+{"context": "VehicleMessages", "source": "Mission cannot be completed\t"}
+{"context": "VehicleMessages", "source": "Mission could not reset jump count.\t"}
+{"context": "VehicleMessages", "source": "Mission finished, landed\t"}
+{"context": "VehicleMessages", "source": "Mission finished, loitering\t"}
+{"context": "VehicleMessages", "source": "Mission item could not be set.\t"}
+{"context": "VehicleMessages", "source": "Mission land item could not be read.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Add Landing item or remove Takeoff.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Add Takeoff item or remove Landing.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Landing waypoint/pattern required."}
+{"context": "VehicleMessages", "source": "Mission rejected: Landing waypoint/pattern required.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Mission contains VTOL items but vehicle is not a VTOL\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Takeoff altitude below home altitude!\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Takeoff or Landing item missing.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: Takeoff waypoint required.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: invalid land start.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: land start item before RTL item not possible.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: more than one land start.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: starts with land waypoint.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: starts with landing\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: takeoff not first waypoint item\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: the approach waypoint must be above the landing point.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: the landing point must be outside the orbit radius.\t"}
+{"context": "VehicleMessages", "source": "Mission rejected: unsupported landing approach entrance waypoint type. Only ORBIT_TO_ALT or WAYPOINT allowed.\t"}
+{"context": "VehicleMessages", "source": "Mission start denied! No valid mission\t"}
+{"context": "VehicleMessages", "source": "No airspeed sensor detected. Switch to non-airspeed mode.\t"}
+{"context": "VehicleMessages", "source": "No valid mission available, loitering\t"}
+{"context": "VehicleMessages", "source": "No valid mission available, refusing takeoff\t"}
+{"context": "VehicleMessages", "source": "Not yet ready for mission, no position lock.\t"}
+{"context": "VehicleMessages", "source": "Onboard controller regained\t"}
+{"context": "VehicleMessages", "source": "Orbit command rejected"}
+{"context": "VehicleMessages", "source": "Orbit is outside geofence"}
+{"context": "VehicleMessages", "source": "Orbit radius limit exceeded\t"}
+{"context": "VehicleMessages", "source": "Parachute system lost\t"}
+{"context": "VehicleMessages", "source": "Parachute system regained\t"}
+{"context": "VehicleMessages", "source": "Pilot took over using sticks\t"}
+{"context": "VehicleMessages", "source": "Position estimate has low accuracy\t"}
+{"context": "VehicleMessages", "source": "Precision landing\t"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Airspeed invalid"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Airspeed selector module down"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Airspeed too high"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Altitude failure"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Attitude failure (pitch)"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Attitude failure (roll)"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Battery unhealthy"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Crash dumps present on SD"}
+{"context": "VehicleMessages", "source": "Preflight Fail: ESC telemetry missing"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Flight termination active"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Flying with USB is not safe"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Geofence RTL requires valid home"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Global position estimate required"}
+{"context": "VehicleMessages", "source": "Preflight Fail: High Accelerometer Bias"}
+{"context": "VehicleMessages", "source": "Preflight Fail: High Gyro Bias"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Home position required"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Imbalanced propeller detected"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Kill switch engaged"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Landing gear switch set in UP position"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Missing FMU SD Card"}
+{"context": "VehicleMessages", "source": "Preflight Fail: No CPU and RAM load information"}
+{"context": "VehicleMessages", "source": "Preflight Fail: No connection to the GCS"}
+{"context": "VehicleMessages", "source": "Preflight Fail: No rally point available\t"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Open Drone ID system missing"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Open Drone ID system not ready"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Parachute system missing"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Parachute system not ready"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Power module not connected"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Press safety button first"}
+{"context": "VehicleMessages", "source": "Preflight Fail: RTL switch engaged"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Strong magnetic interference"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Task watchdog dumps present on SD"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Traffic avoidance system missing"}
+{"context": "VehicleMessages", "source": "Preflight Fail: VTOL fixed-wing system failure detected\t"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Vehicle is in safety configuration"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Vehicle is in transition state"}
+{"context": "VehicleMessages", "source": "Preflight Fail: Vehicle is not in multicopter mode"}
+{"context": "VehicleMessages", "source": "Preflight Fail: ekf2 missing data"}
+{"context": "VehicleMessages", "source": "Preflight Fail: heading estimate invalid"}
+{"context": "VehicleMessages", "source": "Preflight Fail: height estimate not stable"}
+{"context": "VehicleMessages", "source": "Preflight Fail: horizontal position unstable"}
+{"context": "VehicleMessages", "source": "Preflight Fail: horizontal velocity unstable"}
+{"context": "VehicleMessages", "source": "Preflight Fail: no heading reference"}
+{"context": "VehicleMessages", "source": "Preflight Fail: system power unavailable"}
+{"context": "VehicleMessages", "source": "Preflight Fail: triggered by external system"}
+{"context": "VehicleMessages", "source": "Preflight Fail: vertical velocity unstable"}
+{"context": "VehicleMessages", "source": "Primary airspeed index bigger than number connected sensors. Take last sensor.\t"}
+{"context": "VehicleMessages", "source": "Quad-chute triggered\t"}
+{"context": "VehicleMessages", "source": "RTL: completed, loitering\t"}
+{"context": "VehicleMessages", "source": "RTL: land at destination\t"}
+{"context": "VehicleMessages", "source": "RTL: unsupported MAV_FRAME\t"}
+{"context": "VehicleMessages", "source": "Remote ID system lost\t"}
+{"context": "VehicleMessages", "source": "Remote ID system regained\t"}
+{"context": "VehicleMessages", "source": "Reposition is outside geofence\t"}
+{"context": "VehicleMessages", "source": "Returning to launch\t"}
+{"context": "VehicleMessages", "source": "SET_POSITION_TARGET_GLOBAL_INT force not supported\t"}
+{"context": "VehicleMessages", "source": "SET_POSITION_TARGET_LOCAL_NED force not supported\t"}
+{"context": "VehicleMessages", "source": "SET_POSITION_TARGET_LOCAL_NED invalid\t"}
+{"context": "VehicleMessages", "source": "Septentrio: Device paths must be different"}
+{"context": "VehicleMessages", "source": "Septentrio: Failed to configure receiver internal logging"}
+{"context": "VehicleMessages", "source": "Septentrio: Logging stream should be different from main stream"}
+{"context": "VehicleMessages", "source": "System does not support shutdown\t"}
+{"context": "VehicleMessages", "source": "TRIM: PARAM SET FAIL\t"}
+{"context": "VehicleMessages", "source": "Takeoff detected\t"}
+{"context": "VehicleMessages", "source": "Target altitude higher than max HAGL\t"}
+{"context": "VehicleMessages", "source": "Terrain collision risk, descent is stopped\t"}
+{"context": "VehicleMessages", "source": "Tilt constrained to safe value\t"}
+{"context": "VehicleMessages", "source": "Traffic avoidance system lost\t"}
+{"context": "VehicleMessages", "source": "Traffic avoidance system regained\t"}
+{"context": "VehicleMessages", "source": "Transition to hover mode and descend.\t"}
+{"context": "VehicleMessages", "source": "Transponder Failure\t"}
+{"context": "VehicleMessages", "source": "Transponder System Failure\t"}
+{"context": "VehicleMessages", "source": "Unsupported auto mode\t"}
+{"context": "VehicleMessages", "source": "Unsupported base mode\t"}
+{"context": "VehicleMessages", "source": "Unsupported main mode\t"}
+{"context": "VehicleMessages", "source": "Waypoint could not be read.\t"}
+{"context": "VehicleMessages", "source": "Yaw Airmode requires disabling the stick arm gesture\t"}
+{"context": "VehicleMessages", "source": "[IO] config read fail, abort.\t"}
+{"context": "VehicleMessages", "source": "[lpe] GPS OK"}
+{"context": "VehicleMessages", "source": "[lpe] GPS timeout "}
+{"context": "VehicleMessages", "source": "[lpe] baro OK"}
+{"context": "VehicleMessages", "source": "[lpe] baro timeout "}
+{"context": "VehicleMessages", "source": "[lpe] flow OK"}
+{"context": "VehicleMessages", "source": "[lpe] flow timeout "}
+{"context": "VehicleMessages", "source": "[lpe] land OK"}
+{"context": "VehicleMessages", "source": "[lpe] land init"}
+{"context": "VehicleMessages", "source": "[lpe] land timeout "}
+{"context": "VehicleMessages", "source": "[lpe] lidar OK"}
+{"context": "VehicleMessages", "source": "[lpe] lidar timeout "}
+{"context": "VehicleMessages", "source": "[lpe] mocap timeout "}
+{"context": "VehicleMessages", "source": "[lpe] sonar init std > min"}
+{"context": "VehicleMessages", "source": "[lpe] sonar init timeout "}
+{"context": "VehicleMessages", "source": "[lpe] sonar timeout "}
+{"context": "VehicleMessages", "source": "[lpe] vision position OK"}
+{"context": "VehicleMessages", "source": "[lpe] vision position timeout "}
+{"context": "VehicleMessages", "source": "no inputs, aborting\t"}
+{"context": "VehicleMessages", "source": "parameter_rc_channel_index out of bounds\t"}
+{"context": "VehicleMessages", "source": "trim cal done\t"}
+{"context": "VehicleMessages", "source": "unable to reach heading within timeout\t"}

@@ -70,9 +70,9 @@ Rectangle {
             Text {
                 id: stText
                 anchors.centerIn: parent
-                text: state === "done"   ? "通过"
-                    : state === "active" ? "等待"
-                    : "待定"
+                text: state === "done"   ? qsTr("Passed")
+                    : state === "active" ? qsTr("Hold")
+                    : qsTr("Pending")
                 font.pixelSize: 10
                 font.weight: Font.DemiBold
                 color: state === "done"   ? (theme ? theme.green  : "#16a34a")

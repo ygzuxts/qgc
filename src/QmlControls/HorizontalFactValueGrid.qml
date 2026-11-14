@@ -26,6 +26,10 @@ T.HorizontalFactValueGrid {
     Layout.preferredHeight: topLayout.height
 
     property bool   settingsUnlocked:       false
+    property real   minimumLabelFontPointSize: 0
+    property real   minimumValueFontPointSize: 0
+    property real   valueRowSpacing:         0
+    property real   valueColumnSpacing:      ScreenTools.defaultFontPixelWidth * 1.25
 
     property real   _margins:               ScreenTools.defaultFontPixelWidth / 2
     property int    _rowMax:                2
@@ -43,7 +47,7 @@ T.HorizontalFactValueGrid {
             spacing: parent.spacing
             RowLayout {
                 id:         labelValueColumnLayout
-                spacing:    ScreenTools.defaultFontPixelWidth * 1.25
+                spacing:    _root.valueColumnSpacing
 
                 Repeater {
                     model: _root.columns
@@ -51,7 +55,7 @@ T.HorizontalFactValueGrid {
                     GridLayout {
                         rows:           object.count
                         columns:        2
-                        rowSpacing:     0
+                        rowSpacing:     _root.valueRowSpacing
                         columnSpacing:  ScreenTools.defaultFontPixelWidth / 4
                         flow:           GridLayout.TopToBottom
 
@@ -63,6 +67,7 @@ T.HorizontalFactValueGrid {
                                 Layout.fillHeight:      true
                                 Layout.alignment:       Qt.AlignRight
                                 instrumentValueData:    object
+                                minimumFontPointSize:   _root.minimumLabelFontPointSize
                             }
                         }
 
@@ -87,6 +92,7 @@ T.HorizontalFactValueGrid {
                                 Layout.alignment:       Qt.AlignLeft
                                 Layout.preferredWidth:  valueRepeater.maxWidth
                                 instrumentValueData:    object
+                                minimumFontPointSize:   _root.minimumValueFontPointSize
 
                                 property real lastContentWidth
 

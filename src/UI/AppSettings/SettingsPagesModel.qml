@@ -38,7 +38,8 @@ ListModel {
         name: qsTr("Video")
         url: "qrc:/qml/QGroundControl/AppSettings/VideoSettings.qml"
         iconUrl: "qrc:/InstrumentValueIcons/camera.svg"
-        pageVisible: function() { return QGroundControl.settingsManager.videoSettings.visible }
+        // Temporarily hide the video settings entry; keep the page for later use.
+        pageVisible: function() { return true }
     }
 
     ListElement {

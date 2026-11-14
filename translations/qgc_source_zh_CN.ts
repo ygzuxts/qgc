@@ -3735,67 +3735,67 @@ Please place your vehicle in water, click the button, and wait. Note that the th
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="39"/>
       <source>Geometry</source>
-      <translation type="unfinished">Geometry</translation>
+      <translation>几何布局</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="177"/>
       <source>Actuator Testing</source>
-      <translation type="unfinished">Actuator Testing</translation>
+      <translation>执行器测试</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="196"/>
       <source>Configure some outputs in order to test them.</source>
-      <translation type="unfinished">Configure some outputs in order to test them.</translation>
+      <translation>请先配置输出，再进行测试。</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="233"/>
       <source>Careful: Actuator sliders are enabled</source>
-      <translation type="unfinished">Careful: Actuator sliders are enabled</translation>
+      <translation>注意：执行器滑块已启用</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="233"/>
       <source>Propellers are removed - Enable sliders</source>
-      <translation type="unfinished">Propellers are removed - Enable sliders</translation>
+      <translation>已拆除螺旋桨 — 启用滑块</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="322"/>
       <source>Actuator Outputs</source>
-      <translation type="unfinished">Actuator Outputs</translation>
+      <translation>执行器输出</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="327"/>
       <source>One or more actuator still needs to be assigned to an output.</source>
-      <translation type="unfinished">One or more actuator still needs to be assigned to an output.</translation>
+      <translation>仍有执行器尚未分配输出。</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="369"/>
       <source>Identify &amp; Assign Motors</source>
-      <translation type="unfinished">Identify &amp; Assign Motors</translation>
+      <translation>识别并分配电机</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="385"/>
       <source>Motor Order Identification and Assignment</source>
-      <translation type="unfinished">Motor Order Identification and Assignment</translation>
+      <translation>电机顺序识别与分配</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="401"/>
       <source>Error</source>
-      <translation type="unfinished">Error</translation>
+      <translation>错误</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="406"/>
       <source>Spin Motor Again</source>
-      <translation type="unfinished">Spin Motor Again</translation>
+      <translation>再次转动电机</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.qml" line="413"/>
       <source>Abort</source>
-      <translation type="unfinished">Abort</translation>
+      <translation>中止</translation>
     </message>
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorComponent.cc" line="21"/>
       <source>Actuators</source>
-      <translation type="unfinished">Actuators</translation>
+      <translation>执行器</translation>
     </message>
   </context>
   <context>
@@ -3803,7 +3803,7 @@ Please place your vehicle in water, click the button, and wait. Note that the th
     <message>
       <location filename="../src/AutoPilotPlugins/PX4/ActuatorFact.qml" line="46"/>
       <source>(Param not available)</source>
-      <translation type="unfinished">(Param not available)</translation>
+      <translation>（参数不可用）</translation>
     </message>
   </context>
   <context>
@@ -5712,7 +5712,7 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/FactValueGrid.cc" line="24"/>
       <source>Default</source>
-      <translation>默认 </translation>
+      <translation>默认</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/FactValueGrid.cc" line="25"/>
@@ -8069,7 +8069,7 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/InstrumentValueData.cc" line="22"/>
       <source>Opacity</source>
-      <translation>不透明度</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueData.cc" line="23"/>
@@ -8104,22 +8104,22 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="25"/>
       <source>Telemetry Display</source>
-      <translation>遥测显示</translation>
+      <translation>数据显示设置</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="55"/>
       <source>Telemetry</source>
-      <translation>遥测</translation>
+      <translation>遥测数据</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="59"/>
       <source>Group</source>
-      <translation>分组</translation>
+      <translation>数据分类</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="75"/>
       <source>Value</source>
-      <translation>数值</translation>
+      <translation>数据项</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="136"/>
@@ -8129,7 +8129,7 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="173"/>
       <source>Size</source>
-      <translation>大小</translation>
+      <translation>字号</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="181"/>
@@ -8166,7 +8166,7 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="511"/>
       <source>Specify the icon opacity you want based on value ranges.</source>
-      <translation>根据值范围指定要显示的图标。</translation>
+      <translation>根据数值范围设置图标透明度。</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/InstrumentValueEditDialog.qml" line="581"/>
@@ -9677,12 +9677,12 @@ Click Ok to start the auto-tuning process.
     <message>
       <location filename="../src/QmlControls/MainStatusIndicatorOfflinePage.qml" line="43"/>
       <source>Select Link to Connect</source>
-      <translation type="unfinished">Select Link to Connect</translation>
+      <translation>选择要连接的链路</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/MainStatusIndicatorOfflinePage.qml" line="46"/>
       <source>No Links Configured</source>
-      <translation type="unfinished">No Links Configured</translation>
+      <translation>尚未配置连接</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/MainStatusIndicatorOfflinePage.qml" line="55"/>
@@ -10979,37 +10979,37 @@ Is this really what you want?</translation>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="35"/>
       <source>Manual</source>
-      <translation>手动Manual</translation>
+      <translation>手动</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="36"/>
       <source>Acro</source>
-      <translation>特技Acro</translation>
+      <translation>特技</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="37"/>
       <source>Stabilized</source>
-      <translation>自稳Stabilized</translation>
+      <translation>自稳</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="38"/>
       <source>Rattitude</source>
-      <translation>半自稳Rattitude</translation>
+      <translation>半自稳</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="39"/>
       <source>Altitude</source>
-      <translation>高度</translation>
+      <translation>定高</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="40"/>
       <source>Position</source>
-      <translation>定点Position</translation>
+      <translation>定点</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="41"/>
       <source>Offboard</source>
-      <translation>板外Offboard</translation>
+      <translation>外部控制</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="42"/>
@@ -11024,7 +11024,7 @@ Is this really what you want?</translation>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="44"/>
       <source>Hold</source>
-      <translation>等待</translation>
+      <translation>悬停</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="45"/>
@@ -11034,7 +11034,7 @@ Is this really what you want?</translation>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="46"/>
       <source>Return</source>
-      <translation>返航Return</translation>
+      <translation>返航</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="47"/>
@@ -11054,17 +11054,17 @@ Is this really what you want?</translation>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="50"/>
       <source>Follow Me</source>
-      <translation>跟随Follow Me</translation>
+      <translation>跟随</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="51"/>
       <source>Simple</source>
-      <translation>简单</translation>
+      <translation>简易</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="52"/>
       <source>Orbit</source>
-      <translation>轨道</translation>
+      <translation>绕点飞行</translation>
     </message>
     <message>
       <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="136"/>
@@ -15030,121 +15030,125 @@ Click the Next button to upload calibration to board. Click Cancel if you don&ap
   </context>
   <context>
     <name>RemoteIDSettings</name>
+    <message><source> (EU Required)</source><translation> （欧盟要求）</translation></message>
+    <message><source>Disabled</source><translation>禁用</translation></message>
+    <message><source>UDP Port</source><translation>UDP 端口</translation></message>
+    <message><source>Serial &lt;none available&gt;</source><translation>串口（无可用设备）</translation></message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="164"/>
       <source>ARM STATUS</source>
-      <translation type="unfinished">ARM STATUS</translation>
+      <translation>解锁状态</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="181"/>
       <source>RID COMMS</source>
-      <translation type="unfinished">RID COMMS</translation>
+      <translation>远程识别通信</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="181"/>
       <source>NOT CONNECTED</source>
-      <translation type="unfinished">NOT CONNECTED</translation>
+      <translation>未连接</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="199"/>
       <source>GCS GPS</source>
-      <translation type="unfinished">GCS GPS</translation>
+      <translation>地面站 GPS</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="217"/>
       <source>BASIC ID</source>
-      <translation type="unfinished">BASIC ID</translation>
+      <translation>基本标识</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="235"/>
       <source>OPERATOR ID</source>
-      <translation type="unfinished">OPERATOR ID</translation>
+      <translation>运营人标识</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="281"/>
       <source>Arm Status Error</source>
-      <translation type="unfinished">Arm Status Error</translation>
+      <translation>解锁状态错误</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="289"/>
       <source>Basic ID</source>
-      <translation type="unfinished">Basic ID</translation>
+      <translation>基本标识</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="290"/>
       <source>If Basic ID is already set on the RID device, this will be registered as Basic ID 2</source>
-      <translation type="unfinished">If Basic ID is already set on the RID device, this will be registered as Basic ID 2</translation>
+      <translation>如果远程识别设备已设置基本标识，此标识将登记为基本标识 2。</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="298"/>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="422"/>
       <source>Broadcast</source>
-      <translation type="unfinished">Broadcast</translation>
+      <translation>广播</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="416"/>
       <source>If an emergency is declared, Emergency Text will be broadcast even if Broadcast setting is not enabled.</source>
-      <translation type="unfinished">If an emergency is declared, Emergency Text will be broadcast even if Broadcast setting is not enabled.</translation>
+      <translation>声明紧急情况后，即使未启用广播，也会广播紧急信息。</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="432"/>
       <source>Broadcast Message</source>
-      <translation type="unfinished">Broadcast Message</translation>
+      <translation>广播消息</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="483"/>
       <source>GroundStation Location</source>
-      <translation type="unfinished">GroundStation Location</translation>
+      <translation>地面站位置</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="603"/>
       <source>EU Vehicle Info</source>
-      <translation type="unfinished">EU Vehicle Info</translation>
+      <translation>欧盟航空器信息</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="609"/>
       <source>Provide Information</source>
-      <translation type="unfinished">Provide Information</translation>
+      <translation>提供信息</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="539"/>
       <source>NMEA External GPS Device</source>
-      <translation type="unfinished">NMEA External GPS Device</translation>
+      <translation>NMEA 外置 GPS 设备</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="570"/>
       <source>NMEA GPS Baudrate</source>
-      <translation type="unfinished">NMEA GPS Baudrate</translation>
+      <translation>NMEA GPS 波特率</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="590"/>
       <source>NMEA stream UDP port</source>
-      <translation type="unfinished">NMEA stream UDP port</translation>
+      <translation>NMEA 数据流 UDP 端口</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="343"/>
       <source>Operator ID</source>
-      <translation type="unfinished">Operator ID</translation>
+      <translation>运营人标识</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="347"/>
       <source>Broadcast%1</source>
-      <translation type="unfinished">Broadcast%1</translation>
+      <translation>广播%1</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="372"/>
       <source> (%1)</source>
-      <translation type="unfinished"> (%1)</translation>
+      <translation> （%1）</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="388"/>
       <source>Invalid Operator ID</source>
-      <translation type="unfinished">Invalid Operator ID</translation>
+      <translation>无效的运营人标识</translation>
     </message>
     <message>
       <location filename="../src/UI/AppSettings/RemoteIDSettings.qml" line="415"/>
       <source>Self ID</source>
-      <translation type="unfinished">Self ID</translation>
+      <translation>自述标识</translation>
     </message>
   </context>
   <context>
@@ -16107,7 +16111,7 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
     <message>
       <location filename="../src/QmlControls/SetupPage.qml" line="44"/>
       <source>%1 Config</source>
-      <translation type="unfinished">%1 Config</translation>
+      <translation>%1配置</translation>
     </message>
     <message>
       <location filename="../src/QmlControls/SetupPage.qml" line="67"/>
@@ -18490,7 +18494,61 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
     <message><source>Video</source><translation>视频</translation></message>
     <message><source>Video source, display and recording</source><translation>视频源、显示和录制设置</translation></message>
   </context>
-<context><name>WaypointPlanPage</name><message><source>The connected vehicle does not report fence upload support. Fences can still be edited and saved locally.</source><translation>当前飞控未报告围栏上传支持，仍可在本地编辑和保存围栏。</translation></message></context>
+<context><name>WaypointPlanPage</name><message><source>The connected vehicle does not report fence upload support. Fences can still be edited and saved locally.</source><translation>当前飞控未报告围栏上传支持，仍可在本地编辑和保存围栏。</translation></message>    <message><source>  Altitude </source><translation>  高度 </translation></message>
+    <message><source>Add Breach Return Point</source><translation>增加越界返回点</translation></message>
+    <message><source>Breach Return Point</source><translation>越界返回点</translation></message>
+    <message><source>Cancel</source><translation>取消</translation></message>
+    <message><source>Cannot add here</source><translation>当前不可添加</translation></message>
+    <message><source>Circular Fence</source><translation>圆形围栏</translation></message>
+    <message><source>Click the map to add</source><translation>点击地图新增</translation></message>
+    <message><source>Delete</source><translation>删除</translation></message>
+    <message><source>Discard</source><translation>不保存</translation></message>
+    <message><source>Edit</source><translation>编辑</translation></message>
+    <message><source>Failed to Create Takeoff Point</source><translation>起飞点创建失败</translation></message>
+    <message><source>Failed to add item. Check whether insertion is allowed here.</source><translation>添加失败，请确认当前任务位置允许插入</translation></message>
+    <message><source>GeoFence</source><translation>地理围栏</translation></message>
+    <message><source>Geofences define virtual boundaries around the flight area.</source><translation>地理围栏允许你在飞行区域周围设置虚拟围栏。</translation></message>
+    <message><source>Height</source><translation>高度</translation></message>
+    <message><source>Inclusion</source><translation>包含</translation></message>
+    <message><source>Insert GeoFence</source><translation>插入地理围栏</translation></message>
+    <message><source>Invalid map coordinates; cannot add item</source><translation>地图坐标无效，无法添加</translation></message>
+    <message><source>Land</source><translation>着陆</translation></message>
+    <message><source>Land </source><translation>着陆 </translation></message>
+    <message><source>Mission Item</source><translation>任务项</translation></message>
+    <message><source>Mission_</source><translation>任务_</translation></message>
+    <message><source>No circular fences</source><translation>暂无圆形围栏</translation></message>
+    <message><source>No mission to save</source><translation>当前没有可保存的任务</translation></message>
+    <message><source>No polygon fences</source><translation>暂无多边形围栏</translation></message>
+    <message><source>Ok</source><translation>确定</translation></message>
+    <message><source>Plan View</source><translation>任务规划</translation></message>
+    <message><source>Point of Interest</source><translation>兴趣点</translation></message>
+    <message><source>Point of interest </source><translation>兴趣点 </translation></message>
+    <message><source>Polygon </source><translation>多边形 </translation></message>
+    <message><source>Polygon Fence</source><translation>多边形围栏</translation></message>
+    <message><source>Return</source><translation>返航</translation></message>
+    <message><source>Radius</source><translation>半径</translation></message>
+    <message><source>Remove Breach Return Point</source><translation>移除越界返回点</translation></message>
+    <message><source>Return </source><translation>返航 </translation></message>
+    <message><source>Return Altitude</source><translation>返回高度</translation></message>
+    <message><source>Save</source><translation>保存</translation></message>
+    <message><source>Saved Successfully</source><translation>保存成功</translation></message>
+    <message><source>Select a type, then click the map to add</source><translation>选择类型后点击地图添加</translation></message>
+    <message><source>Select a type, then click the map to add a mission item</source><translation>选择类型后点击地图添加任务项</translation></message>
+    <message><source>Select a waypoint or landing point on the map to view and edit</source><translation>点击地图中的航点/着陆点查看与编辑</translation></message>
+    <message><source>Selected Item</source><translation>选中项</translation></message>
+    <message><source>Speed</source><translation>速度</translation></message>
+    <message><source>Takeoff</source><translation>起飞</translation></message>
+    <message><source>Takeoff </source><translation>起飞 </translation></message>
+    <message><source>The current mission has unsaved changes. Save them?</source><translation>当前任务有未保存的修改，是否保存？</translation></message>
+    <message><source>Unsaved Mission</source><translation>任务尚未保存</translation></message>
+    <message><source>Vehicle position is invalid; cannot create takeoff point</source><translation>当前飞机位置无效，无法创建起飞点</translation></message>
+    <message><source>Waypoint</source><translation>航点</translation></message>
+    <message><source>Waypoint </source><translation>航点 </translation></message>
+    <message><source>⌗ Geofence</source><translation>⌗ 电子围栏</translation></message>
+    <message><source>✈ Route Planning</source><translation>✈ 航线规划</translation></message>
+    <message><source>＋ Circular Fence</source><translation>＋ 圆形围栏</translation></message>
+    <message><source>＋ Polygon Fence</source><translation>＋ 多边形围栏</translation></message>
+</context>
   <context>
     <name>VehicleMessages</name>
     <message><source>Battery %1 voltage low</source><translation>电池 %1 电压低</translation></message>
@@ -18498,5 +18556,558 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
     <message><source>Test confirmation</source><translation>测试确认消息</translation></message>
     <message><source>Test dialog #%1</source><translation>测试确认弹窗 #%1</translation></message>
     <message><source>Test popup #%1: Battery voltage low</source><translation>测试弹窗 #%1：电池电压低</translation></message>
+  </context>
+  <context>
+    <name>ActuatorMetadata</name>
+    <message>
+      <source>Tiltrotor VTOL</source>
+      <translation>倾转旋翼垂直起降</translation>
+    </message>
+    <message>
+      <source>MC Motors</source>
+      <translation>多旋翼电机</translation>
+    </message>
+    <message>
+      <source>Motors</source>
+      <translation>电机</translation>
+    </message>
+    <message>
+      <source>Control Surfaces</source>
+      <translation>控制舵面</translation>
+    </message>
+    <message>
+      <source>Position X</source>
+      <translation>X 位置</translation>
+    </message>
+    <message>
+      <source>Position Y</source>
+      <translation>Y 位置</translation>
+    </message>
+    <message>
+      <source>Position Z</source>
+      <translation>Z 位置</translation>
+    </message>
+    <message>
+      <source>Tilted by</source>
+      <translation>倾转机构</translation>
+    </message>
+    <message>
+      <source>Direction CCW</source>
+      <translation>逆时针方向</translation>
+    </message>
+    <message>
+      <source>Type</source>
+      <translation>类型</translation>
+    </message>
+    <message>
+      <source>Roll Scale</source>
+      <translation>横滚比例</translation>
+    </message>
+    <message>
+      <source>Pitch Scale</source>
+      <translation>俯仰比例</translation>
+    </message>
+    <message>
+      <source>Yaw Scale</source>
+      <translation>偏航比例</translation>
+    </message>
+    <message>
+      <source>Trim</source>
+      <translation>微调</translation>
+    </message>
+    <message>
+      <source>Lock control surfaces in hover</source>
+      <translation>悬停时锁定舵面</translation>
+    </message>
+    <message>
+      <source>Configure</source>
+      <translation>配置</translation>
+    </message>
+    <message>
+      <source>Enabled</source>
+      <translation>启用</translation>
+    </message>
+    <message>
+      <source>Disabled</source>
+      <translation>禁用</translation>
+    </message>
+    <message>
+      <source>None</source>
+      <translation>无</translation>
+    </message>
+    <message>
+      <source>Left Aileron</source>
+      <translation>左副翼</translation>
+    </message>
+    <message>
+      <source>Right Aileron</source>
+      <translation>右副翼</translation>
+    </message>
+    <message>
+      <source>Elevator</source>
+      <translation>升降舵</translation>
+    </message>
+    <message>
+      <source>Rudder</source>
+      <translation>方向舵</translation>
+    </message>
+    <message>
+      <source>Function</source>
+      <translation>功能</translation>
+    </message>
+    <message>
+      <source>Disarmed</source>
+      <translation>未解锁</translation>
+    </message>
+    <message>
+      <source>Minimum</source>
+      <translation>最小值</translation>
+    </message>
+    <message>
+      <source>Maximum</source>
+      <translation>最大值</translation>
+    </message>
+    <message>
+      <source>Failsafe</source>
+      <translation>故障保护</translation>
+    </message>
+    <message>
+      <source>Reversible</source>
+      <translation>可反转</translation>
+    </message>
+    <message>
+      <source>Reverse</source>
+      <translation>反向</translation>
+    </message>
+    <message>
+      <source>ESCs</source>
+      <translation>电调</translation>
+    </message>
+    <message>
+      <source>Servos</source>
+      <translation>舵机</translation>
+    </message>
+    <message>
+      <source>Tilts</source>
+      <translation>倾转机构</translation>
+    </message>
+    <message>
+      <source>Motor %1</source>
+      <translation>电机 %1</translation>
+    </message>
+    <message>
+      <source>Tilt %1</source>
+      <translation>倾转机构 %1</translation>
+    </message>
+    <message>
+      <source>Servo %1</source>
+      <translation>舵机 %1</translation>
+    </message>
+    <message>
+      <source>Surface %1 (Servo %2)</source>
+      <translation>舵面 %1（舵机 %2）</translation>
+    </message>
+  </context>
+  <context>
+    <name>AttitudeHUD</name>
+    <message><source>Airspeed</source><translation>空速</translation></message>
+    <message><source>Height</source><translation>高度</translation></message>
+    <message><source>Roll</source><translation>横滚</translation></message>
+    <message><source>Tilt</source><translation>俯仰</translation></message>
+    <message><source>Yaw</source><translation>偏航</translation></message>
+  </context>
+  <context>
+    <name>BoardStatusCard</name>
+    <message><source>Flight Controller</source><translation>主控板</translation></message>
+    <message><source>Hot Standby</source><translation>热备</translation></message>
+  </context>
+  <context>
+    <name>CompassWidget</name>
+    <message><source>Heading</source><translation>航向</translation></message>
+    <message><source>Roll</source><translation>横滚</translation></message>
+    <message><source>Tilt</source><translation>俯仰</translation></message>
+  </context>
+  <context>
+    <name>CustomFlyViewMap</name>
+    <message><source>Altitude 87m</source><translation>高度 87m</translation></message>
+    <message><source>Level </source><translation>级别 </translation></message>
+  </context>
+  <context>
+    <name>CustomPlanView</name>
+    <message><source>Geofence</source><translation>电子围栏</translation></message>
+    <message><source>Home Position</source><translation>返航点</translation></message>
+    <message><source>Route Planning</source><translation>航线规划</translation></message>
+      <message><source>Plan Upload</source><translation>任务计划上传</translation></message>
+    <message><source>Plan has incomplete items. Complete all items and %1 again.</source><translation>计划有不完整的项目。重新完成所有项目和 %1。</translation></message>
+    <message><source>Plan is waiting on terrain data from server for correct altitude values.</source><translation>规划正在等待来自服务器的地形数据，已得到正确的高度值。</translation></message>
+    <message><source>Save</source><translation>保存​​</translation></message>
+    <message><source>Save KML</source><translation>保存KML</translation></message>
+    <message><source>Save Plan</source><translation>保存计划</translation></message>
+    <message><source>Select Plan File</source><translation>选择任务计划文件</translation></message>
+    <message><source>UTM-Adapter</source><translation>UTM 适配器</translation></message>
+    <message><source>Unable to %1</source><translation>无法 %1</translation></message>
+    <message><source>Upload</source><translation>上传</translation></message>
+    <message><source>Vehicle is currently armed. Do you want to upload the mission to the vehicle?</source><translation>飞机当前已解锁。您确认想上传任务到飞机吗？</translation></message>
+    <message><source>You have changed the default altitude for mission items. Would you like to apply that altitude to all the items in the current mission?</source><translation>您已经更改了任务项的默认高度。希望应用新的高度设置到当前任务的所有航点吗？</translation></message>
+<message><source>Apply new altitude</source><translation>应用新高度</translation></message>
+<message><source>Plan View - Vehicle Disconnected</source><translation>任务规划：飞行器已断开</translation></message>
+<message><source>Plan View - Vehicle Changed</source><translation>任务规划：飞行器已更换</translation></message>
+<message><source>The vehicle associated with the plan in the Plan View is no longer available. What would you like to do with that plan?</source><translation>当前规划关联的飞行器已不可用，如何处理此规划？</translation></message>
+<message><source>The plan being worked on in the Plan View is not from the current vehicle. What would you like to do with that plan?</source><translation>当前编辑的规划不属于当前飞行器，如何处理此规划？</translation></message>
+<message><source>Discard Unsaved Changes</source><translation>放弃未保存的修改</translation></message>
+<message><source>Discard Unsaved Changes, Load New Plan From Vehicle</source><translation>放弃未保存的修改，并从飞行器加载新规划</translation></message>
+<message><source>Load New Plan From Vehicle</source><translation>从飞行器加载新规划</translation></message>
+<message><source>Keep Current Plan</source><translation>保留当前规划</translation></message>
+<message><source>Keep Current Plan, Don't Update From Vehicle</source><translation>保留当前规划，不从飞行器更新</translation></message>
+<message><source>Send To Vehicle</source><translation>发送至飞行器</translation></message>
+<message><source>Current mission must be paused prior to uploading a new Plan</source><translation>上传新规划前必须暂停当前任务</translation></message>
+<message><source>Powered by %1</source><translation>由 %1 提供支持</translation></message>
+</context>
+  <context>
+    <name>CustomPlanViewToolBar</name>
+    <message><source>Back to Flight</source><translation>返回飞行</translation></message>
+  </context>
+  <context>
+    <name>DecisionFlowItem</name>
+    <message><source>Hold</source><translation>等待</translation></message>
+    <message><source>Passed</source><translation>通过</translation></message>
+    <message><source>Pending</source><translation>待定</translation></message>
+  </context>
+  <context>
+    <name>FailoverDialog</name>
+    <message><source> heartbeat timed out.\nA standby controller is available. Confirm failover.</source><translation> 心跳超时
+检测到可用热备板卡，请确认是否切换。</translation></message>
+    <message><source> s</source><translation> 秒</translation></message>
+    <message><source> · Health normal</source><translation> · 健康状态正常</translation></message>
+    <message><source>Auto-cancel in: </source><translation>自动取消倒计时：</translation></message>
+    <message><source>Candidate controller: FCB #0</source><translation>候选主板：FCB #0</translation></message>
+    <message><source>Confirm Failover</source><translation>确认切换</translation></message>
+    <message><source>Not Now</source><translation>暂不切换</translation></message>
+    <message><source>Primary FCB #0</source><translation>主控板 FCB #0</translation></message>
+    <message><source>⚠  Failover Request</source><translation>⚠  冗余切换请求</translation></message>
+  </context>
+  <context>
+    <name>FlightModeButton</name>
+    <message><source>Armed</source><translation>已解锁</translation></message>
+    <message><source>Connection Lost</source><translation>失联</translation></message>
+    <message><source>Landing</source><translation>降落中</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Not Ready</source><translation>未就绪</translation></message>
+    <message><source>Ready to Fly</source><translation>可起飞</translation></message>
+    <message><source>Flying</source><translation>飞行中</translation></message>
+  </context>
+  <context>
+    <name>FlightModePanel</name>
+    <message><source> · Current </source><translation> · 当前 </translation></message>
+    <message><source>Acro</source><translation>特技</translation></message>
+    <message><source>Altitude Cruise</source><translation>高度巡航</translation></message>
+    <message><source>Altitude Hold</source><translation>定高</translation></message>
+    <message><source>Armed</source><translation>已解锁</translation></message>
+    <message><source>Available modes: </source><translation>可用模式：</translation></message>
+    <message><source>Communication Lost</source><translation>通信中断</translation></message>
+    <message><source>Disconnected; no modes available</source><translation>未连接，暂无可用模式</translation></message>
+    <message><source>Flight Mode </source><translation>飞行模式</translation></message>
+    <message><source>Follow Target</source><translation>跟随目标</translation></message>
+    <message><source>Hold</source><translation>悬停</translation></message>
+    <message><source>Land</source><translation>降落</translation></message>
+    <message><source>Landing</source><translation>降落中</translation></message>
+    <message><source>Manual</source><translation>手动</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>No modes available</source><translation>无可用模式</translation></message>
+    <message><source>Not Ready</source><translation>未就绪</translation></message>
+    <message><source>Offboard</source><translation>外部控制</translation></message>
+    <message><source>Position</source><translation>定点</translation></message>
+    <message><source>Precision Land</source><translation>精准降落</translation></message>
+    <message><source>Return</source><translation>返航</translation></message>
+    <message><source>Rattitude</source><translation>半自稳</translation></message>
+    <message><source>Ready</source><translation>就绪</translation></message>
+    <message><source>Safe Recovery</source><translation>安全恢复</translation></message>
+    <message><source>Slow Position</source><translation>低速定点</translation></message>
+    <message><source>Stabilized</source><translation>自稳</translation></message>
+    <message><source>Takeoff</source><translation>起飞</translation></message>
+    <message><source>VTOL Takeoff</source><translation>垂直起飞</translation></message>
+    <message><source>Flying</source><translation>飞行中</translation></message>
+  </context>
+  <context>
+    <name>FlyViewBottomBar</name>
+    <message><source>Connected</source><translation>已连接</translation></message>
+    <message><source>Execute Mission</source><translation>执行任务</translation></message>
+    <message><source>Hold Position</source><translation>原地悬停</translation></message>
+    <message><source>Link</source><translation>链路</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Mode</source><translation>模式</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Resume Mission</source><translation>恢复任务</translation></message>
+    <message><source>Return and Land</source><translation>返航降落</translation></message>
+    <message><source>⚠ Confirm Failover</source><translation>⚠ 确认切换</translation></message>
+  </context>
+  <context>
+    <name>FlyViewHUD</name>
+    <message><source>Select Data</source><translation>选择数据</translation></message>
+    <message><source>Click to choose displayed data</source><translation>点击选择显示数据</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Flight Data</source><translation>飞行数据</translation></message>
+    <message><source>Edit</source><translation>编辑</translation></message>
+    <message><source>Done</source><translation>完成</translation></message>
+    <message><source>Click a value to change it</source><translation>点击数据项可更换</translation></message>
+    <message><source>Ground Speed (m/s)</source><translation>地速 (m/s)</translation></message>
+    <message><source>Airspeed (m/s)</source><translation>空速 (m/s)</translation></message>
+    <message><source>Flight Altitude</source><translation>飞行高度</translation></message>
+    <message><source>Flight speed</source><translation>飞行速度</translation></message>
+    <message><source>Roll</source><translation>横滚</translation></message>
+    <message><source>Pitch</source><translation>俯仰</translation></message>
+  </context>
+  <context>
+    <name>FlyViewRightPanel</name>
+    <message><source>Takeoff / Landing</source><translation>起降</translation></message>
+  </context>
+  <context>
+    <name>FlyViewState</name>
+    <message><source> m is already at or above the target takeoff altitude of </source><translation> m 已不低于起飞目标高度 </translation></message>
+    <message><source> m. Increase the target altitude, or use Hold, Land, or Return.</source><translation> m，请提高目标高度，或改用悬停、降落、返航等飞行中动作。</translation></message>
+    <message><source> satellites</source><translation>星</translation></message>
+    <message><source>Armed</source><translation>已解锁</translation></message>
+    <message><source>Controller failover</source><translation>主板切换执行</translation></message>
+    <message><source>Current relative altitude </source><translation>当前相对高度 </translation></message>
+    <message><source>Data Consistency Check</source><translation>数据一致性校验</translation></message>
+    <message><source>Disarmed</source><translation>未解锁</translation></message>
+    <message><source>Heartbeat Check</source><translation>心跳检测</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Pilot Confirms Failover</source><translation>飞手确认切换</translation></message>
+    <message><source>State Synchronization Check</source><translation>状态同步验证</translation></message>
+    <message><source>Takeoff Altitude Too Low</source><translation>起飞目标高度过低</translation></message>
+  </context>
+  <context>
+    <name>FlyViewTopBar</name>
+    <message><source>Fixed Wing</source><translation>固定翼</translation></message>
+    <message><source>Multi-Rotor</source><translation>旋翼</translation></message>
+    <message><source>VTOL Transition</source><translation>旋翼/固定翼切换</translation></message>
+    <message><source>Hold to transition to Fixed Wing</source><translation>长按切换至固定翼</translation></message>
+    <message><source>Hold to transition to Multi-Rotor</source><translation>长按切换至多旋翼</translation></message>
+    <message><source>Connect</source><translation>连接</translation></message>
+    <message><source>Select Link to Connect</source><translation>选择要连接的链路</translation></message>
+    <message><source>Acro</source><translation>特技</translation></message>
+    <message><source>Altitude Hold</source><translation>定高</translation></message>
+    <message><source>Armed</source><translation>已解锁</translation></message>
+    <message><source>Bottom Panel</source><translation>底部展开栏</translation></message>
+    <message><source>Communication Lost</source><translation>通信丢失</translation></message>
+    <message><source>Custom Interface</source><translation>自定义界面</translation></message>
+    <message><source>Dark Theme</source><translation>深色主题</translation></message>
+    <message><source>Disarmed</source><translation>未解锁</translation></message>
+    <message><source>Disconnect</source><translation>断开连接</translation></message>
+    <message><source>Disconnected · Current </source><translation>Disconnected · 当前 </translation></message>
+    <message><source>Disconnected · Current --\nModes: 0</source><translation>Disconnected · 当前 --
+modes: 0</translation></message>
+    <message><source>Disconnected; no modes available</source><translation>未连接，暂无可用模式</translation></message>
+    <message><source>Display</source><translation>界面显示</translation></message>
+    <message><source>Flight Mode </source><translation>飞行模式</translation></message>
+    <message><source>Hold</source><translation>悬停</translation></message>
+    <message><source>Info Bar Opacity</source><translation>信息栏透明度</translation></message>
+    <message><source>Interface Mode</source><translation>界面模式</translation></message>
+    <message><source>Land</source><translation>降落</translation></message>
+    <message><source>Landing</source><translation>降落中</translation></message>
+    <message><source>Light Theme</source><translation>浅色主题</translation></message>
+    <message><source>Manual</source><translation>手动</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Not Ready</source><translation>未就绪</translation></message>
+    <message><source>Offboard</source><translation>外部控制</translation></message>
+    <message><source>Position</source><translation>定点</translation></message>
+    <message><source>Precision Land</source><translation>精准降落</translation></message>
+    <message><source>Return</source><translation>返航</translation></message>
+    <message><source>Rattitude</source><translation>半自稳</translation></message>
+    <message><source>Ready to Fly</source><translation>可起飞</translation></message>
+    <message><source>Sidebar Opacity</source><translation>侧边栏透明度</translation></message>
+    <message><source>Stabilized</source><translation>自稳</translation></message>
+    <message><source>Standard Interface</source><translation>原版界面</translation></message>
+    <message><source>Takeoff</source><translation>起飞</translation></message>
+    <message><source>Theme</source><translation>主题模式</translation></message>
+    <message><source>VTOL Takeoff</source><translation>垂直起飞</translation></message>
+    <message><source>Vehicle messages and overall status</source><translation>飞行器消息与总体状态</translation></message>
+    <message><source>Flying</source><translation>飞行中</translation></message>
+      <message><source>Vehicle Configuration</source><translation>飞行器配置</translation></message>
+</context>
+  <context>
+    <name>PageMission</name>
+    <message><source>Clear Vehicle Mission</source><translation>清空飞控</translation></message>
+    <message><source>Clear the mission on the vehicle? This will remove all vehicle mission items.</source><translation>确定要清空飞控上的任务吗？此操作会同步删除飞控中的任务。</translation></message>
+    <message><source>Delete Mission</source><translation>删除任务</translation></message>
+    <message><source>Delete this local mission?</source><translation>确定要删除这个本地任务吗？</translation></message>
+    <message><source>Edit</source><translation>编辑</translation></message>
+    <message><source>Execute Mission</source><translation>执行任务</translation></message>
+    <message><source>Mission List</source><translation>任务列表</translation></message>
+    <message><source>Mission_</source><translation>任务_</translation></message>
+    <message><source>No local missions. Save the vehicle mission\nor clear the vehicle mission.</source><translation>本地任务列表为空，可保存
+飞控任务或清空飞控任务。</translation></message>
+    <message><source>No saved missions</source><translation>暂无保存任务</translation></message>
+    <message><source>Save Mission</source><translation>保存任务</translation></message>
+    <message><source>Untitled Mission</source><translation>未命名任务</translation></message>
+    <message><source>Use Add at the bottom right</source><translation>点击右下角新增</translation></message>
+    <message><source>Vehicle Has Mission</source><translation>飞控中有任务</translation></message>
+  </context>
+  <context>
+    <name>PageTakeoff</name>
+    <message><source> mission items</source><translation> 个任务项</translation></message>
+    <message><source> satellites</source><translation>星</translation></message>
+    <message><source>Abort Mission</source><translation>中止任务</translation></message>
+    <message><source>Available in flight; disabled while disarmed or on the ground.</source><translation>飞行中可用；未解锁或未起飞时会自动禁用。</translation></message>
+    <message><source>Battery Level</source><translation>电池电量</translation></message>
+    <message><source>Cancel</source><translation>取消</translation></message>
+    <message><source>Change Altitude</source><translation>改变高度</translation></message>
+    <message><source>Change Maximum Ground Speed</source><translation>改变最大地速</translation></message>
+    <message><source>Collapse</source><translation>收起</translation></message>
+    <message><source>Confirm Action</source><translation>确认执行</translation></message>
+    <message><source>Confirm Value</source><translation>确认数值</translation></message>
+    <message><source>Confirmed</source><translation>已确认</translation></message>
+    <message><source>Connected</source><translation>已连接</translation></message>
+    <message><source>Connection loss timeout</source><translation>失联超时</translation></message>
+    <message><source>Continue Mission</source><translation>继续任务</translation></message>
+    <message><source>Expand</source><translation>展开</translation></message>
+    <message><source>Flight Actions</source><translation>飞行动作</translation></message>
+    <message><source>Flight Time</source><translation>飞行时间</translation></message>
+    <message><source>GPS Fix</source><translation>GPS 定位</translation></message>
+    <message><source>GPS or battery warnings do not block this action. Confirm that flight conditions are safe.</source><translation>GPS 或电池项为警告时仍可执行，但请确认现场飞行条件安全。</translation></message>
+    <message><source>Hold Position</source><translation>原地悬停</translation></message>
+    <message><source>Hold current altitude</source><translation>保持当前位置高度</translation></message>
+    <message><source>Hold to Execute</source><translation>长按执行</translation></message>
+    <message><source>In Progress</source><translation>执行中</translation></message>
+    <message><source>Land</source><translation>着陆</translation></message>
+    <message><source>Loaded</source><translation>已加载</translation></message>
+    <message><source>Local Takeoff Altitude</source><translation>本地起飞目标高度</translation></message>
+    <message><source>Low battery capacity threshold</source><translation>低电量容量阈值</translation></message>
+    <message><source>Low battery voltage threshold</source><translation>低电量电压阈值</translation></message>
+    <message><source>Low battery warning threshold</source><translation>低电量告警阈值</translation></message>
+    <message><source>Maximum Ground Speed</source><translation>最大地速</translation></message>
+    <message><source>Maximum Takeoff Altitude</source><translation>最大起飞高度</translation></message>
+    <message><source>Mission Control</source><translation>任务控制</translation></message>
+    <message><source>Mission Loaded</source><translation>任务已加载</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Not Loaded</source><translation>未加载</translation></message>
+    <message><source>Ok</source><translation>确定</translation></message>
+    <message><source>Parameters not ready</source><translation>参数未就绪</translation></message>
+    <message><source>Flight controller safety parameters cannot be read or modified yet.</source><translation>暂时无法读写飞控安全参数。</translation></message>
+    <message><source>Pause Mission</source><translation>暂停任务</translation></message>
+    <message><source>Paused</source><translation>已暂停</translation></message>
+    <message><source>Pre-Mission Checks</source><translation>开始任务前检查</translation></message>
+    <message><source>Queued</source><translation>待执行</translation></message>
+    <message><source>Range 0.00–1.00</source><translation>范围 0.00–1.00</translation></message>
+    <message><source>Range 0.1–100.0 m/s</source><translation>范围 0.1–100.0 m/s</translation></message>
+    <message><source>Range 0–1000 m</source><translation>范围 0–1000 m</translation></message>
+    <message><source>Range 0–300 s</source><translation>范围 0–300 s</translation></message>
+    <message><source>Range 0–500 m</source><translation>范围 0–500 m</translation></message>
+    <message><source>Return Altitude</source><translation>返航高度</translation></message>
+    <message><source>Return and Land</source><translation>返航降落</translation></message>
+    <message><source>Safety Settings</source><translation>安全设置</translation></message>
+    <message><source>Start Mission</source><translation>开始任务</translation></message>
+    <message><source>Takeoff</source><translation>起飞</translation></message>
+    <message><source>Takeoff altitude</source><translation>一键起飞高度</translation></message>
+    <message><source>Target Relative Altitude</source><translation>目标相对高度</translation></message>
+    <message><source>Target Takeoff Altitude</source><translation>起飞目标高度</translation></message>
+    <message><source>Use Default</source><translation>使用默认值</translation></message>
+    <message><source>Uses flight controller parameter units</source><translation>按当前飞控参数单位</translation></message>
+    <message><source>Vehicle Connection</source><translation>飞行器连接</translation></message>
+    <message><source>Vehicle Ready</source><translation>飞行器可执行</translation></message>
+  </context>
+  <context>
+    <name>PageWaypoint</name>
+    <message><source> mission items</source><translation> 个任务项</translation></message>
+    <message><source>Add</source><translation>新增</translation></message>
+    <message><source>Average Speed</source><translation>平均速度</translation></message>
+    <message><source>Delete</source><translation>删除</translation></message>
+    <message><source>Duplicate</source><translation>复制</translation></message>
+    <message><source>Estimated Time</source><translation>预计时间</translation></message>
+    <message><source>Landing Point</source><translation>降落点</translation></message>
+    <message><source>Leg Distance</source><translation>航段距离</translation></message>
+    <message><source>Maximum Altitude</source><translation>最高高度</translation></message>
+    <message><source>Minimum Altitude</source><translation>最低高度</translation></message>
+    <message><source>No mission items</source><translation>当前没有任务项</translation></message>
+    <message><source>None</source><translation>无</translation></message>
+    <message><source>Route Parameters</source><translation>航线参数</translation></message>
+    <message><source>Select a mission item to view details</source><translation>选择一个任务项查看详情</translation></message>
+    <message><source>Takeoff Point</source><translation>起飞点</translation></message>
+    <message><source>Total: </source><translation>共 </translation></message>
+    <message><source>Waypoint Count</source><translation>航点数量</translation></message>
+    <message><source>Waypoint Details</source><translation>航点详情</translation></message>
+    <message><source>Waypoint List</source><translation>航点列表</translation></message>
+  </context>
+  <context>
+    <name>PlanShellView</name>
+    <message><source>Altitude </source><translation>高度 </translation></message>
+    <message><source>Available</source><translation>可用</translation></message>
+    <message><source>Back to Flight</source><translation>返回飞行</translation></message>
+    <message><source>Connection</source><translation>连线</translation></message>
+    <message><source>Edit</source><translation>编辑</translation></message>
+    <message><source>Edit fence boundaries and safety areas</source><translation>编辑围栏边界与安全区域</translation></message>
+    <message><source>Edit home position</source><translation>编辑返航点位置</translation></message>
+    <message><source>Geofence</source><translation>电子围栏</translation></message>
+    <message><source>Home Position</source><translation>返航点</translation></message>
+    <message><source>Maps</source><translation>地图</translation></message>
+    <message><source>Mission Item</source><translation>任务项</translation></message>
+    <message><source>Mission item </source><translation>任务项 </translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Normal</source><translation>正常</translation></message>
+    <message><source>Plan View</source><translation>任务规划</translation></message>
+    <message><source>PlanView integration pending</source><translation>等待接入 PlanView 底层逻辑</translation></message>
+    <message><source>Ready</source><translation>就绪</translation></message>
+    <message><source>Route Planning</source><translation>航线规划</translation></message>
+    <message><source>Status</source><translation>状态</translation></message>
+    <message><source>Uses MissionController / PlanMasterController</source><translation>可直接复用 MissionController / PlanMasterController</translation></message>
+  </context>
+  <context>
+    <name>SignalBars</name>
+    <message><source>Up</source><translation>上</translation></message>
+  </context>
+<context><name>CustomPlanCenterMapDropButton</name>
+    <message><source>All items</source><translation>所有项目</translation></message>
+    <message><source>Center map on:</source><translation>置中地图于：</translation></message>
+    <message><source>Current Location</source><translation>当前位置</translation></message>
+    <message><source>Follow Vehicle</source><translation>跟随飞机</translation></message>
+    <message><source>Launch</source><translation>发射，起飞</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Specified Location</source><translation>指定位置</translation></message>
+    <message><source>Vehicle</source><translation>飞机</translation></message>
+</context>
+<context><name>CustomPlanCenterMapDropPanel</name>
+    <message><source>All items</source><translation>所有项目</translation></message>
+    <message><source>Center map on:</source><translation>置中地图于：</translation></message>
+    <message><source>Current Location</source><translation>当前位置</translation></message>
+    <message><source>Launch</source><translation>发射，起飞</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Specified Location</source><translation>指定位置</translation></message>
+    <message><source>Vehicle</source><translation>飞机</translation></message>
+</context>
+<context><name>Screen01.ui</name>
+    <message><source>Button Checked</source><translation>按钮已选中</translation></message>
+    <message><source>Hello UntitledProject3</source><translation>欢迎</translation></message>
+    <message><source>Press me</source><translation>点击我</translation></message>
+</context>
+
+
+<context><name>CustomPlanRallyPointEditorHeader</name><message><source>Click in the map to add new rally points.</source><translation>点击地图添加新的备降点。</translation></message><message><source>This vehicle does not support Rally Points.</source><translation>此飞行器不支持备降点。</translation></message></context>
+
+  <context>
+    <name>InstrumentValueData</name>
+    <message><source>Vehicle</source><translation>飞行器</translation></message>
+    <message><source>GPS</source><translation>卫星定位</translation></message>
+    <message><source>GPS 2</source><translation>卫星定位 2</translation></message>
+    <message><source>Wind</source><translation>风速风向</translation></message>
+    <message><source>Vibration</source><translation>振动</translation></message>
+    <message><source>Temperature</source><translation>温度</translation></message>
+    <message><source>Clock</source><translation>时间</translation></message>
+    <message><source>Attitude Setpoint</source><translation>姿态目标值</translation></message>
+    <message><source>Distance Sensor</source><translation>测距传感器</translation></message>
+    <message><source>Local Position</source><translation>本地位置</translation></message>
+    <message><source>Local Position Setpoint</source><translation>本地位置目标值</translation></message>
+    <message><source>ESC Status</source><translation>电调状态</translation></message>
+    <message><source>Estimator Status</source><translation>状态估计器</translation></message>
+    <message><source>Hygrometer</source><translation>温湿度</translation></message>
+    <message><source>Generator</source><translation>发电机</translation></message>
+    <message><source>EFI</source><translation>发动机电喷</translation></message>
+    <message><source>RPM</source><translation>转速</translation></message>
+    <message><source>Terrain</source><translation>地形</translation></message>
+    <message><source>Submarine</source><translation>潜航器</translation></message>
+    <message><source>Battery</source><translation>电池</translation></message>
+    <message><source>Battery %1</source><translation>电池 %1</translation></message>
   </context>
 </TS>

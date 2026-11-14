@@ -33,7 +33,7 @@ QGCPopupDialog {
     ColumnLayout {
         QGCLabel {
             id:                     label
-            Layout.preferredWidth:  Math.max(mainWindow.width / (ScreenTools.isMobile ? 2 : 3), headerMinWidth)
+            Layout.preferredWidth:  Math.max(mainWindow.uiWidth / (ScreenTools.isMobileLayout ? 2 : 3), headerMinWidth)
             wrapMode:               Text.WordWrap
         }
     }

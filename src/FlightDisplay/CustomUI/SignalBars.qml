@@ -7,7 +7,7 @@ import QtQuick.Layouts
 RowLayout {
     id: root
 
-    property string label:     "上"
+    property string label:     qsTr("Up")
     property int    activeBars: 5
     property int    totalBars:  6
     property color  barColor:  "#16a34a"

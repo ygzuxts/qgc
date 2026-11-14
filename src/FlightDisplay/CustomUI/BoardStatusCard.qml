@@ -61,7 +61,7 @@ Rectangle {
                 color: theme ? theme.text : "#1a1d23"
             }
             Text {
-                text: role === "Master" ? "主控板" : "热备"
+                text: role === "Master" ? qsTr("Flight Controller") : qsTr("Hot Standby")
                 font.pixelSize: theme ? theme.fontSm : 11
                 color: role === "Master"
                        ? (theme ? theme.blue  : "#000066")

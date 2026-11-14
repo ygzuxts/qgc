@@ -1,4 +1,5 @@
 import QtQuick
+import "ActuatorTranslation.js" as ActuatorTranslation
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -16,6 +17,7 @@ Loader {
 		FactComboBox {
 			fact:           loader.fact
 			indexModel:     false
+            model: loader.fact ? loader.fact.enumStrings.map(function(text) { return ActuatorTranslation.label(text) }) : []
 			sizeToContents: true
 		}
 	}

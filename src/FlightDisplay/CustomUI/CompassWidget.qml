@@ -11,40 +11,9 @@ Item {
 
     property real size:        180
     property real heading:     0
-    property real roll:        0
-    property real pitch:       0
     property var  theme:       null
     property real infoBarOpacity: 1.0
     readonly property real valueBarHeight: Math.round(35 * (theme ? theme.uiScale : 1))
-    property real _displayHeading: 0
-    property real _displayRoll:    0
-    property real _displayPitch:   0
-
-    function _closestAngle(currentValue, targetValue) {
-        var currentNorm = ((currentValue % 360) + 360) % 360
-        var targetNorm = ((targetValue % 360) + 360) % 360
-        var delta = targetNorm - currentNorm
-        if (delta > 180) {
-            delta -= 360
-        } else if (delta < -180) {
-            delta += 360
-        }
-        return currentValue + delta
-    }
-
-    onHeadingChanged: _displayHeading = _closestAngle(_displayHeading, heading)
-    onRollChanged: _displayRoll = roll
-    onPitchChanged: _displayPitch = pitch
-
-    Behavior on _displayHeading {
-        NumberAnimation { duration: 80; easing.type: Easing.OutQuad }
-    }
-    Behavior on _displayRoll {
-        NumberAnimation { duration: 90; easing.type: Easing.OutQuad }
-    }
-    Behavior on _displayPitch {
-        NumberAnimation { duration: 90; easing.type: Easing.OutQuad }
-    }
 
     // 颜色
     readonly property color _bgColor:     theme ? theme.surface  : "#ffffff"
@@ -126,7 +95,7 @@ Item {
         Item {
             id: needle
             anchors.fill: parent
-            rotation: root._displayHeading
+            rotation: root.heading
 
             Canvas {
                 id: needleCanvas
@@ -182,7 +151,7 @@ Item {
         }
     }
 
-    // ── 底部：航向数值 + 横滚俯仰 ──
+    // 底部航向读数
     Rectangle {
         anchors.top: dialCircle.bottom
         anchors.topMargin: Math.round(5 * (theme ? theme.uiScale : 1))
@@ -190,35 +159,25 @@ Item {
         anchors.right: parent.right
         height: root.valueBarHeight - Math.round(5 * (theme ? theme.uiScale : 1))
         radius: Math.round(6 * (theme ? theme.uiScale : 1))
-        color: Qt.rgba(0.05, 0.10, 0.18, 0.82 * infoBarOpacity)
+        color: Qt.rgba(0.03, 0.05, 0.09, infoBarOpacity)
 
         Row {
-            anchors.fill: parent
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            anchors.topMargin: 3
-            anchors.bottomMargin: 3
-            spacing: 0
+            anchors.centerIn: parent
+            spacing: Math.round(8 * (theme ? theme.uiScale : 1))
 
-            Column {
-                width: parent.width / 3
-                spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "横滚"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayRoll.toFixed(1) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.DemiBold; color: "#ffffff" }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("Heading")
+                font.pixelSize: Math.round(11 * (theme ? theme.uiScale : 1))
+                color: Qt.rgba(1, 1, 1, 0.82)
             }
 
-            Column {
-                width: parent.width / 3
-                spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "航向"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: (((root._displayHeading % 360) + 360) % 360).toFixed(0) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.Bold; color: "#ffffff" }
-            }
-
-            Column {
-                width: parent.width / 3
-                spacing: 0
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "俯仰"; font.pixelSize: Math.round(8 * (theme ? theme.uiScale : 1));  color: Qt.rgba(1, 1, 1, 0.72) }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root._displayPitch.toFixed(1) + "°"; font.pixelSize: Math.round(10 * (theme ? theme.uiScale : 1)); font.weight: Font.DemiBold; color: "#ffffff" }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: (Math.round(((root.heading % 360) + 360) % 360) % 360) + "°"
+                font.pixelSize: Math.round(19 * (theme ? theme.uiScale : 1))
+                font.weight: Font.Bold
+                color: "#ffffff"
             }
         }
     }

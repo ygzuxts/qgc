@@ -82,7 +82,7 @@ Item {
     }
 
     function closeCustomSettings() {
-        customOverlay.settingsPageVisible = false
+        customOverlay.openToolPage = ""
     }
 
     QGCToolInsets {
@@ -131,8 +131,8 @@ Item {
             anchors.margins:        _toolsMargin
             item1IsFullSettingsKey: "MainFlyWindowIsMap"
             item1:                  mapControl
-            item2:                  QGroundControl.videoManager.hasVideo ? videoControl : null
-            show:                   !_useCustomFlyView && QGroundControl.videoManager.hasVideo && !QGroundControl.videoManager.fullScreen &&
+            item2:                  (QGroundControl.videoManager.hasVideo || videoControl.testVideoEnabled) ? videoControl : null
+            show:                   !_useCustomFlyView && (QGroundControl.videoManager.hasVideo || videoControl.testVideoEnabled) && !QGroundControl.videoManager.fullScreen &&
                                         (videoControl.pipState.state === videoControl.pipState.pipState || mapControl.pipState.state === mapControl.pipState.pipState)
             z:                      QGroundControl.zOrderWidgets
 

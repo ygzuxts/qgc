@@ -13,27 +13,27 @@ Item {
     readonly property bool healthAndArmingChecksSupported: !!(activeVehicle && activeVehicle.healthAndArmingCheckReport && activeVehicle.healthAndArmingCheckReport.supported)
     readonly property string statusText: {
         if (!activeVehicle) {
-            return "未连接"
+            return qsTr("Disconnected")
         }
         if (communicationLost) {
-            return "失联"
+            return qsTr("Connection Lost")
         }
         if (activeVehicle.armed) {
             if (activeVehicle.flying) {
-                return "飞行中"
+                return qsTr("Flying")
             }
             if (activeVehicle.landing) {
-                return "降落中"
+                return qsTr("Landing")
             }
-            return "已解锁"
+            return qsTr("Armed")
         }
         if (healthAndArmingChecksSupported) {
-            return activeVehicle.healthAndArmingCheckReport.canArm ? "可起飞" : "未就绪"
+            return activeVehicle.healthAndArmingCheckReport.canArm ? qsTr("Ready to Fly") : qsTr("Not Ready")
         }
         if (activeVehicle.readyToFlyAvailable) {
-            return activeVehicle.readyToFly ? "可起飞" : "未就绪"
+            return activeVehicle.readyToFly ? qsTr("Ready to Fly") : qsTr("Not Ready")
         }
-        return activeVehicle.allSensorsHealthy && activeVehicle.autopilotPlugin && activeVehicle.autopilotPlugin.setupComplete ? "可起飞" : "未就绪"
+        return activeVehicle.allSensorsHealthy && activeVehicle.autopilotPlugin && activeVehicle.autopilotPlugin.setupComplete ? qsTr("Ready to Fly") : qsTr("Not Ready")
     }
     readonly property string statusTone: {
         if (!activeVehicle) {

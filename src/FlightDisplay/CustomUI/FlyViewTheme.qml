@@ -8,7 +8,7 @@ QtObject {
     property QGCPalette qgcPal: QGCPalette { colorGroupEnabled: true }
     property real viewportWidth: 1280
     property real viewportHeight: 720
-    readonly property bool mobile: ScreenTools.isMobile
+    readonly property bool mobile: ScreenTools.isMobileLayout
     readonly property real designWidth: 1280
     readonly property real designHeight: 720
     readonly property real rawUiScale: Math.min(viewportWidth / designWidth, viewportHeight / designHeight)

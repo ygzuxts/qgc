@@ -61,24 +61,38 @@ Rectangle {
     function modeDisplayName(modeName) {
         var normalizedModeName = modeName ? String(modeName).trim() : "--"
         switch (normalizedModeName) {
-        case "Manual": return "手动Manual"
-        case "Stabilized": return "自稳Stabilized"
-        case "Acro": return "特技Acro"
-        case "Rattitude": return "半自稳Rattitude"
-        case "Altitude": return "高度"
-        case "Offboard": return "板外Offboard"
-        case "Position": return "定点Position"
-        case "Hold": return "等待"
-        case "Mission": return "任务"
-        case "Return": return "返航Return"
-        case "Land": return "着陆Land"
-        case "Precision Landing": return "精准降落"
-        case "Takeoff": return "起飞Takeoff"
-        case "VTOL Takeoff": return "垂直起飞"
-        case "Safe Recovery": return "安全恢复"
-        case "Position Slow": return "低速定点"
-        case "Altitude Cruise": return "高度巡航"
-        case "Follow Target": return "跟随目标"
+        case "手动":
+        case "Manual": return qsTr("Manual")
+        case "自稳":
+        case "Stabilized": return qsTr("Stabilized")
+        case "特技":
+        case "Acro": return qsTr("Acro")
+        case "半自稳":
+        case "Rattitude": return qsTr("Rattitude")
+        case "定高":
+        case "Altitude": return qsTr("Altitude Hold")
+        case "外部控制":
+        case "Offboard": return qsTr("Offboard")
+        case "定点":
+        case "Position": return qsTr("Position")
+        case "悬停":
+        case "Hold": return qsTr("Hold")
+        case "任务":
+        case "Mission": return qsTr("Mission")
+        case "返航":
+        case "Return": return qsTr("Return")
+        case "降落":
+        case "Land": return qsTr("Land")
+        case "精准降落":
+        case "Precision Land":
+        case "Precision Landing": return qsTr("Precision Land")
+        case "起飞":
+        case "Takeoff": return qsTr("Takeoff")
+        case "VTOL Takeoff": return qsTr("VTOL Takeoff")
+        case "Safe Recovery": return qsTr("Safe Recovery")
+        case "Position Slow": return qsTr("Slow Position")
+        case "Altitude Cruise": return qsTr("Altitude Cruise")
+        case "Follow Target": return qsTr("Follow Target")
         default: return normalizedModeName && normalizedModeName !== "--" ? normalizedModeName : "--"
         }
     }
@@ -111,14 +125,14 @@ Rectangle {
 
     function statusDisplayName(statusName) {
         switch (statusName) {
-        case "Ready": return "Ready"
-        case "Not Ready": return "Not Ready"
-        case "Flying": return "Flying"
-        case "Landing": return "Landing"
-        case "Armed": return "Armed"
-        case "Comms Lost": return "Comms Lost"
-        case "Disconnected": return "Disconnected"
-        default: return statusName && statusName.length > 0 ? statusName : "Disconnected"
+        case "Ready": return qsTr("Ready")
+        case "Not Ready": return qsTr("Not Ready")
+        case "Flying": return qsTr("Flying")
+        case "Landing": return qsTr("Landing")
+        case "Armed": return qsTr("Armed")
+        case "Comms Lost": return qsTr("Communication Lost")
+        case "Disconnected": return qsTr("Disconnected")
+        default: return statusName && statusName.length > 0 ? statusName : qsTr("Disconnected")
         }
     }
 
@@ -147,7 +161,7 @@ Rectangle {
 
         Text {
             id: titleText
-            text: "飞行模式"
+            text: qsTr("Flight Mode ")
             font.pixelSize: 18
             font.weight: Font.Bold
             color: panelRoot.primaryText
@@ -155,14 +169,14 @@ Rectangle {
 
         Text {
             id: statusText
-            text: panelRoot.statusDisplayName(panelRoot.state ? panelRoot.state.mainStatusText : "Disconnected") + " · 当前 " + panelRoot.modeDisplayName(panelRoot._currentMode())
+            text: panelRoot.statusDisplayName(panelRoot.state ? panelRoot.state.mainStatusText : qsTr("Disconnected")) + qsTr(" · Current ") + panelRoot.modeDisplayName(panelRoot._currentMode())
             font.pixelSize: 12
             color: panelRoot.secondaryText
         }
 
         Text {
             id: modeCountText
-            text: "可用模式：" + (vehicle && panelRoot.sortedModeList ? panelRoot.sortedModeList.length : 0)
+            text: qsTr("Available modes: ") + (vehicle && panelRoot.sortedModeList ? panelRoot.sortedModeList.length : 0)
             font.pixelSize: 12
             color: panelRoot.secondaryText
         }
@@ -256,7 +270,7 @@ Rectangle {
 
             Text {
                 anchors.centerIn: parent
-                text: vehicle === null ? "未连接，暂无可用模式" : "无可用模式"
+                text: vehicle === null ? qsTr("Disconnected; no modes available") : qsTr("No modes available")
                 font.pixelSize: 12
                 color: panelRoot.secondaryText
             }

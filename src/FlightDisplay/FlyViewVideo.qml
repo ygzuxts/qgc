@@ -19,6 +19,7 @@ Item {
 
     property Item pipView
     property Item pipState: videoPipState
+    property bool testVideoEnabled: videoStreaming.ffmpegTestEnabled
 
     property int    _track_rec_x:       0
     property int    _track_rec_y:       0
@@ -58,7 +59,7 @@ Item {
         id:             videoStreaming
         anchors.fill:   parent
         useSmallFont:   _root.pipState.state !== _root.pipState.fullState
-        visible:        QGroundControl.videoManager.isStreamSource
+        visible:        QGroundControl.videoManager.isStreamSource || _root.testVideoEnabled
     }
     //-- UVC Video (USB Camera or Video Device)
     Loader {
