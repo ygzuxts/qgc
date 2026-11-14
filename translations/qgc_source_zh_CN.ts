@@ -18840,6 +18840,7 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
     <message><source>Disconnected</source><translation>未连接</translation></message>
     <message><source>Resume Mission</source><translation>恢复任务</translation></message>
     <message><source>Return and Land</source><translation>返航降落</translation></message>
+    <message><source>Return and Land (hold)</source><translation>长按返航降落</translation></message>
     <message><source>⚠ Confirm Failover</source><translation>⚠ 确认切换</translation></message>
   </context>
   <context>
@@ -18860,6 +18861,36 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
   </context>
   <context>
     <name>FlyViewRightPanel</name>
+    <message><source>Flight</source><translation>飞行</translation></message>
+    <message><source>Takeoff</source><translation>起降</translation></message>
+    <message><source>Mission</source><translation>任务</translation></message>
+    <message><source>Settings</source><translation>设置</translation></message>
+    <message><source>Vehicle</source><translation>载具</translation></message>
+    <message><source>Vehicle %1</source><translation>载具 %1</translation></message>
+    <message><source>Connection lost</source><translation>链路丢失</translation></message>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>Flight Parameters</source><translation>飞行参数</translation></message>
+    <message><source>Flight Mode</source><translation>飞行模式</translation></message>
+    <message><source>Arming Status</source><translation>解锁状态</translation></message>
+    <message><source>Battery</source><translation>电池</translation></message>
+    <message><source>GPS</source><translation>GPS 定位</translation></message>
+    <message><source>Satellites</source><translation>卫星数</translation></message>
+    <message><source>Ground Speed</source><translation>地速</translation></message>
+    <message><source>Relative Altitude</source><translation>相对高度</translation></message>
+    <message><source>Flight Time</source><translation>飞行时间</translation></message>
+    <message><source>Flight Instruments</source><translation>姿态仪</translation></message>
+    <message><source>No live attitude data</source><translation>暂无实时姿态数据</translation></message>
+    <message><source>Vehicle Configuration</source><translation>载具配置</translation></message>
+    <message><source>Display</source><translation>界面显示</translation></message>
+    <message><source>Light Theme</source><translation>浅色主题</translation></message>
+    <message><source>Dark Theme</source><translation>深色主题</translation></message>
+    <message><source>Bottom Action Bar</source><translation>底部操作栏</translation></message>
+    <message><source>Fly View</source><translation>飞行视图</translation></message>
+    <message><source>Keep Map Centered on Vehicle</source><translation>地图保持居中于载具</translation></message>
+    <message><source>Connections</source><translation>连接</translation></message>
+    <message><source>Comm Links</source><translation>通信连接</translation></message>
+    <message><source>Summary</source><translation>概览</translation></message>
+    <message><source>Application Settings</source><translation>完整应用设置</translation></message>
     <message><source>Takeoff / Landing</source><translation>起降</translation></message>
   </context>
   <context>

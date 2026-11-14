@@ -17,12 +17,12 @@ QtObject {
     readonly property real baseWidth: ScreenTools.defaultFontPixelWidth * uiScale
     readonly property real compactScale: mobile ? 1.0 : 1.0
 
-    readonly property color bg:       darkMode ? "#000000" : "#ffffff"
-    readonly property color surface:  darkMode ? "#000000" : "#ffffff"
-    readonly property color surface2: darkMode ? "#000000" : "#ffffff"
-    readonly property color surface3: darkMode ? "#000000" : "#ffffff"
-    readonly property color border:   darkMode ? "#2b2b2b" : "#e4e8ed"
-    readonly property color border2:  darkMode ? "#1f1f1f" : "#edf0f4"
+    readonly property color bg:       darkMode ? "#0d2339" : "#f5f8fc"
+    readonly property color surface:  darkMode ? "#0d2339" : "#f5f8fc"
+    readonly property color surface2: darkMode ? "#173554" : "#e8eff8"
+    readonly property color surface3: darkMode ? "#1b4268" : "#dce8f6"
+    readonly property color border:   darkMode ? "#294965" : "#cddbea"
+    readonly property color border2:  darkMode ? "#243f58" : "#e0e8f1"
     readonly property color text:     darkMode ? "#e5edf8" : "#1a1d23"
     readonly property color text2:    darkMode ? "#a8b5c7" : "#5a6272"
     readonly property color text3:    darkMode ? "#7f8da3" : "#9aa3b2"

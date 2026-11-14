@@ -130,7 +130,8 @@ Rectangle {
     Rectangle {
         anchors.fill: parent
         readonly property real bgAlpha: Math.max(0.15, Math.min(1.0, root.infoBarOpacity))
-        color: root.theme && root.theme.darkMode ? Qt.rgba(0, 0, 0, bgAlpha) : Qt.rgba(1, 1, 1, bgAlpha)
+        readonly property color surfaceColor: root.theme ? root.theme.surface : "#f5f8fc"
+        color: Qt.rgba(surfaceColor.r, surfaceColor.g, surfaceColor.b, bgAlpha)
         opacity: 1
     }
 
@@ -700,6 +701,7 @@ Rectangle {
                     mipmap: true
                 }
 
+                Accessible.name: qsTr("Flight")
                 MouseArea {
                     id: pageMouse
                     anchors.fill: parent

@@ -43,20 +43,16 @@ Item {
     property bool customFlyViewEnabled: false
     property var setCustomFlyViewEnabled
     readonly property bool wantsMapVisible: customFlyViewEnabled
-    readonly property bool wantsMapInteractive: customFlyViewEnabled && mapViewportHover.hovered
+    readonly property bool wantsMapInteractive: workspaceVisible && mapViewportHover.hovered
     property bool nativeSwitchPanelExpanded: false
     property bool flightModePanelVisible: false
-    // 0: 起飞/起降页，1: 任务列表页。打开地面站默认进入任务列表页。
-    property int currentTab: 1
+    property int currentTab: 0
     property bool customPlanShellVisible: false
     property string customPlanFilePath: ""
     property string openToolPage: ""
     readonly property real informationBarHeight: topBar.height
-    property real leftW: Math.max(minLeftW, Math.min(maxLeftW, theme.leftPanelW))
-    property real rightW: Math.max(minRightW, Math.min(maxRightW, theme.rightPanelW))
+    property real rightW: Math.max(minRightW, Math.min(maxRightW, width * 0.22))
     property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobileLayout ? 0.44 : 0.52)))
-    property bool hudCollapsed: false
-    property bool showLeftPanel: _panelSettings.showLeftPanel
     property bool showRightPanel: _panelSettings.showRightPanel
     property real sidePanelOpacity: _panelSettings.sidePanelOpacity
     property bool showHudExpandBar: _panelSettings.showHudExpandBar
@@ -65,15 +61,11 @@ Item {
     property bool showViewSwitchBar: _flyViewSettings.showViewSwitchBar.rawValue
     readonly property var uiTheme: theme
     readonly property var uiState: flightViewState
-    readonly property bool taskListPageActive: currentTab === 1 && !customPlanShellVisible
-    readonly property bool takeoffPageActive: currentTab === 0 && !customPlanShellVisible
-    readonly property bool bottomBarVisible: false
-    readonly property real effectiveLeftW: taskListPageActive && showLeftPanel ? leftW : 0
-    readonly property real effectiveRightW: takeoffPageActive && showRightPanel ? rightW : 0
-    readonly property real minLeftW: width * (ScreenTools.isMobileLayout ? 0.17 : 0.104)
-    readonly property real maxLeftW: width * (ScreenTools.isMobileLayout ? 0.34 : 0.208)
-    readonly property real minRightW: width * (ScreenTools.isMobileLayout ? 0.18 : 0.115)
-    readonly property real maxRightW: width * (ScreenTools.isMobileLayout ? 0.34 : 0.219)
+    readonly property bool workspaceVisible: customFlyViewEnabled && !customPlanShellVisible && openToolPage === ""
+    readonly property bool bottomBarVisible: workspaceVisible && showBottomActionBar
+    readonly property real effectiveRightW: workspaceVisible && showRightPanel ? rightW : 0
+    readonly property real minRightW: Math.min(width * 0.42, 280 * theme.uiScale)
+    readonly property real maxRightW: width * 0.46
     readonly property real qgcAndroidInstrumentSize: Math.min(ScreenTools.defaultFontPixelHeight * 6.38, height * 0.253, width * 0.132)
     readonly property real minHudH: Math.round(ScreenTools.isMobileLayout ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
     readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobileLayout ? 0.50 : 0.58), ScreenTools.isMobileLayout ? minHudH : 0))
@@ -83,14 +75,25 @@ Item {
                                                     : Math.max(96, Math.min(172, Math.min(width * 0.16, (hudH - theme.spacingXl * 2 - Math.round(10 * theme.uiScale) - Math.round(35 * theme.uiScale)) / 2)))
     readonly property real sharedHudTelemetryWidth: Math.max(220, Math.min(Math.round(430 * theme.uiScale), width - theme.spacingXl - sharedHudInstrumentSize - Math.max(8, Math.round(18 * theme.uiScale)) - theme.spacingXl))
 
-    Component.onCompleted: {
-        _root.currentTab = 1
-        _panelSettings.showLeftPanel = true
+    function selectWorkspaceTab(index) {
+        if (!mainWindow.allowViewSwitch() || !mainWindow.closeTool()) {
+            return false
+        }
+        if (customPlanShellVisible && customPlanShellLoader.item && customPlanShellLoader.item.requestReturn) {
+            customPlanShellLoader.item.requestReturn()
+            return false
+        }
+        customPlanShellVisible = false
+        flightModePanelVisible = false
+        openToolPage = ""
+        currentTab = index
+        _panelSettings.showRightPanel = true
+        return true
     }
 
     function openWaypointPlanPage(planFilePath) {
         _root.customPlanFilePath = typeof planFilePath === "string" ? planFilePath : ""
-        _root.currentTab = 1
+        _root.currentTab = 2
         _root.customPlanShellVisible = true
     }
 
@@ -114,7 +117,6 @@ Item {
     Settings {
         id: _panelSettings
         category: "CustomFlyView"
-        property bool showLeftPanel: true
         property bool showRightPanel: true
         property real sidePanelOpacity: 0.92
         property bool showHudExpandBar: true
@@ -126,6 +128,7 @@ Item {
         id: theme
         viewportWidth: _root.width
         viewportHeight: _root.height
+        darkMode: QGroundControl.settingsManager.appSettings.indoorPalette.rawValue === 1
     }
 
     FlyViewState {
@@ -135,19 +138,12 @@ Item {
         guidedController: _root.guidedController
         customFlyViewEnabled: _root.customFlyViewEnabled
         setCustomFlyViewEnabled: _root.setCustomFlyViewEnabled
-        showLeftPanel: _root.showLeftPanel
-        setShowLeftPanel: function(visible) { _panelSettings.showLeftPanel = !!visible }
         sidePanelOpacity: _root.sidePanelOpacity
         setSidePanelOpacity: function(value) {
             _panelSettings.sidePanelOpacity = Math.max(0, Math.min(1, Number(value)))
         }
         showHudExpandBar: _root.showHudExpandBar
-        setShowHudExpandBar: function(visible) {
-            _panelSettings.showHudExpandBar = !!visible
-            if (!visible) {
-                _root.hudCollapsed = true
-            }
-        }
+        setShowHudExpandBar: function(visible) { _panelSettings.showHudExpandBar = !!visible }
         infoBarOpacity: _root.infoBarOpacity
         setInfoBarOpacity: function(value) {
             _panelSettings.infoBarOpacity = Math.max(0, Math.min(1, Number(value)))
@@ -176,95 +172,14 @@ Item {
             _root.flightModePanelVisible = false
             _root.openToolPage = "analyze"
         }
-        onSettingsRequested: {
-            if (!mainWindow.closeTool()) {
-                return
-            }
-            _root.flightModePanelVisible = false
-            _root.openToolPage = "settings"
-        }
-        onPageSwitchRequested: {
-            if (_root.openToolPage !== "" || mainWindow.vehicleConfigurationOpen()) {
-                if (!mainWindow.closeTool()) {
-                    return
-                }
-                _root.openToolPage = ""
-                _root.customPlanShellVisible = false
-                _root.flightModePanelVisible = false
-                _root.currentTab = 0
-                _panelSettings.showRightPanel = true
-                return
-            }
-            if (_root.customPlanShellVisible && customPlanShellLoader.item && customPlanShellLoader.item.requestReturn) {
-                customPlanShellLoader.item.requestReturn()
-                return
-            }
-            _root.currentTab = _root.taskListPageActive ? 0 : 1
-            if (_root.currentTab === 1) {
-                _panelSettings.showLeftPanel = true
-            } else if (_root.currentTab === 0) {
-                _panelSettings.showRightPanel = true
-            }
-        }
-    }
-
-    FlyViewLeftPanel {
-        id: leftPanel
-        anchors.top: topBar.bottom
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        width: _root.effectiveLeftW
-        visible: _root.customFlyViewEnabled && _root.taskListPageActive && _root.showLeftPanel
-        state: _root.uiState
-        theme: theme
-        clip: true
-        backgroundOpacity: _root.sidePanelOpacity
-        openCustomPlanShell: function(planFilePath) { _root.openWaypointPlanPage(planFilePath) }
-        onTakeoffPageRequested: {
-            _root.currentTab = 0
-            _panelSettings.showRightPanel = true
-        }
-    }
-
-    Rectangle {
-        id: leftPanelCollapseHandle
-        readonly property real handleW: Math.max(20, Math.round(theme.baseWidth * 2.4))
-        readonly property real handleH: Math.max(42, Math.round(theme.baseFont * 3.1))
-
-        width: handleW
-        height: handleH
-        radius: Math.round(width / 2)
-        color: theme.darkMode ? Qt.rgba(0, 0, 0, 0.72) : Qt.rgba(1, 1, 1, 0.90)
-        border.color: theme.darkMode ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(0, 0, 0, 0.14)
-        border.width: 1
-        visible: _root.customFlyViewEnabled && _root.taskListPageActive
-        z: 35
-        anchors.top: topBar.bottom
-        anchors.topMargin: theme.spacingLg
-        anchors.left: parent.left
-        anchors.leftMargin: _root.showLeftPanel ? Math.max(0, _root.leftW - width / 2) : 0
-
-        Text {
-            anchors.centerIn: parent
-            text: _root.showLeftPanel ? "‹" : "›"
-            color: theme.darkMode ? "#ffffff" : "#111827"
-            font.pixelSize: Math.round(theme.fontLg * 1.15)
-            font.weight: Font.Bold
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: _panelSettings.showLeftPanel = !_panelSettings.showLeftPanel
-        }
+        onSettingsRequested: _root.selectWorkspaceTab(3)
+        onPageSwitchRequested: _root.selectWorkspaceTab(0)
     }
 
     Item {
         id: centerArea
         anchors.top: topBar.bottom
         anchors.left: parent.left
-        anchors.leftMargin: _root.effectiveLeftW
         anchors.right: parent.right
         anchors.rightMargin: _root.effectiveRightW
         anchors.bottom: _root.bottomBarVisible ? bottomBar.top : parent.bottom
@@ -282,117 +197,6 @@ Item {
             }
         }
 
-        Rectangle {
-            id: hudTopBar
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: hudArea.top
-            height: theme.sectionH
-            color: theme.surface
-            z: 5
-            visible: false
-
-            Rectangle {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 1
-                color: theme.border
-            }
-
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 1
-                color: theme.border
-            }
-
-            Text {
-                anchors.centerIn: parent
-                text: "姿态 · 遥测"
-                font.pixelSize: theme.fontSm
-                font.weight: Font.Medium
-                color: theme.text3
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                anchors.rightMargin: 88
-                cursorShape: _root.hudCollapsed ? Qt.ArrowCursor : Qt.SizeVerCursor
-                hoverEnabled: true
-
-                property int _sy: 0
-                property int _sh: 0
-
-                onPressed: {
-                    _sy = mouseY
-                    _sh = _root.hudH
-                }
-                onMouseYChanged: {
-                    if (pressed && !_root.hudCollapsed) {
-                        var newH = _sh - (mouseY - _sy)
-                        _root.hudH = Math.max(_root.minHudH, Math.min(_root.maxHudH, newH))
-                    }
-                }
-            }
-
-            Rectangle {
-                anchors.right: parent.right
-                anchors.rightMargin: theme.spacingSm
-                anchors.verticalCenter: parent.verticalCenter
-                width: theme.baseWidth * 9.5
-                height: theme.controlHSm
-                radius: theme.radiusLg
-                color: _colBtn.containsMouse ? theme.blue : theme.surface3
-                border.color: _colBtn.containsMouse ? theme.blueBorder : theme.blueBorder
-                border.width: 1
-
-                Row {
-                    anchors.centerIn: parent
-                    spacing: theme.spacingSm
-
-                    Text {
-                        text: _root.hudCollapsed ? "▲" : "▼"
-                        font.pixelSize: theme.fontXs
-                        font.weight: Font.Bold
-                        color: _colBtn.containsMouse ? theme.textOnBlue : theme.blue
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    Text {
-                        text: _root.hudCollapsed ? "展开" : "收起"
-                        font.pixelSize: theme.fontMd
-                        font.weight: Font.DemiBold
-                        color: _colBtn.containsMouse ? theme.textOnBlue : theme.blue
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
-
-                MouseArea {
-                    id: _colBtn
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: _root.hudCollapsed = !_root.hudCollapsed
-                }
-            }
-        }
-
-        FlyViewHUD {
-            id: hudArea
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            height: _root.takeoffPageActive && !_root.hudCollapsed ? _root.hudH : 0
-            visible: _root.takeoffPageActive && !_root.hudCollapsed
-            clip: false
-            z: 8
-            state: _root.uiState
-            theme: theme
-            instrumentSizeOverride: _root.sharedHudInstrumentSize
-            telemetryWidthOverride: _root.sharedHudTelemetryWidth
-        }
     }
 
     FlightModePanel {
@@ -410,17 +214,20 @@ Item {
         id: rightPanel
         anchors.top: topBar.bottom
         anchors.right: parent.right
-        anchors.bottom: _root.bottomBarVisible ? bottomBar.top : parent.bottom
+        anchors.bottom: parent.bottom
         width: _root.effectiveRightW
         state: _root.uiState
         theme: theme
         clip: true
         currentTab: _root.currentTab
-        visible: _root.customFlyViewEnabled && _root.takeoffPageActive && _root.showRightPanel
+        visible: width > 0
         backgroundOpacity: _root.sidePanelOpacity
-        openCustomPlanShell: function() {
-            _root.customPlanFilePath = ""
-            _root.customPlanShellVisible = true
+        openCustomPlanShell: _root.openWaypointPlanPage
+        onTabRequested: index => _root.selectWorkspaceTab(index)
+        onAdvancedSettingsRequested: {
+            if (mainWindow.allowViewSwitch()) {
+                _root.openToolPage = "settings"
+            }
         }
     }
 
@@ -435,10 +242,10 @@ Item {
         color: theme.darkMode ? Qt.rgba(0, 0, 0, 0.72) : Qt.rgba(1, 1, 1, 0.90)
         border.color: theme.darkMode ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(0, 0, 0, 0.14)
         border.width: 1
-        visible: _root.customFlyViewEnabled && _root.takeoffPageActive
+        visible: _root.workspaceVisible
         z: 35
         anchors.top: topBar.bottom
-        anchors.topMargin: theme.spacingLg
+        anchors.topMargin: rightPanel.tabHeight + theme.spacingSm
         anchors.right: parent.right
         anchors.rightMargin: _root.showRightPanel ? Math.max(0, _root.rightW - width / 2) : 0
 
@@ -463,11 +270,17 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.rightMargin: _root.effectiveRightW
         height: _root.bottomBarH
         state: _root.uiState
         theme: theme
         visible: _root.bottomBarVisible
         onFailoverRequested: failoverDialog.visible = true
+        onMissionCheckRequested: {
+            if (_root.selectWorkspaceTab(1)) {
+                rightPanel.openMissionCheck()
+            }
+        }
     }
 
     Loader {
@@ -492,7 +305,7 @@ Item {
                 hudHeight: _root.hudH
                 topInset: topBar.height
                 onCloseRequested: {
-                    _root.currentTab = 1
+                    _root.currentTab = 2
                     _root.customPlanShellVisible = false
                 }
             }

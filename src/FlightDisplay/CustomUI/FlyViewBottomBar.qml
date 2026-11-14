@@ -11,18 +11,15 @@ Rectangle {
     property var theme: null
 
     signal failoverRequested()
+    signal missionCheckRequested()
 
     function actionLabel(index) {
         switch (index) {
         case 0: return qsTr("Hold Position")
         case 1: return qsTr("Resume Mission")
         case 2: return qsTr("Execute Mission")
-        default: return qsTr("Return and Land")
+        default: return qsTr("Return and Land (hold)")
         }
-    }
-
-    function actionType(index) {
-        return index === 2 ? "primary" : "normal"
     }
 
     function actionEnabled(index) {
@@ -49,7 +46,7 @@ Rectangle {
             root.state.executeResumeMission()
             break
         case 2:
-            root.state.executeStartMission()
+            root.missionCheckRequested()
             break
         default:
             root.state.executeRTL()
@@ -107,7 +104,11 @@ Rectangle {
                 border.width: 0
 
                 Text {
-                    anchors.centerIn: parent
+                    anchors.fill: parent
+                    anchors.margins: 3
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
                     text: root.actionLabel(index)
                     font.pixelSize: theme ? theme.fontMd : 13; font.weight: Font.Medium
                     color: actionMouse.pressed || actionMouse.containsMouse
@@ -120,7 +121,17 @@ Rectangle {
                     enabled: root.actionEnabled(index)
                     hoverEnabled: true
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: root.triggerAction(index)
+                    // Match the existing takeoff page's deliberate return command.
+                    onClicked: {
+                        if (index !== 3) {
+                            root.triggerAction(index)
+                        }
+                    }
+                    onPressAndHold: {
+                        if (index === 3 && root.actionEnabled(index)) {
+                            root.triggerAction(index)
+                        }
+                    }
                 }
             }
         }
@@ -153,6 +164,7 @@ Rectangle {
 
         // 飞行状态摘要
         Row {
+            visible: root.width >= 640
             spacing: theme ? theme.spacingXs : 4
             Repeater {
                 model: 3

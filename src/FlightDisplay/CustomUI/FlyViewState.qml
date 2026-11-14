@@ -28,7 +28,7 @@ QtObject {
  readonly property var rpmGroup: vehicleConnected && activeVehicle && activeVehicle.rpm ? activeVehicle.rpm : null
 
  property bool vehicleAvailable: !!activeVehicle
- property bool communicationLost: !!(activeVehicle && activeVehicle.communicationLost)
+ property bool communicationLost: !!(activeVehicle && activeVehicle.vehicleLinkManager && activeVehicle.vehicleLinkManager.communicationLost)
  property bool vehicleConnected: vehicleAvailable && !communicationLost
  property bool armed: activeVehicle ? activeVehicle.armed : false
  property bool flying: activeVehicle ? activeVehicle.flying : false
