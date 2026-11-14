@@ -18863,6 +18863,25 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
   </context>
   <context>
     <name>FlyViewRightPanel</name>
+    <message><source>Takeoff Setup</source><translation>起飞设置</translation></message>
+    <message><source>Landing Setup</source><translation>降落设置</translation></message>
+    <message><source>Altitude</source><translation>高度</translation></message>
+    <message><source>Longitude</source><translation>经度</translation></message>
+    <message><source>Latitude</source><translation>纬度</translation></message>
+    <message><source>Approach Altitude</source><translation>进场高度</translation></message>
+    <message><source>Loiter Radius</source><translation>盘旋半径</translation></message>
+    <message><source>Landing Distance</source><translation>降落距离</translation></message>
+    <message><source>Approach Speed</source><translation>进场速度</translation></message>
+    <message><source>Vehicle Controls</source><translation>载具操作</translation></message>
+    <message><source>Survey</source><translation>航测</translation></message>
+    <message><source>Route</source><translation>航线</translation></message>
+    <message><source>Inspection</source><translation>巡检</translation></message>
+    <message><source>Survey Parameters</source><translation>航测参数</translation></message>
+    <message><source>Camera</source><translation>相机</translation></message>
+    <message><source>Grid Angle</source><translation>航线角度</translation></message>
+    <message><source>Turnaround Distance</source><translation>转弯距离</translation></message>
+    <message><source>Camera Shots</source><translation>预计拍照数量</translation></message>
+    <message><source>Direction</source><translation>方向</translation></message>
     <message><source>Mission Information Preview</source><translation>任务信息预览</translation></message>
     <message><source>Flight Status and Instruments</source><translation>飞行状态及仪表</translation></message>
     <message><source>Waypoints</source><translation>航点</translation></message>

@@ -16,6 +16,33 @@ Rectangle {
     property real backgroundOpacity: 1.0
     readonly property real tabHeight: 50
     readonly property var safety: safetyLoader.item
+    readonly property var missionItems: state.missionController ? state.missionController.visualItems : null
+    property int missionTab: 0
+
+    function missionItem(kind, count) {
+        for (let i = 1; missionItems && i < count; ++i) {
+            const item = missionItems.get(i)
+            if ((kind === "takeoff" && item.launchCoordinate !== undefined) ||
+                    (kind === "landing" && item.landingDistance !== undefined) ||
+                    (kind === "survey" && item.gridAngle !== undefined)) {
+                return item
+            }
+        }
+        return null
+    }
+
+    function coordinateValue(coordinate, latitude) {
+        return coordinate && coordinate.isValid
+                ? (latitude ? coordinate.latitude : coordinate.longitude).toFixed(6) : unavailable
+    }
+
+    function plannedValue(fact) {
+        return fact ? fact.valueString + (fact.units ? " " + fact.units : "") : unavailable
+    }
+
+    readonly property var takeoffItem: missionItem("takeoff", missionItems ? missionItems.count : 0)
+    readonly property var landingItem: missionItem("landing", missionItems ? missionItems.count : 0)
+    readonly property var surveyItem: missionItem("survey", missionItems ? missionItems.count : 0)
     readonly property bool connected: state.vehicleConnected
     readonly property string unavailable: "—"
 
@@ -24,8 +51,8 @@ Rectangle {
     signal waypointEditorRequested()
 
     function openMissionCheck() {
-        if (takeoffLoader.item && takeoffLoader.item.takeoffPage.missionStartEnabled()) {
-            takeoffLoader.item.takeoffPage.openStartMissionCheck()
+        if (takeoffLoader.item && takeoffLoader.item.missionStartEnabled()) {
+            takeoffLoader.item.openStartMissionCheck()
         }
     }
 
@@ -323,27 +350,97 @@ Rectangle {
                 }
             }
 
-            Loader {
-                id: takeoffLoader
-                active: root.currentTab === 1
-                sourceComponent: ScrollView {
-                    property alias takeoffPage: takeoffPage
-                    contentWidth: availableWidth
-                    clip: true
+            ScrollView {
+                contentWidth: availableWidth
+                clip: true
 
-                    PageTakeoff {
-                        id: takeoffPage
-                        width: parent.width
-                        height: implicitHeight
-                        state: root.state
-                        theme: root.theme
+                ColumnLayout {
+                    width: Math.max(0, parent.width - 16)
+                    x: 8
+                    spacing: 5
+
+                    Section {
+                        title: qsTr("Takeoff Setup")
+                        expanded: true
+                        Readout { label: qsTr("Altitude"); value: root.plannedValue(root.takeoffItem ? root.takeoffItem.altitude : null) }
+                        Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.takeoffItem ? root.takeoffItem.coordinate : null, false) }
+                        Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.takeoffItem ? root.takeoffItem.coordinate : null, true) }
+                    }
+
+                    Section {
+                        title: qsTr("Landing Setup")
+                        expanded: true
+                        Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, false) }
+                        Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, true) }
+                        Readout { label: qsTr("Approach Altitude"); value: root.plannedValue(root.landingItem ? root.landingItem.finalApproachAltitude : null) }
+                        Readout { label: qsTr("Loiter Radius"); value: root.plannedValue(root.landingItem ? root.landingItem.loiterRadius : null) }
+                        Readout { label: qsTr("Landing Distance"); value: root.plannedValue(root.landingItem ? root.landingItem.landingDistance : null) }
+                        Readout { label: qsTr("Approach Speed"); value: root.plannedValue(root.landingItem ? root.landingItem.finalApproachSpeed : null) }
+                    }
+
+                    DockButton {
+                        text: qsTr("Open Waypoint Editor")
+                        onClicked: root.waypointEditorRequested()
+                    }
+
+                    Section {
+                        id: liveControls
+                        title: qsTr("Vehicle Controls")
+
+                        Loader {
+                            id: takeoffLoader
+                            Layout.fillWidth: true
+                            active: root.currentTab === 1
+                            visible: liveControls.expanded
+                            sourceComponent: PageTakeoff {
+                                state: root.state
+                                theme: root.theme
+                            }
+                        }
                     }
                 }
             }
 
-            Loader {
-                active: root.currentTab === 2
-                sourceComponent: PageMission {
+            ColumnLayout {
+                spacing: 2
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 1
+
+                    Repeater {
+                        model: [qsTr("Survey"), qsTr("Route"), qsTr("Inspection")]
+
+                        DockButton {
+                            required property int index
+                            required property string modelData
+                            Layout.preferredWidth: 1
+                            Layout.preferredHeight: 34
+                            text: modelData
+                            checked: root.missionTab === index
+                            onClicked: root.missionTab = index
+                        }
+                    }
+                }
+
+                Section {
+                    visible: root.missionTab === 0
+                    title: qsTr("Survey Parameters")
+                    expanded: true
+                    Readout { label: qsTr("Camera"); value: root.surveyItem ? (root.surveyItem.cameraCalc.cameraModel || root.unavailable) : root.unavailable }
+                    Readout { label: qsTr("Grid Angle"); value: root.plannedValue(root.surveyItem ? root.surveyItem.gridAngle : null) }
+                    Readout { label: qsTr("Turnaround Distance"); value: root.plannedValue(root.surveyItem ? root.surveyItem.turnAroundDistance : null) }
+                    Readout { label: qsTr("Camera Shots"); value: root.surveyItem ? String(root.surveyItem.cameraShots) : root.unavailable }
+                }
+
+                DockButton {
+                    text: qsTr("Open Waypoint Editor")
+                    onClicked: root.waypointEditorRequested()
+                }
+
+                PageMission {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                     state: root.state
                     theme: root.theme
                     openCustomPlanShell: root.openCustomPlanShell
@@ -353,33 +450,65 @@ Rectangle {
 
             ColumnLayout {
                 spacing: 2
-                DockButton {
-                    text: qsTr("Open Waypoint Editor")
-                    onClicked: root.waypointEditorRequested()
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 28
+                    Repeater {
+                        model: [qsTr("Waypoints"), qsTr("Altitude"), qsTr("Loiter Radius"), qsTr("Direction"), qsTr("Camera")]
+
+                        Text {
+                            required property string modelData
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 1
+                            horizontalAlignment: Text.AlignHCenter
+                            text: modelData
+                            font.pixelSize: 12
+                            color: root.panelText
+                            elide: Text.ElideRight
+                        }
+                    }
                 }
 
                 ListView {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
-                    model: root.state.missionController ? root.state.missionController.visualItems : null
+                    model: root.missionItems
 
-                    delegate: Item {
+                    delegate: RowLayout {
+                        id: waypointRow
                         required property var object
                         width: ListView.view.width
                         height: visible ? 25 : 0
                         visible: object.specifiesCoordinate && object.sequenceNumber > 0
 
-                        Text {
-                            anchors.fill: parent
-                            anchors.leftMargin: 8
-                            verticalAlignment: Text.AlignVCenter
-                            text: object.sequenceNumber + "   " + object.commandName
-                            color: root.panelText
-                            elide: Text.ElideRight
-                            font.pixelSize: 12
+                        Repeater {
+                            model: [
+                                String(waypointRow.object.sequenceNumber),
+                                root.plannedValue(waypointRow.object.altitude),
+                                typeof waypointRow.object.loiterRadius === "number" && waypointRow.object.isLoiterItem
+                                    ? Math.abs(waypointRow.object.loiterRadius).toFixed(0) : root.unavailable,
+                                root.unavailable,
+                                root.unavailable
+                            ]
+
+                            Text {
+                                required property string modelData
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: 1
+                                text: modelData
+                                color: root.panelText
+                                horizontalAlignment: Text.AlignHCenter
+                                elide: Text.ElideRight
+                                font.pixelSize: 12
+                            }
                         }
                     }
+                }
+
+                DockButton {
+                    text: qsTr("Open Waypoint Editor")
+                    onClicked: root.waypointEditorRequested()
                 }
             }
 
