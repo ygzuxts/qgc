@@ -3,10 +3,15 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import QGroundControl.Controls
+import QGroundControl
+import QGroundControl.Palette
+import MAVLink
 import QGroundControl.FlightDisplay
 
 RowLayout {
     id: root
+
+    QGCPalette { id: batteryPalette; colorGroupEnabled: true }
 
     property bool compactLandscape: false
     property var flightState
@@ -118,101 +123,58 @@ RowLayout {
 
     Item {
         Layout.alignment: Qt.AlignVCenter
-        Layout.preferredWidth: compactLandscape ? 92 : 118
-        Layout.preferredHeight: compactLandscape ? 62 : 78
+        Layout.preferredWidth: compactLandscape ? 72 : 84
+        Layout.preferredHeight: compactLandscape ? 28 : 32
 
-        Canvas {
-            id: batteryGauge
-            anchors.fill: parent
+        QGCColoredImage {
+            id: batteryIcon
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            width: root.compactLandscape ? 26 : 30
+            height: width
+            sourceSize.width: width
+            fillMode: Image.PreserveAspectFit
 
-            onPaint: {
-                var ctx = getContext("2d")
-                var w = width
-                var h = height
-                var cx = w * 0.5
-                var cy = h * 0.68
-                var r = Math.min(w * 0.42, h * 0.56)
-                var start = Math.PI
-                var batteryValue = root.flightState.batteryReadingValid ? Math.max(0, Math.min(100, FlightTelemetryModel.displayBattery)) : 0
-                var angle = start + (batteryValue / 100) * Math.PI
-
-                ctx.clearRect(0, 0, w, h)
-
-                var shell = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r * 1.22)
-                shell.addColorStop(0, FlightPalette.lightMode ? "#F1EFE7" : "#424347")
-                shell.addColorStop(0.55, FlightPalette.lightMode ? "#D7D3C8" : "#17181A")
-                shell.addColorStop(1, FlightPalette.lightMode ? "#8C897F" : "#050506")
-                ctx.fillStyle = shell
-                ctx.beginPath()
-                ctx.arc(cx, cy, r * 1.18, Math.PI, Math.PI * 2, false)
-                ctx.lineTo(cx + r * 1.18, cy + r * 0.16)
-                ctx.lineTo(cx - r * 1.18, cy + r * 0.16)
-                ctx.closePath()
-                ctx.fill()
-
-                ctx.lineWidth = Math.max(2, w * 0.045)
-                ctx.lineCap = "round"
-                function arcSegment(a0, a1, color) {
-                    ctx.strokeStyle = color
-                    ctx.beginPath()
-                    ctx.arc(cx, cy, r * 0.82, a0, a1)
-                    ctx.stroke()
+            readonly property var battery: FlightTelemetryModel.batteryFactGroup
+            readonly property int chargeState: root.flightState.batteryReadingValid && battery
+                                              ? battery.chargeState.rawValue : MAVLink.MAV_BATTERY_CHARGE_STATE_UNDEFINED
+            readonly property var settings: QGroundControl.settingsManager.batteryIndicatorSettings
+            readonly property real percentage: FlightTelemetryModel.displayBattery
+            readonly property int level: {
+                switch (chargeState) {
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_OK:
+                    return percentage > settings.threshold1.rawValue ? 0
+                         : percentage > settings.threshold2.rawValue ? 1 : 2
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_LOW:
+                    return 3
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_CRITICAL:
+                    return 4
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_EMERGENCY:
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_FAILED:
+                case MAVLink.MAV_BATTERY_CHARGE_STATE_UNHEALTHY:
+                    return 5
+                default:
+                    return 6
                 }
-                arcSegment(Math.PI, Math.PI * 1.28, FlightPalette.statusRed)
-                arcSegment(Math.PI * 1.30, Math.PI * 1.58, FlightPalette.statusYellow)
-                arcSegment(Math.PI * 1.60, Math.PI * 2.0, FlightPalette.statusGreen)
-
-                ctx.strokeStyle = FlightPalette.textHi
-                ctx.lineWidth = 1
-                for (var i = 0; i <= 10; i++) {
-                    var tickAngle = start + i / 10 * Math.PI
-                    var x0 = cx + Math.cos(tickAngle) * r * 0.66
-                    var y0 = cy + Math.sin(tickAngle) * r * 0.66
-                    var x1 = cx + Math.cos(tickAngle) * r * 0.76
-                    var y1 = cy + Math.sin(tickAngle) * r * 0.76
-                    ctx.beginPath()
-                    ctx.moveTo(x0, y0)
-                    ctx.lineTo(x1, y1)
-                    ctx.stroke()
-                }
-
-                ctx.strokeStyle = root.flightState.batteryReadingValid ? FlightPalette.textHi : FlightPalette.textLo
-                ctx.lineWidth = Math.max(2, w * 0.035)
-                ctx.beginPath()
-                ctx.moveTo(cx, cy)
-                ctx.lineTo(cx + Math.cos(angle) * r * 0.58, cy + Math.sin(angle) * r * 0.58)
-                ctx.stroke()
-
-                ctx.fillStyle = FlightPalette.lightMode ? "#3B3934" : "#0A0A0B"
-                ctx.beginPath()
-                ctx.arc(cx, cy, r * 0.11, 0, Math.PI * 2)
-                ctx.fill()
-                ctx.strokeStyle = FlightPalette.panelBorder
-                ctx.stroke()
             }
-
-            Connections {
-                target: FlightTelemetryModel
-                function onDisplayBatteryChanged() { batteryGauge.requestPaint() }
-            }
-            Connections {
-                target: root.flightState
-                function onBatteryReadingValidChanged() { batteryGauge.requestPaint() }
-            }
-            Connections {
-                target: FlightPalette
-                function onLightModeChanged() { batteryGauge.requestPaint() }
-            }
+            source: ["/qmlimages/BatteryGreen.svg", "/qmlimages/BatteryYellowGreen.svg",
+                     "/qmlimages/BatteryYellow.svg", "/qmlimages/BatteryOrange.svg",
+                     "/qmlimages/BatteryCritical.svg", "/qmlimages/BatteryEMERGENCY.svg",
+                     "/qmlimages/Battery.svg"][level]
+            color: [batteryPalette.colorGreen, batteryPalette.colorYellowGreen,
+                    batteryPalette.colorYellow, batteryPalette.colorOrange,
+                    batteryPalette.colorRed, batteryPalette.colorRed,
+                    FlightPalette.textHi][level]
         }
-
         Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            text: root.flightState.batteryReadingValid ? ("电量 " + Math.round(FlightTelemetryModel.displayBattery) + "%") : "电量 --"
+            anchors.left: batteryIcon.right
+            anchors.leftMargin: 3
+            anchors.verticalCenter: parent.verticalCenter
+            text: root.flightState.batteryReadingValid ? (Math.round(FlightTelemetryModel.displayBattery) + "%") : "--%"
             color: FlightPalette.textHi
             font.family: FlightPalette.cockpitFont
-            font.pixelSize: compactLandscape ? 12 : 15
-            font.bold: true
+            font.pixelSize: compactLandscape ? 13 : 15
+            font.bold: false
         }
     }
 

@@ -3728,6 +3728,7 @@
           <g
              transform="translate(-36.860843,-46.53888)"
              id="text6746"
+             display="none"
              style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans">
             <path
                id="path6751"
@@ -3772,6 +3773,7 @@
           </g>
           <g
              id="text7808"
+             display="none"
              style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
              transform="translate(-26.648078,832.67769)">
             <path

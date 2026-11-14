@@ -5,11 +5,11 @@ Item {
     height: 2 * radius
 
     required property double radius
-    property double altitude: 0
+    property double altitude: 0 // Meters; the long needle completes one turn per 1000 m.
     property double pressure: 28
-    readonly property double tenThousandFootNeedleRotation: 0.0036 * altitude
-    readonly property double thousandFootNeedleRotation: 0.036 * altitude
-    readonly property double hundredFootNeedleRotation: 0.36 * (altitude % 1000)
+    readonly property double tenThousandMeterNeedleRotation: 0.0036 * altitude
+    readonly property double thousandMeterNeedleRotation: 0.036 * altitude
+    readonly property double hundredMeterNeedleRotation: 0.36 * (altitude % 1000)
 
     QfiCustomImage {
         anchors.fill: parent
@@ -34,25 +34,6 @@ Item {
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.145
-        width: parent.width * 0.18
-        height: parent.height * 0.07
-        radius: height * 0.18
-        color: "#171717"
-        opacity: 0.94
-    }
-
-    Text {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.142
-        text: "m"
-        color: "white"
-        font.pixelSize: Math.round(parent.width * 0.055)
-        font.bold: true
-    }
-
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * 0.40
         width: parent.width * 0.34
         height: parent.height * 0.14
@@ -73,19 +54,19 @@ Item {
     QfiCustomImage {
         anchors.fill: parent
         source: "QmlFlightInstruments/Images/alt/alt_face_3.svg"
-        rotation: tenThousandFootNeedleRotation
+        rotation: tenThousandMeterNeedleRotation
     }
 
     QfiCustomImage {
         anchors.fill: parent
         source: "QmlFlightInstruments/Images/alt/alt_hand_1.svg"
-        rotation: thousandFootNeedleRotation
+        rotation: thousandMeterNeedleRotation
     }
 
     QfiCustomImage {
         anchors.fill: parent
         source: "QmlFlightInstruments/Images/alt/alt_hand_2.svg"
-        rotation: hundredFootNeedleRotation
+        rotation: hundredMeterNeedleRotation
     }
 
     QfiCustomImage {

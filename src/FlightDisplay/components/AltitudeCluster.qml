@@ -24,35 +24,6 @@ Column {
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
-        width: Math.round(root.sideGaugeSize * 0.54)
-        height: Math.round(root.sideGaugeSize * 0.16)
-        radius: 3
-        color: FlightPalette.lcdBg
-        border.color: FlightPalette.lcdBorder
-        border.width: 1
-
-        Text {
-            anchors.centerIn: parent
-            text: flightState.dataSuppressed ? "--" : (FlightTelemetryModel.activeVehicle ? FlightTelemetryModel.displayAltitude.toFixed(0) : "--")
-            color: FlightPalette.lcdText
-            font.family: FlightPalette.cockpitFont
-            font.pixelSize: Math.round(root.sideGaugeSize * 0.105)
-            font.bold: true
-            style: Text.Raised
-            styleColor: FlightPalette.lcdGlow
-        }
-    }
-
-    Text {
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: "高度 m"
-        color: FlightPalette.textLo
-        font.family: FlightPalette.cockpitFont
-        font.pixelSize: Math.round(root.sideGaugeSize * 0.052)
-    }
-
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
         width: Math.round(root.sideGaugeSize * 0.46)
         height: Math.round(root.sideGaugeSize * 0.14)
         radius: 3

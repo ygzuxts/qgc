@@ -42,36 +42,6 @@ Item {
         source: "QmlFlightInstruments/Images/asi/asi_case.svg"
     }
 
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.245
-        width: parent.width * 0.34
-        height: parent.height * 0.08
-        radius: height * 0.16
-        color: "#171717"
-        opacity: 0.94
-    }
-
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.44
-        width: parent.width * 0.26
-        height: parent.height * 0.11
-        radius: height * 0.15
-        color: "#171717"
-        opacity: 0.92
-    }
-
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.555
-        width: parent.width * 0.27
-        height: parent.height * 0.07
-        radius: height * 0.16
-        color: "#171717"
-        opacity: 0.94
-    }
-
     Text {
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * 0.445
