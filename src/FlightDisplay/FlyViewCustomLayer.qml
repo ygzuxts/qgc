@@ -49,9 +49,10 @@ Item {
     property int currentTab: 0
     property bool customPlanShellVisible: false
     property string customPlanFilePath: ""
+    property int customPlanSequence: -1
     property string openToolPage: ""
     readonly property real informationBarHeight: topBar.height
-    property real rightW: Math.max(minRightW, Math.min(maxRightW, 340))
+    readonly property real rightW: Math.max(minRightW, Math.min(maxRightW, _panelSettings.rightPanelWidth))
     property real hudH: Math.max(minHudH, Math.min(maxHudH, height * (ScreenTools.isMobileLayout ? 0.44 : 0.52)))
     property bool showRightPanel: _panelSettings.showRightPanel
     property real sidePanelOpacity: _panelSettings.sidePanelOpacity
@@ -64,8 +65,8 @@ Item {
     readonly property bool workspaceVisible: customFlyViewEnabled && !customPlanShellVisible && openToolPage === ""
     readonly property bool bottomBarVisible: workspaceVisible && showBottomActionBar
     readonly property real effectiveRightW: workspaceVisible && showRightPanel ? rightW : 0
-    readonly property real minRightW: Math.min(width * 0.42, 280 * theme.uiScale)
-    readonly property real maxRightW: width * 0.46
+    readonly property real minRightW: Math.min(width * 0.50, 324)
+    readonly property real maxRightW: Math.max(minRightW, width - Math.min(240, width * 0.30))
     readonly property real qgcAndroidInstrumentSize: Math.min(ScreenTools.defaultFontPixelHeight * 6.38, height * 0.253, width * 0.132)
     readonly property real minHudH: Math.round(ScreenTools.isMobileLayout ? qgcAndroidInstrumentSize * 2.1 + 8 * theme.uiScale : height * 0.45)
     readonly property real maxHudH: Math.round(Math.max(height * (ScreenTools.isMobileLayout ? 0.50 : 0.58), ScreenTools.isMobileLayout ? minHudH : 0))
@@ -91,7 +92,8 @@ Item {
         return true
     }
 
-    function openWaypointPlanPage(planFilePath) {
+    function openWaypointPlanPage(planFilePath, sequenceNumber = -1) {
+        _root.customPlanSequence = sequenceNumber
         _root.customPlanFilePath = typeof planFilePath === "string" ? planFilePath : ""
         _root.currentTab = 2
         _root.customPlanShellVisible = true
@@ -118,6 +120,7 @@ Item {
         id: _panelSettings
         category: "CustomFlyView"
         property bool showRightPanel: true
+        property real rightPanelWidth: 340
         property real sidePanelOpacity: 0.92
         property bool showHudExpandBar: true
         property real infoBarOpacity: 0.82
@@ -128,7 +131,6 @@ Item {
         id: theme
         viewportWidth: _root.width
         viewportHeight: _root.height
-        darkMode: QGroundControl.settingsManager.appSettings.indoorPalette.rawValue === 1
     }
 
     FlyViewState {
@@ -225,12 +227,12 @@ Item {
 
                     background: Rectangle {
                         radius: 6
-                        color: mapButton.down || mapButton.hovered ? "#b0102840" : "#b0000000"
-                        border.color: "#80000000"
+                        color: mapButton.down || mapButton.hovered ? theme.blueL : theme.surface
+                        border.color: theme.border
                     }
                     contentItem: QGCColoredImage {
                         source: "qrc:/qmlimages/" + mapButton.modelData[1]
-                        color: "#ffffff"
+                        color: theme.text
                         fillMode: Image.PreserveAspectFit
                         opacity: mapButton.enabled ? 1 : 0.45
                     }
@@ -272,11 +274,46 @@ Item {
         backgroundOpacity: _root.sidePanelOpacity
         openCustomPlanShell: _root.openWaypointPlanPage
         onTabRequested: index => _root.selectWorkspaceTab(index)
-        onWaypointEditorRequested: _root.openWaypointPlanPage("")
+        onWaypointEditorRequested: sequenceNumber => _root.openWaypointPlanPage("", sequenceNumber)
         onAdvancedSettingsRequested: {
             if (mainWindow.allowViewSwitch()) {
                 _root.openToolPage = "settings"
             }
+        }
+    }
+
+    MouseArea {
+        id: panelDivider
+        width: 10
+        anchors.top: rightPanel.top
+        anchors.bottom: rightPanel.bottom
+        anchors.right: rightPanel.left
+        visible: rightPanel.visible
+        z: 34
+        hoverEnabled: true
+        cursorShape: Qt.SizeHorCursor
+        preventStealing: true
+
+        property real pressX: 0
+        property real initialWidth: 0
+
+        onPressed: mouse => {
+            pressX = mapToItem(_root, mouse.x, mouse.y).x
+            initialWidth = _root.rightW
+        }
+        onPositionChanged: mouse => {
+            if (pressed) {
+                const delta = pressX - mapToItem(_root, mouse.x, mouse.y).x
+                _panelSettings.rightPanelWidth = Math.max(_root.minRightW, Math.min(_root.maxRightW, initialWidth + delta))
+            }
+        }
+        onDoubleClicked: _panelSettings.rightPanelWidth = 340
+
+        Rectangle {
+            anchors.right: parent.right
+            height: parent.height
+            width: panelDivider.containsMouse || panelDivider.pressed ? 3 : 1
+            color: panelDivider.containsMouse || panelDivider.pressed ? theme.blueL : theme.border
         }
     }
 
@@ -368,6 +405,7 @@ Item {
                 state: _root.uiState
                 theme: _root.uiTheme
                 initialPlanFile: _root.customPlanFilePath
+                initialSequenceNumber: _root.customPlanSequence
                 missionController: _root.missionController
                 hudInstrumentSize: _root.sharedHudInstrumentSize
                 hudTelemetryWidth: _root.sharedHudTelemetryWidth

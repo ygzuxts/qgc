@@ -25,10 +25,15 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         "${FFmpeg_ROOT}/lib/swscale.lib"
 )
 
-# 将 FFmpeg DLL 复制到程序所在目录
-file(GLOB FFMPEG_RUNTIME_DLLS
+# Use the runtime from the same SDK as the import libraries for both layouts.
+file(GLOB FFMPEG_RUNTIME_DLLS CONFIGURE_DEPENDS
     "${FFmpeg_ROOT}/bin/*.dll"
 )
+if(NOT FFMPEG_RUNTIME_DLLS)
+    message(FATAL_ERROR "No FFmpeg runtime DLLs found in ${FFmpeg_ROOT}/bin")
+endif()
+
+install(FILES ${FFMPEG_RUNTIME_DLLS} DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 add_custom_target(CopyFFmpegDLLs
     COMMAND ${CMAKE_COMMAND} -E make_directory

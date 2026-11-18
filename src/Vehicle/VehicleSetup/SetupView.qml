@@ -35,7 +35,7 @@ Rectangle {
     readonly property bool _compactLayout: ScreenTools.isMobileLayout || width < 1000
     readonly property real _navMargin: Math.round((_compactLayout ? 10 : 18) * _pageScale)
     readonly property real _navSpacing: Math.round((_compactLayout ? 10 : 14) * _pageScale)
-    readonly property color _navHoverColor: Qt.rgba(_accent.r, _accent.g, _accent.b, _dark ? 0.28 : 0.10)
+    readonly property color _navHoverColor: _dark ? "#243f63" : "#e4efff"
     readonly property color _navTextColor: _dark ? "#e5edf8" : "#111827"
     readonly property real _contentMargin: ScreenTools.isMobileLayout ? 8 : 24
     readonly property real _contentPadding: ScreenTools.isMobileLayout ? 4 : 16

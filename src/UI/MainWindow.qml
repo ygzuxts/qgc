@@ -29,9 +29,139 @@ ApplicationWindow {
     id:             mainWindow
     visible:        true
 
+    readonly property bool customWindowFrame: Qt.platform.os === "windows" && !ScreenTools.fakeMobile &&
+                                              QGroundControl.settingsManager.flyViewSettings.useCustomFlyView.rawValue
+    readonly property bool windowControlsVisible: customWindowFrame && visibility !== Window.FullScreen
+    readonly property bool flightTitleBarVisible: flyView.visible && !QGroundControl.videoManager.fullScreen
+    readonly property int windowTitleHeight: windowControlsVisible ? 28 : 0
+    readonly property int windowControlsWidth: windowControlsVisible ? 96 : 0
+    readonly property int windowTitleInset: flightTitleBarVisible ? 0 : windowTitleHeight
+
+    flags: customWindowFrame ? Qt.Window | Qt.FramelessWindowHint | Qt.WindowSystemMenuHint |
+                               Qt.WindowMinMaxButtonsHint | Qt.WindowCloseButtonHint : Qt.Window
+
+    FlyViewTheme { id: windowTheme }
+
+    color: windowTheme.surface
+    palette.window: windowTheme.surface
+    palette.windowText: windowTheme.text
+    palette.base: windowTheme.surface
+    palette.alternateBase: windowTheme.surface2
+    palette.text: windowTheme.text
+    palette.button: windowTheme.surface2
+    palette.buttonText: windowTheme.text
+    palette.highlight: windowTheme.blue
+    palette.highlightedText: windowTheme.textOnBlue
+    palette.toolTipBase: windowTheme.surface2
+    palette.toolTipText: windowTheme.text
+
+    function toggleMaximized() {
+        if (visibility === Window.Maximized) {
+            showNormal()
+        } else {
+            showMaximized()
+        }
+    }
+
+    Rectangle {
+        parent: mainWindow.contentItem
+        visible: mainWindow.windowTitleInset > 0
+        width: parent.width
+        height: mainWindow.windowTitleHeight
+        z: 1000
+        color: windowTheme.surface
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            text: QGroundControl.appName
+            color: windowTheme.text
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            anchors.rightMargin: mainWindow.windowControlsWidth
+            onPressed: mainWindow.startSystemMove()
+            onDoubleClicked: mainWindow.toggleMaximized()
+        }
+    }
+
+    Row {
+        parent: mainWindow.contentItem
+        anchors.top: parent.top
+        anchors.right: parent.right
+        visible: mainWindow.windowControlsVisible
+        z: 1001
+
+        Repeater {
+            model: [qsTr("Minimize"), mainWindow.visibility === Window.Maximized ? qsTr("Restore") : qsTr("Maximize"), qsTr("Close")]
+
+            Button {
+                id: windowButton
+                hoverEnabled: true
+                required property int index
+                required property string modelData
+                width: 32
+                height: mainWindow.windowTitleHeight
+                text: index === 0 ? "−" : index === 1 ? (mainWindow.visibility === Window.Maximized ? "❐" : "□") : "×"
+                Accessible.name: modelData
+                ToolTip.text: modelData
+                ToolTip.visible: hovered
+                onClicked: {
+                    if (index === 0) {
+                        mainWindow.showMinimized()
+                    } else if (index === 1) {
+                        mainWindow.toggleMaximized()
+                    } else {
+                        mainWindow.close()
+                    }
+                }
+                background: Rectangle {
+                    color: windowButton.hovered ? (windowButton.index === 2 ? windowTheme.redL : windowTheme.blueL) : windowTheme.surface
+                }
+                contentItem: Text {
+                    text: windowButton.text
+                    color: windowTheme.text
+                    font.pixelSize: 15
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
+    Repeater {
+        parent: mainWindow.contentItem
+        model: [
+            Qt.LeftEdge, Qt.RightEdge, Qt.TopEdge, Qt.BottomEdge,
+            Qt.LeftEdge | Qt.TopEdge, Qt.RightEdge | Qt.TopEdge,
+            Qt.LeftEdge | Qt.BottomEdge, Qt.RightEdge | Qt.BottomEdge
+        ]
+
+        MouseArea {
+            required property int modelData
+            readonly property bool edgeLeft: !!(modelData & Qt.LeftEdge)
+            readonly property bool edgeRight: !!(modelData & Qt.RightEdge)
+            readonly property bool edgeTop: !!(modelData & Qt.TopEdge)
+            readonly property bool edgeBottom: !!(modelData & Qt.BottomEdge)
+            readonly property bool corner: (edgeLeft || edgeRight) && (edgeTop || edgeBottom)
+            parent: mainWindow.contentItem
+            visible: mainWindow.customWindowFrame && mainWindow.visibility === Window.Windowed
+            z: corner ? 1003 : 1002
+            width: edgeLeft || edgeRight ? (corner ? 7 : 4) : parent.width
+            height: edgeTop || edgeBottom ? (corner ? 7 : 4) : parent.height
+            x: edgeRight ? parent.width - width : 0
+            y: edgeBottom ? parent.height - height : 0
+            cursorShape: corner ? (edgeLeft === edgeTop ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor)
+                                : (edgeLeft || edgeRight ? Qt.SizeHorCursor : Qt.SizeVerCursor)
+            onPressed: mainWindow.startSystemResize(modelData)
+        }
+    }
+
     // Android presents the desktop canvas in one uniformly scaled coordinate system.
     readonly property real uiWidth: ScreenTools.isAndroid ? ScreenTools.screenWidth : contentItem.width
-    readonly property real uiHeight: ScreenTools.isAndroid ? ScreenTools.screenHeight : contentItem.height
+    readonly property real uiHeight: ScreenTools.isAndroid ? ScreenTools.screenHeight : contentItem.height - windowTitleInset
     readonly property real uiScale: ScreenTools.isAndroid
                                    ? Math.max(0.001, Math.min(contentItem.width / uiWidth, contentItem.height / uiHeight) * 1.15)
                                    : 1
@@ -42,7 +172,7 @@ ApplicationWindow {
         width: mainWindow.uiWidth
         height: mainWindow.uiHeight
         x: (mainWindow.contentItem.width - width * mainWindow.uiScale) / 2
-        y: (mainWindow.contentItem.height - height * mainWindow.uiScale) / 2
+        y: mainWindow.windowTitleInset + (mainWindow.contentItem.height - mainWindow.windowTitleInset - height * mainWindow.uiScale) / 2
         scale: mainWindow.uiScale
         transformOrigin: Item.TopLeft
     }

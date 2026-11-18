@@ -15,7 +15,7 @@ import QGroundControl.Palette
 /// Mission item edit control
 Rectangle {
     id:             _root
-    height:         _currentItem ? (editorLoader.y + editorLoader.height + _innerMargin) : (topRowLayout.y + topRowLayout.height + _margin)
+    height:         _currentItem ? (editorLoader.y + editorLoader.height + (loiterDirection.visible ? loiterDirection.height + _innerMargin : 0) + _innerMargin) : (topRowLayout.y + topRowLayout.height + _margin)
     color:          _currentItem
                     ? (theme ? theme.surface : qgcPal.missionItemEditor)
                     : (theme ? theme.surface2 : qgcPal.windowShade)
@@ -334,5 +334,31 @@ Rectangle {
         property var    masterController:   _masterController
         property real   availableWidth:     _root.width - (anchors.margins * 2) ///< How wide the editor should be
         property var    editorRoot:         _root
+    }
+    RowLayout {
+        id: loiterDirection
+        anchors.top: editorLoader.bottom
+        anchors.topMargin: _root._innerMargin
+        anchors.left: editorLoader.left
+        anchors.right: parent.right
+        anchors.rightMargin: _root._innerMargin
+        visible: _root._currentItem && !_root.readOnly && _root.missionItem.isSimpleItem &&
+                 !_root.missionItem.rawEdit && _root.missionItem.showLoiterRadius &&
+                 Number.isFinite(_root.missionItem.loiterRadius) && _root.missionItem.loiterRadius !== 0
+
+        QGCLabel {
+            Layout.fillWidth: true
+            text: qsTr("Loiter Direction")
+            wrapMode: Text.WordWrap
+        }
+
+        QGCComboBox {
+            model: [qsTr("Clockwise"), qsTr("Counterclockwise")]
+            currentIndex: loiterDirection.visible && _root.missionItem.loiterRadius < 0 ? 1 : 0
+            onActivated: index => {
+                const radius = Math.abs(_root.missionItem.loiterRadius)
+                _root.missionItem.loiterRadius = index === 0 ? radius : -radius
+            }
+        }
     }
 } // Rectangle

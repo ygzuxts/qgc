@@ -1,10 +1,12 @@
 import QtQuick
 
+import QGroundControl
 import QGroundControl.Palette
 import QGroundControl.ScreenTools
 
 QtObject {
-    property bool darkMode: false
+    readonly property var paletteSetting: QGroundControl.settingsManager.appSettings.indoorPalette
+    readonly property bool darkMode: qgcPal.globalTheme === QGCPalette.Dark
     property QGCPalette qgcPal: QGCPalette { colorGroupEnabled: true }
     property real viewportWidth: 1280
     property real viewportHeight: 720
@@ -17,20 +19,20 @@ QtObject {
     readonly property real baseWidth: ScreenTools.defaultFontPixelWidth * uiScale
     readonly property real compactScale: mobile ? 1.0 : 1.0
 
-    readonly property color bg:       darkMode ? "#0d2339" : "#f5f8fc"
-    readonly property color surface:  darkMode ? "#0d2339" : "#f5f8fc"
-    readonly property color surface2: darkMode ? "#173554" : "#e8eff8"
-    readonly property color surface3: darkMode ? "#1b4268" : "#dce8f6"
+    readonly property color bg:       darkMode ? "#101b2b" : "#ffffff"
+    readonly property color surface:  darkMode ? "#101b2b" : "#ffffff"
+    readonly property color surface2: darkMode ? "#18273b" : "#f4f8fd"
+    readonly property color surface3: darkMode ? "#22354d" : "#eaf2fc"
     readonly property color border:   darkMode ? "#294965" : "#cddbea"
     readonly property color border2:  darkMode ? "#243f58" : "#e0e8f1"
     readonly property color text:     darkMode ? "#e5edf8" : "#1a1d23"
     readonly property color text2:    darkMode ? "#a8b5c7" : "#5a6272"
-    readonly property color text3:    darkMode ? "#7f8da3" : "#9aa3b2"
+    readonly property color text3:    darkMode ? "#96a9c2" : "#64748b"
     readonly property color textOnBlue: "#ffffff"
     // 自定义界面的交互色跟随当前品牌色。品牌色由各 brand 的 BrandedPlugin
     // 覆盖 QGCPalette.brandingPurple，避免 FutureWings/NiceWing/ANTG 全部固定成同一个蓝紫色。
     readonly property color brandBlue:       qgcPal.brandingPurple
-    readonly property color brandBlueHover:  Qt.rgba(brandBlue.r, brandBlue.g, brandBlue.b, darkMode ? 0.38 : 0.12)
+    readonly property color brandBlueHover:  darkMode ? "#243f63" : "#e4efff"
     readonly property color brandBluePress:  Qt.darker(brandBlue, darkMode ? 1.18 : 1.10)
     readonly property color brandBlueBorder: Qt.rgba(brandBlue.r, brandBlue.g, brandBlue.b, darkMode ? 0.78 : 0.42)
     readonly property color blue:       brandBlue
@@ -80,7 +82,7 @@ QtObject {
     readonly property int  radius:     Math.max(6, Math.round(baseFont * 0.48))
     readonly property int  radiusLg:   Math.max(8, Math.round(baseFont * 0.64))
 
-    function toggleTheme() {
-        darkMode = !darkMode
+    function setDarkMode(enabled) {
+        paletteSetting.rawValue = enabled ? 1 : 0
     }
 }

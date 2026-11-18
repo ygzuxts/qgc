@@ -14,7 +14,6 @@ Rectangle {
 
     property var state: null
     property var theme: null
-    property var appSettings: QGroundControl.settingsManager ? QGroundControl.settingsManager.appSettings : null
     property bool analyzeMode: false
     property int selectedIndex: 0
     readonly property string defaultSettingsUrl: "qrc:/qml/QGroundControl/AppSettings/GeneralSettings.qml"
@@ -28,9 +27,9 @@ Rectangle {
         selectedUrl = defaultSettingsUrl
     }
 
-    readonly property bool pageDark: theme ? !!theme.darkMode : false
+    readonly property bool pageDark: qgcPal.globalTheme === QGCPalette.Dark
     readonly property color brandColor: qgcPal.brandingPurple
-    readonly property color brandHoverColor: Qt.rgba(brandColor.r, brandColor.g, brandColor.b, pageDark ? 0.28 : 0.10)
+    readonly property color brandHoverColor: theme ? theme.blueL : (pageDark ? "#243f63" : "#e4efff")
     readonly property color bgColor: pageDark ? "#05070c" : "#ffffff"
     readonly property color navColor: pageDark ? "#030509" : "#f8fafc"
     readonly property color cardColor: pageDark ? "#0b0f18" : "#ffffff"
@@ -54,38 +53,6 @@ Rectangle {
         active: root.analyzeMode
         sourceComponent: Component {
             GeoTagController {}
-        }
-    }
-
-    function _paletteValueIsDark(value) {
-        return value === true || value === 1 || value === "1" || String(value).toLowerCase() === "true"
-    }
-
-    function _syncQgcPalette() {
-        if (root.appSettings && root.appSettings.indoorPalette && root.theme) {
-            root.appSettings.indoorPalette.rawValue = root.theme.darkMode ? 1 : 0
-        }
-    }
-
-    function _syncThemeFromQgcPalette() {
-        if (root.appSettings && root.appSettings.indoorPalette && root.theme) {
-            root.theme.darkMode = root._paletteValueIsDark(root.appSettings.indoorPalette.rawValue)
-        }
-    }
-
-    Component.onCompleted: root._syncQgcPalette()
-
-    Connections {
-        target: root.theme
-        function onDarkModeChanged() {
-            root._syncQgcPalette()
-        }
-    }
-
-    Connections {
-        target: root.appSettings && root.appSettings.indoorPalette ? root.appSettings.indoorPalette : null
-        function onRawValueChanged() {
-            root._syncThemeFromQgcPalette()
         }
     }
 

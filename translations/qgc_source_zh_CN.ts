@@ -18863,6 +18863,17 @@ ROTATION_NONE indicates component points in direction of flight.</translation>
   </context>
   <context>
     <name>FlyViewRightPanel</name>
+    <message><source>Landing Point</source><translation>降落点</translation></message>
+    <message><source>Landing Loiter Point</source><translation>降落盘旋点</translation></message>
+    <message><source>Landing Parameters</source><translation>降落参数</translation></message>
+    <message><source>Approach Heading</source><translation>进场航向</translation></message>
+    <message><source>Track Bearing</source><translation>航段方位</translation></message>
+    <message><source>Edit Landing Pattern</source><translation>编辑降落航线</translation></message>
+    <message><source>Edit Takeoff Point</source><translation>编辑起飞点</translation></message>
+    <message><source>Vehicle Yaw: %1</source><translation>机头航向：%1</translation></message>
+    <message><source>Clockwise</source><translation>顺时针</translation></message>
+    <message><source>Counterclockwise</source><translation>逆时针</translation></message>
+    <message><source>Loiter Direction</source><translation>盘旋方向</translation></message>
     <message><source>Takeoff Setup</source><translation>起飞设置</translation></message>
     <message><source>Landing Setup</source><translation>降落设置</translation></message>
     <message><source>Altitude</source><translation>高度</translation></message>
@@ -19007,6 +19018,7 @@ modes: 0</translation></message>
     <message><source>Untitled Mission</source><translation>未命名任务</translation></message>
     <message><source>Use Add at the bottom right</source><translation>点击右下角新增</translation></message>
     <message><source>Vehicle Has Mission</source><translation>飞控中有任务</translation></message>
+    <message><source>HUD Opacity</source><translation>飞行仪表透明度</translation></message>
   </context>
   <context>
     <name>PageTakeoff</name>
@@ -19171,5 +19183,16 @@ modes: 0</translation></message>
     <message><source>Submarine</source><translation>潜航器</translation></message>
     <message><source>Battery</source><translation>电池</translation></message>
     <message><source>Battery %1</source><translation>电池 %1</translation></message>
+  </context>
+  <context>
+    <name>CustomPlanMissionItemEditor</name>
+    <message><source>Clockwise</source><translation>顺时针</translation></message>
+    <message><source>Counterclockwise</source><translation>逆时针</translation></message>
+    <message><source>Loiter Direction</source><translation>盘旋方向</translation></message>
+  </context>
+  <context>
+    <name>FlightDisplayInstrument</name>
+    <message><source>Disconnected</source><translation>未连接</translation></message>
+    <message><source>No Attitude Data</source><translation>暂无姿态数据</translation></message>
   </context>
 </TS>

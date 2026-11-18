@@ -31,6 +31,41 @@ Rectangle {
         return null
     }
 
+    function routeDirection(item, row, count) {
+        if (item.showLoiterRadius && Number.isFinite(item.loiterRadius) && item.loiterRadius !== 0) {
+            return loiterDirection(item.loiterRadius > 0)
+        }
+        if (!missionItems || !item.coordinate.isValid || item.isStandaloneCoordinate) {
+            return unavailable
+        }
+
+        let previous = state.missionController.plannedHomePosition
+        for (let i = Math.min(row - 1, count - 1); i > 0; --i) {
+            const candidate = missionItems.get(i)
+            if (candidate.specifiesCoordinate && !candidate.isStandaloneCoordinate && candidate.exitCoordinate.isValid) {
+                previous = candidate.exitCoordinate
+                break
+            }
+        }
+        if (!previous.isValid || previous.distanceTo(item.coordinate) < 0.01) {
+            return unavailable
+        }
+        return headingValue(previous.azimuthTo(item.coordinate))
+    }
+
+    function loiterDirection(clockwise) {
+        return clockwise ? qsTr("Clockwise") : qsTr("Counterclockwise")
+    }
+
+    function headingValue(degrees) {
+        return Number.isFinite(degrees) ? (Math.round((degrees % 360 + 360) % 360) % 360) + "°" : unavailable
+    }
+
+    function cameraValue(item) {
+        const action = item.isSimpleItem && item.cameraSection ? item.cameraSection.cameraAction : null
+        return action && action.rawValue !== 0 ? action.enumStringValue : unavailable
+    }
+
     function coordinateValue(coordinate, latitude) {
         return coordinate && coordinate.isValid
                 ? (latitude ? coordinate.latitude : coordinate.longitude).toFixed(6) : unavailable
@@ -48,7 +83,7 @@ Rectangle {
 
     signal tabRequested(int index)
     signal advancedSettingsRequested()
-    signal waypointEditorRequested()
+    signal waypointEditorRequested(int sequenceNumber)
 
     function openMissionCheck() {
         if (takeoffLoader.item && takeoffLoader.item.missionStartEnabled()) {
@@ -70,7 +105,7 @@ Rectangle {
                 : unavailable
     }
 
-    color: "#092a4b"
+    color: theme.surface
 
     MouseArea {
         anchors.fill: parent
@@ -84,12 +119,13 @@ Rectangle {
         color: root.theme.border
     }
 
-    readonly property color panelText: "#ffffff"
-    readonly property color secondaryText: "#c1d7eb"
+    readonly property color panelText: theme.text
+    readonly property color secondaryText: theme.text2
     readonly property var tabIcons: ["PaperPlane.svg", "MapCenter.svg", "Plan.svg", "MapAddMission.svg", "Gears.svg"]
 
     component DockButton: Button {
         id: control
+        hoverEnabled: true
         Layout.fillWidth: true
         Layout.minimumWidth: 0
         Layout.preferredHeight: root.tabHeight
@@ -99,15 +135,15 @@ Rectangle {
         contentItem: Text {
             text: control.text
             font: control.font
-            color: control.enabled ? root.panelText : root.secondaryText
+            color: control.checked || control.down ? root.theme.textOnBlue : control.enabled ? root.panelText : root.secondaryText
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
 
         background: Rectangle {
-            color: control.down || control.checked ? "#20517e"
-                   : control.hovered || control.visualFocus ? "#1a4471" : "transparent"
+            color: control.down || control.checked ? root.theme.blue
+                   : control.hovered || control.visualFocus ? root.theme.blueL : "transparent"
 
             Rectangle {
                 visible: control.visualFocus
@@ -136,6 +172,7 @@ Rectangle {
 
         Button {
             id: header
+            hoverEnabled: true
             Layout.fillWidth: true
             Layout.preferredHeight: 25
             text: section.title
@@ -160,7 +197,7 @@ Rectangle {
             }
 
             background: Rectangle {
-                color: header.hovered || header.visualFocus ? "#20517e" : "#1a4471"
+                color: header.hovered || header.visualFocus ? root.theme.blueL : root.theme.surface2
                 radius: 3
             }
         }
@@ -222,7 +259,8 @@ Rectangle {
                 delegate: DockButton {
                     required property int index
                     required property string modelData
-                    Layout.preferredWidth: 1
+                    Layout.fillWidth: false
+                    Layout.preferredWidth: Math.min(64, Math.max(0, (root.width - 5) / 5))
                     text: modelData
                     checked: index === root.currentTab
                     contentItem: Column {
@@ -232,14 +270,14 @@ Rectangle {
                             width: 23
                             height: 23
                             source: "qrc:/qmlimages/" + root.tabIcons[index]
-                            color: root.panelText
+                            color: index === root.currentTab ? root.theme.textOnBlue : root.panelText
                             fillMode: Image.PreserveAspectFit
                         }
                         Text {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             text: modelData
-                            color: root.panelText
+                            color: index === root.currentTab ? root.theme.textOnBlue : root.panelText
                             font.pixelSize: 12
                             elide: Text.ElideRight
                         }
@@ -249,6 +287,7 @@ Rectangle {
                     ToolTip.text: text
                 }
             }
+            Item { Layout.fillWidth: true }
         }
 
         Rectangle {
@@ -292,8 +331,8 @@ Rectangle {
                                     required property var modelData
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 58
-                                    color: "#143b65"
-                                    border.color: "#204c7b"
+                                    color: root.theme.surface2
+                                    border.color: root.theme.border
                                     radius: 5
                                     Column {
                                         anchors.centerIn: parent
@@ -330,16 +369,11 @@ Rectangle {
                             font.pixelSize: 12
                         }
 
-                        AttitudeHUD {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 245
-                            theme: root.theme
-                            connected: root.connected
-                            pitch: root.state.pitch
-                            roll: root.state.roll
-                            heading: root.state.heading
-                            airspeed: root.state.airSpeed
-                            altitude: root.state.altitude
+                        FlightDisplayInstrument {
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredWidth: Math.min(306, Math.max(0, root.width - 22))
+                            Layout.preferredHeight: Layout.preferredWidth
+                            state: root.state
                         }
                     }
 
@@ -365,22 +399,53 @@ Rectangle {
                         Readout { label: qsTr("Altitude"); value: root.plannedValue(root.takeoffItem ? root.takeoffItem.altitude : null) }
                         Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.takeoffItem ? root.takeoffItem.coordinate : null, false) }
                         Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.takeoffItem ? root.takeoffItem.coordinate : null, true) }
+                        Readout {
+                            label: qsTr("Track Bearing")
+                            value: root.takeoffItem && root.takeoffItem.launchCoordinate.isValid && root.takeoffItem.coordinate.isValid &&
+                                   root.takeoffItem.launchCoordinate.distanceTo(root.takeoffItem.coordinate) >= 0.01
+                                   ? root.headingValue(root.takeoffItem.launchCoordinate.azimuthTo(root.takeoffItem.coordinate)) : root.unavailable
+                        }
+                        DockButton {
+                            text: qsTr("Edit Takeoff Point")
+                            enabled: !!root.takeoffItem
+                            onClicked: root.waypointEditorRequested(root.takeoffItem.sequenceNumber)
+                        }
                     }
 
                     Section {
                         title: qsTr("Landing Setup")
                         expanded: true
-                        Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, false) }
-                        Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, true) }
-                        Readout { label: qsTr("Approach Altitude"); value: root.plannedValue(root.landingItem ? root.landingItem.finalApproachAltitude : null) }
-                        Readout { label: qsTr("Loiter Radius"); value: root.plannedValue(root.landingItem ? root.landingItem.loiterRadius : null) }
-                        Readout { label: qsTr("Landing Distance"); value: root.plannedValue(root.landingItem ? root.landingItem.landingDistance : null) }
-                        Readout { label: qsTr("Approach Speed"); value: root.plannedValue(root.landingItem ? root.landingItem.finalApproachSpeed : null) }
-                    }
 
-                    DockButton {
-                        text: qsTr("Open Waypoint Editor")
-                        onClicked: root.waypointEditorRequested()
+                        Section {
+                            title: qsTr("Landing Point")
+                            expanded: true
+                            Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, false) }
+                            Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.landingCoordinate : null, true) }
+                        }
+
+                        Section {
+                            title: qsTr("Landing Loiter Point")
+                            expanded: true
+                            Readout { label: qsTr("Altitude"); value: root.plannedValue(root.landingItem ? root.landingItem.finalApproachAltitude : null) }
+                            Readout { label: qsTr("Direction"); value: root.landingItem && root.landingItem.useLoiterToAlt.rawValue ? root.loiterDirection(root.landingItem.loiterClockwise.rawValue) : root.unavailable }
+                            Readout { label: qsTr("Loiter Radius"); value: root.plannedValue(root.landingItem && root.landingItem.useLoiterToAlt.rawValue ? root.landingItem.loiterRadius : null) }
+                            Readout { label: qsTr("Longitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.finalApproachCoordinate : null, false) }
+                            Readout { label: qsTr("Latitude"); value: root.coordinateValue(root.landingItem ? root.landingItem.finalApproachCoordinate : null, true) }
+                        }
+
+                        Section {
+                            title: qsTr("Landing Parameters")
+                            expanded: true
+                            Readout { label: qsTr("Approach Heading"); value: root.headingValue(root.landingItem ? root.landingItem.landingHeading.rawValue : NaN) }
+                            Readout { label: qsTr("Landing Distance"); value: root.plannedValue(root.landingItem ? root.landingItem.landingDistance : null) }
+                            Readout { label: qsTr("Approach Speed"); value: root.plannedValue(root.landingItem && root.landingItem.useDoChangeSpeed.rawValue ? root.landingItem.finalApproachSpeed : null) }
+                        }
+
+                        DockButton {
+                            text: qsTr("Edit Landing Pattern")
+                            enabled: !!root.landingItem
+                            onClicked: root.waypointEditorRequested(root.landingItem.sequenceNumber)
+                        }
                     }
 
                     Section {
@@ -435,7 +500,7 @@ Rectangle {
 
                 DockButton {
                     text: qsTr("Open Waypoint Editor")
-                    onClicked: root.waypointEditorRequested()
+                    onClicked: root.waypointEditorRequested(-1)
                 }
 
                 PageMission {
@@ -478,18 +543,28 @@ Rectangle {
                     delegate: RowLayout {
                         id: waypointRow
                         required property var object
+                        required property int index
                         width: ListView.view.width
                         height: visible ? 25 : 0
                         visible: object.specifiesCoordinate && object.sequenceNumber > 0
+
+                        TapHandler {
+                            onDoubleTapped: root.waypointEditorRequested(waypointRow.object.sequenceNumber)
+                        }
+
+                        ToolTip.visible: waypointHover.hovered
+                        ToolTip.text: qsTr("Vehicle Yaw: %1").arg(root.headingValue(waypointRow.object.specifiedVehicleYaw))
+
+                        HoverHandler { id: waypointHover }
 
                         Repeater {
                             model: [
                                 String(waypointRow.object.sequenceNumber),
                                 root.plannedValue(waypointRow.object.altitude),
-                                typeof waypointRow.object.loiterRadius === "number" && waypointRow.object.isLoiterItem
+                                waypointRow.object.showLoiterRadius && Number.isFinite(waypointRow.object.loiterRadius)
                                     ? Math.abs(waypointRow.object.loiterRadius).toFixed(0) : root.unavailable,
-                                root.unavailable,
-                                root.unavailable
+                                root.routeDirection(waypointRow.object, waypointRow.index, root.missionItems.count),
+                                root.cameraValue(waypointRow.object)
                             ]
 
                             Text {
@@ -508,7 +583,7 @@ Rectangle {
 
                 DockButton {
                     text: qsTr("Open Waypoint Editor")
-                    onClicked: root.waypointEditorRequested()
+                    onClicked: root.waypointEditorRequested(-1)
                 }
             }
 
@@ -580,7 +655,7 @@ Rectangle {
                         DockButton {
                             text: root.theme.darkMode ? qsTr("Light Theme") : qsTr("Dark Theme")
                             onClicked: {
-                                QGroundControl.settingsManager.appSettings.indoorPalette.rawValue = root.theme.darkMode ? 0 : 1
+                                root.theme.setDarkMode(!root.theme.darkMode)
                             }
                         }
 

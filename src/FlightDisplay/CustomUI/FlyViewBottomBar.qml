@@ -67,7 +67,7 @@ Rectangle {
     }
 
     height: theme ? theme.bottomBarH : 52
-    color: "#5593b7cb"
+    color: theme.surface
     radius: 8
 
     RowLayout {
@@ -87,8 +87,8 @@ Rectangle {
                 radius: 8
                 opacity: root.actionEnabled(index) ? 1 : 0.65
                 color: actionMouse.pressed || actionMouse.containsMouse
-                       ? "#dc20517e"
-                       : index === 4 ? "#dfae1515" : "#ba254c69"
+                       ? root.theme.blueL
+                       : index === 4 ? root.theme.redL : root.theme.surface2
                 border.width: 0
 
                 Text {
@@ -99,7 +99,7 @@ Rectangle {
                     elide: Text.ElideRight
                     text: root.actionLabel(index)
                     font.pixelSize: 12; font.weight: Font.Medium
-                    color: "#ffffff"
+                    color: index === 4 ? (root.theme.darkMode ? "#ffb4b4" : "#991b1b") : root.theme.text
                 }
                 MouseArea {
                     id: actionMouse

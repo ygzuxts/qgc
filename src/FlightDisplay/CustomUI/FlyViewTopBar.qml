@@ -31,14 +31,13 @@ Rectangle {
     signal flightModeButtonClicked()
     signal flightModePanelCloseRequested()
 
-    readonly property real infoBarOpacity: root.state && root.state.infoBarOpacity !== undefined ? root.state.infoBarOpacity : 0.82
-    readonly property color panelBg: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
-    readonly property color panelText: root.theme && root.theme.darkMode ? "#e5edf8" : "#111827"
-    readonly property color panelText2: root.theme && root.theme.darkMode ? "#a8b5c7" : "#4b5563"
-    readonly property color panelFieldBg: root.theme && root.theme.darkMode ? "#1f2937" : "#e5e5e5"
-    readonly property color panelFieldBorder: root.theme && root.theme.darkMode ? "#333333" : "#333333"
-    readonly property color panelOuterBorder: root.theme && root.theme.darkMode ? "#4b5563" : "#9bbcf8"
-    readonly property color panelSelectBg: root.theme && root.theme.darkMode ? "#111111" : "#f3f3f3"
+    readonly property color panelBg: root.theme ? root.theme.surface : "#ffffff"
+    readonly property color panelText: root.theme ? root.theme.text : "#111827"
+    readonly property color panelText2: root.theme ? root.theme.text2 : "#4b5563"
+    readonly property color panelFieldBg: root.theme ? root.theme.surface2 : "#f4f8fd"
+    readonly property color panelFieldBorder: root.theme ? root.theme.border : "#cddbea"
+    readonly property color panelOuterBorder: root.theme ? root.theme.border : "#cddbea"
+    readonly property color panelSelectBg: root.theme ? root.theme.surface3 : "#eaf2fc"
     readonly property color brandBlue: root.theme ? root.theme.blue : "#000066"
     readonly property color brandHover: root.theme ? root.theme.blueL : "#E6E6F0"
     readonly property color brandPress: root.theme ? root.theme.bluePress : "#00004D"
@@ -125,15 +124,7 @@ Rectangle {
     }
 
     height: 28
-    color: theme ? Qt.rgba(theme.surface.r, theme.surface.g, theme.surface.b, 0.0) : "transparent"
-
-    Rectangle {
-        anchors.fill: parent
-        readonly property real bgAlpha: Math.max(0.15, Math.min(1.0, root.infoBarOpacity))
-        readonly property color surfaceColor: "#102e4d"
-        color: Qt.rgba(surfaceColor.r, surfaceColor.g, surfaceColor.b, 1)
-        opacity: 1
-    }
+    color: panelBg
 
     Rectangle {
         anchors.bottom: parent.bottom
@@ -165,8 +156,18 @@ Rectangle {
     Item {
         anchors.fill: parent
 
-        DeadMouseArea {
+        MouseArea {
             anchors.fill: parent
+            onPressed: {
+                if (mainWindow.windowControlsVisible) {
+                    mainWindow.startSystemMove()
+                }
+            }
+            onDoubleClicked: {
+                if (mainWindow.windowControlsVisible) {
+                    mainWindow.toggleMaximized()
+                }
+            }
         }
 
         Rectangle {
@@ -281,7 +282,7 @@ Rectangle {
                        ? root.brandPress
                        : flightModeMouse.containsMouse || root.flightModePanelVisible
                          ? root.brandHover
-                         : (root.theme && root.theme.darkMode ? "#000000" : "#ffffff")
+                         : (root.theme ? root.theme.surface : "#ffffff")
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: flightModeMouse.containsMouse || flightModeMouse.pressed || root.flightModePanelVisible
                               ? root.brandBorder
@@ -476,7 +477,7 @@ Rectangle {
                 width: height
                 height: 24
                 radius: height / 2
-                color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
+                color: root.theme ? root.theme.surface : "#ffffff"
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: root.theme && root.theme.darkMode ? "#333333" : "#d7dde8"
 
@@ -507,7 +508,7 @@ Rectangle {
                 width: Math.max(theme ? theme.baseWidth * 8.2 : 96, armStateRow.implicitWidth + Math.round(18 * (theme ? theme.uiScale : 1)))
                 height: 24
                 radius: height / 2
-                color: root.theme && root.theme.darkMode ? "#000000" : "#ffffff"
+                color: root.theme ? root.theme.surface : "#ffffff"
                 border.width: Math.round(1 * (theme ? theme.uiScale : 1))
                 border.color: root.theme && root.theme.darkMode ? "#333333" : Qt.rgba(0.83, 0.86, 0.91, 1.0)
 
@@ -612,7 +613,7 @@ Rectangle {
         Row {
             id: rightButtons
             anchors.right: parent.right
-            anchors.rightMargin: theme ? theme.spacingSm : 8
+            anchors.rightMargin: mainWindow.windowControlsWidth + (theme ? theme.spacingSm : 8)
             anchors.verticalCenter: parent.verticalCenter
             spacing: theme ? theme.spacingMd : 12
 
@@ -891,10 +892,7 @@ Rectangle {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            if (root.theme) root.theme.darkMode = false
-                                            if (QGroundControl.settingsManager && QGroundControl.settingsManager.appSettings && QGroundControl.settingsManager.appSettings.indoorPalette) {
-                                                QGroundControl.settingsManager.appSettings.indoorPalette.rawValue = 0
-                                            }
+                                            if (root.theme) root.theme.setDarkMode(false)
                                             root.themeSelectExpanded = false
                                         }
                                     }
@@ -919,10 +917,7 @@ Rectangle {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            if (root.theme) root.theme.darkMode = true
-                                            if (QGroundControl.settingsManager && QGroundControl.settingsManager.appSettings && QGroundControl.settingsManager.appSettings.indoorPalette) {
-                                                QGroundControl.settingsManager.appSettings.indoorPalette.rawValue = 1
-                                            }
+                                            if (root.theme) root.theme.setDarkMode(true)
                                             root.themeSelectExpanded = false
                                         }
                                     }
@@ -1174,7 +1169,7 @@ Rectangle {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: qsTr("Info Bar Opacity")
+                            text: qsTr("HUD Opacity")
                             font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
                             color: root.panelText2
                         }
@@ -1555,9 +1550,9 @@ Rectangle {
 
         background: Rectangle {
             radius: 8
-            color: "#ffffff"
+            color: root.panelBg
             border.width: Math.round(1 * (theme ? theme.uiScale : 1))
-            border.color: "#8fb3f5"
+            border.color: root.panelOuterBorder
         }
 
         contentItem: Item {
@@ -1572,7 +1567,7 @@ Rectangle {
                 text: qsTr("Flight Mode ")
                 font.pixelSize: Math.round(18 * (theme ? theme.uiScale : 1))
                 font.weight: Font.Bold
-                color: "#111111"
+                color: root.panelText
             }
 
             Text {
@@ -1587,7 +1582,7 @@ Rectangle {
                         ? (qsTr("Disconnected · Current ") + root.modeDisplayName(modeText) + "\nmodes: " + root.flightModeList.length)
                         : qsTr("Disconnected · Current --\\nModes: 0")
                 font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
-                color: "#32507a"
+                color: root.panelText2
                 wrapMode: Text.WordWrap
             }
 
@@ -1601,7 +1596,7 @@ Rectangle {
                 anchors.topMargin: 10
                 width: parent.width
                 height: Math.round(1 * (theme ? theme.uiScale : 1))
-                color: "#d8e2ef"
+                color: root.panelFieldBorder
             }
 
             Flickable {
@@ -1644,7 +1639,7 @@ Rectangle {
                                 text: root.modeDisplayName(modelData)
                                 font.pixelSize: Math.round(13 * (theme ? theme.uiScale : 1))
                                 font.weight: modelData === modeText ? Font.Bold : Font.Normal
-                                color: "#172033"
+                                color: root.panelText
                             }
 
                             MouseArea {
@@ -1670,7 +1665,7 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                         text: qsTr("Disconnected; no modes available")
                         font.pixelSize: Math.round(12 * (theme ? theme.uiScale : 1))
-                        color: "#24415f"
+                        color: root.panelText2
                     }
                 }
             }

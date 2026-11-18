@@ -7,6 +7,14 @@ qt_add_qml_module(FlightDisplayModule
     QML_FILES
         CustomUI/App.qml
         CustomUI/AttitudeHUD.qml
+        CustomUI/Eadi/AirspeedIndicator.qml
+        CustomUI/Eadi/Altimeter.qml
+        CustomUI/Eadi/AttitudeIndicator.qml
+        CustomUI/Eadi/CustomImage.qml
+        CustomUI/Eadi/ElectronicAttitudeDirectionIndicator.qml
+        CustomUI/Eadi/HeadingIndicator.qml
+        CustomUI/Eadi/VerticalSpeedIndicator.qml
+        CustomUI/FlightDisplayInstrument.qml
         CustomUI/BoardStatusCard.qml
         CustomUI/CompassWidget.qml
         CustomUI/CustomFlyViewMap.qml
@@ -103,6 +111,30 @@ qt_add_qml_module(FlightDisplayModule
         VehicleWarnings.qml
         VirtualJoystick.qml
     RESOURCES
+        CustomUI/Eadi/LICENSE.txt
+        CustomUI/Eadi/eadi_adi_back.svg
+        CustomUI/Eadi/eadi_adi_doth.svg
+        CustomUI/Eadi/eadi_adi_dotv.svg
+        CustomUI/Eadi/eadi_adi_fd.svg
+        CustomUI/Eadi/eadi_adi_fpm.svg
+        CustomUI/Eadi/eadi_adi_fpmx.svg
+        CustomUI/Eadi/eadi_adi_ladd.svg
+        CustomUI/Eadi/eadi_adi_mask.svg
+        CustomUI/Eadi/eadi_adi_roll.svg
+        CustomUI/Eadi/eadi_adi_scaleh.svg
+        CustomUI/Eadi/eadi_adi_scalev.svg
+        CustomUI/Eadi/eadi_adi_slip.svg
+        CustomUI/Eadi/eadi_adi_stall.svg
+        CustomUI/Eadi/eadi_adi_turn.svg
+        CustomUI/Eadi/eadi_alt_bug.svg
+        CustomUI/Eadi/eadi_alt_frame.svg
+        CustomUI/Eadi/eadi_asi_bug.svg
+        CustomUI/Eadi/eadi_asi_frame.svg
+        CustomUI/Eadi/eadi_hsi_back.svg
+        CustomUI/Eadi/eadi_hsi_bug.svg
+        CustomUI/Eadi/eadi_hsi_face.svg
+        CustomUI/Eadi/eadi_hsi_marks.svg
+        CustomUI/Eadi/eadi_vsi_scale.svg
         CustomUI/antglogo.svg
         CustomUI/antglogo-white.svg
     NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.

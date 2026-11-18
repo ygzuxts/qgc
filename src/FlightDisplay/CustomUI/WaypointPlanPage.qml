@@ -28,6 +28,7 @@ Item {
     property var theme: null
     property var missionController: null
     property string initialPlanFile: ""
+    property int initialSequenceNumber: -1
     property real hudInstrumentSize: 0
     property real hudTelemetryWidth: 0
     property real hudHeight: 0
@@ -523,6 +524,9 @@ Item {
         }
         landSeqNum = _findLandSeq()
         _refreshTools()
+        if (missionController && initialSequenceNumber >= 0) {
+            missionController.setCurrentPlanViewSeqNum(initialSequenceNumber, true)
+        }
         if (_visibleItemCount > 0) {
             mapFitFunctions.fitMapViewportToMissionItems()
         }
